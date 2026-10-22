@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Skull Mode - V6</title>
+<title>إقليم الجماجم والرموز</title>
 <style>
     body {
         margin: 0;
         padding: 0;
-        background-color: #000;
+        background-color: #050505;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         overflow: hidden;
         font-family: 'Arial', sans-serif;
-        transition: background-color 2s;
+        touch-action: none; /* لمنع تكبير الشاشة عند اللمس */
     }
     canvas {
         max-width: 100%;
@@ -24,7 +24,7 @@
     }
     #ui {
         position: absolute;
-        top: 15px;
+        top: 20px;
         width: 100%;
         text-align: center;
         color: white;
@@ -32,84 +32,59 @@
         z-index: 10;
     }
     h1 {
-        font-size: 14px;
+        font-size: 20px;
         margin: 0;
-        text-shadow: 0 0 10px #fff;
+        color: #ff3333;
+        text-shadow: 0 0 15px #ff3333;
     }
     h2 {
-        font-size: 24px;
+        font-size: 30px;
         color: #ffd700;
-        margin-top: 5px;
+        margin-top: 10px;
         text-shadow: 0 0 15px #ffd700;
     }
-    #evolutionText {
+    #game-over {
         position: absolute;
-        top: 90px;
-        width: 100%;
-        text-align: center;
-        font-size: 32px;
-        font-weight: bold;
-        color: #fff;
-        text-shadow: 0 0 20px cyan, 0 0 40px cyan;
-        z-index: 15;
-        pointer-events: none;
-        letter-spacing: 2px;
-        transition: color 0.5s;
-    }
-    #event-text {
-        position: absolute;
-        top: 45%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 45px;
-        font-weight: bold;
         text-align: center;
-        z-index: 30;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.5s, transform 0.5s;
-    }
-    .controls {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 15px;
+        color: white;
+        display: none;
         z-index: 20;
     }
-    .controls button {
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid #fff;
+    #game-over h1 {
+        font-size: 50px;
+        color: red;
+        text-shadow: 0 0 30px red;
+        margin-bottom: 20px;
+    }
+    #restart-btn {
+        background: #ff3333;
         color: white;
-        padding: 10px 20px;
-        border-radius: 25px;
+        border: none;
+        padding: 15px 40px;
+        font-size: 20px;
+        border-radius: 30px;
         cursor: pointer;
         font-weight: bold;
-        backdrop-filter: blur(5px);
+        box-shadow: 0 0 20px #ff3333;
     }
 </style>
 </head>
 <body>
 
 <div id="ui">
-    <h1>EVERY BALL THROUGH A GOLD POINT = 1 NEW BALL</h1>
-    <h2 id="counter">Balls: 1</h2>
+    <h1>إقليم الجماجم والرموز</h1>
+    <h2 id="score">النجوم: 0</h2>
 </div>
-<div id="evolutionText">EVOLUTION ZERO</div>
-<div id="event-text"></div>
 
-<audio id="bg-music" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
+<div id="game-over">
+    <h1>💀 انتهت اللعبة 💀</h1>
+    <button id="restart-btn">المحاولة مجدداً</button>
+</div>
 
 <canvas id="game"></canvas>
-
-<div class="controls">
-    <button id="btn-pause">⏸️ إيقاف</button>
-    <button id="btn-reset">🔄 إعادة</button>
-    <button id="btn-music">🎵 موسيقى</button>
-</div>
 
 <script>
 const canvas = document.getElementById("game");
@@ -118,338 +93,202 @@ const ctx = canvas.getContext("2d");
 canvas.width = 720;
 canvas.height = 1280;
 
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const baseRadius = 280;
+// متغيرات اللعبة
+let score = 0;
+let isGameOver = false;
+let targetX = canvas.width / 2;
+let targetY = canvas.height / 2 + 200;
 
-let balls = [];
-let isFrozen = false;
-let isGravity = false;
-let isRunning = true;
-let exploded200 = false;
-const MAX_BALLS = 1000; 
+// اللاعب
+const player = {
+    x: canvas.width / 2,
+    y: canvas.height / 2 + 200,
+    r: 15,
+    speed: 0.1 // سرعة اللحاق باللمس
+};
 
-// النقاط الذهبية
-const goldPoints = [
-    { x: centerX, y: centerY - 120, r: 8 },
-    { x: centerX, y: centerY + 120, r: 8 }
-];
+// المصفوفات
+let stars = [];
+let skulls = [];
 
-// الموسيقى
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88]; 
-let noteIndex = 0;
+// إعدادات الصعوبة
+let skullSpeed = 1.5;
+let spawnRate = 1000; // كل ثانية
+let lastSpawnTime = 0;
 
-function playNote() {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    let osc = audioCtx.createOscillator();
-    let gain = audioCtx.createGain();
-    osc.frequency.value = notes[noteIndex];
-    noteIndex = (noteIndex + 1) % notes.length; 
-    osc.type = "sine";
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.3);
+// النجمة الأولى
+spawnStar();
+
+// أحداث اللمس والماوس
+function updateTarget(e) {
+    if (isGameOver) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    let clientX = e.clientX || e.touches[0].clientX;
+    let clientY = e.clientY || e.touches[0].clientY;
+
+    targetX = (clientX - rect.left) * scaleX;
+    targetY = (clientY - rect.top) * scaleY;
 }
 
-function randomColor() {
-    return `hsl(${Math.random() * 360}, 100%, 60%)`;
+canvas.addEventListener("mousemove", updateTarget);
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault(); // منع التمرير
+    updateTarget(e);
+}, { passive: false });
+canvas.addEventListener("touchstart", updateTarget, { passive: false });
+
+
+// إنشاء نجمة جديدة
+function spawnStar() {
+    let padding = 60;
+    let x = Math.random() * (canvas.width - padding * 2) + padding;
+    let y = Math.random() * (canvas.height - padding * 2) + padding;
+    
+    // تجنب وضع النجمة فوق اللاعب مباشرة
+    if (Math.hypot(x - player.x, y - player.y) < 100) {
+        return spawnStar(); 
+    }
+    stars = [{ x: x, y: y, r: 15 }];
 }
 
-class Ball {
-    constructor(x, y, vx, vy, color) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
-        this.r = 4;
-        this.color = color || randomColor();
-        this.trail = [];
-        this.hitGold = false; 
-    }
+// إنشاء جمجمة جديدة
+function spawnSkull() {
+    let padding = 40;
+    let x, y;
+    // محاولة إبعاد الجمجمة عن اللاعب قليلاً عند ظهورها
+    do {
+        x = Math.random() * (canvas.width - padding * 2) + padding;
+        y = Math.random() * (canvas.height - padding * 2) + padding;
+    } while (Math.hypot(x - player.x, y - player.y) < 200);
 
-    update() {
-        if (isFrozen || !isRunning) return;
-
-        // الخطوط الذكية
-        let maxTrail = 600;
-        if (balls.length > 30) maxTrail = 150;
-        if (balls.length > 80) maxTrail = 50;
-        if (balls.length > 150) maxTrail = 15;
-        if (balls.length > 300) maxTrail = 5;
-
-        this.trail.push({ x: this.x, y: this.y });
-        if (this.trail.length > maxTrail) this.trail.shift(); 
-
-        if (isGravity) {
-            let gdx = centerX - this.x;
-            let gdy = centerY - this.y;
-            this.vx += gdx * 0.003;
-            this.vy += gdy * 0.003;
-        }
-
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // الفيزياء تعتمد على دائرة وهمية لضمان عدم خروج الكرات 
-        // (سيتم قصها بصرياً لتبدو داخل الشكل)
-        let dx = this.x - centerX;
-        let dy = this.y - centerY;
-        let dist = Math.sqrt(dx*dx + dy*dy);
-
-        if (dist + this.r >= baseRadius) {
-            let nx = dx / dist;
-            let ny = dy / dist;
-            let dot = this.vx * nx + this.vy * ny;
-            this.vx -= 2 * dot * nx;
-            this.vy -= 2 * dot * ny;
-
-            this.x = centerX + nx * (baseRadius - this.r);
-            this.y = centerY + ny * (baseRadius - this.r);
-        }
-
-        if (!this.hitGold && balls.length < MAX_BALLS) {
-            goldPoints.forEach(gp => {
-                let gdx = this.x - gp.x;
-                let gdy = this.y - gp.y;
-                let gdist = Math.sqrt(gdx * gdx + gdy * gdy);
-
-                if (gdist < gp.r + this.r + 5) {
-                    this.hitGold = true; 
-                    spawnNewBall(this.x, this.y);
-                    playNote();
-                    gp.flash = 1.0; 
-                }
-            });
-        }
-    }
-
-    draw(ctx) {
-        if (this.trail.length > 1) {
-            ctx.beginPath();
-            ctx.moveTo(this.trail[0].x, this.trail[0].y);
-            for (let i = 1; i < this.trail.length; i++) {
-                ctx.lineTo(this.trail[i].x, this.trail[i].y);
-            }
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = balls.length > 100 ? 0.5 : 1.5;
-            ctx.globalAlpha = 0.4;
-            ctx.stroke();
-            ctx.globalAlpha = 1.0;
-        }
-
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-    }
-}
-
-function spawnNewBall(x, y) {
-    if (balls.length >= MAX_BALLS) return;
     let angle = Math.random() * Math.PI * 2;
-    let speed = 3 + Math.random() * 3;
-    balls.push(new Ball(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed));
-    document.getElementById("counter").innerText = "Balls: " + balls.length;
+    skulls.push({
+        x: x,
+        y: y,
+        r: 20,
+        vx: Math.cos(angle) * skullSpeed,
+        vy: Math.sin(angle) * skullSpeed,
+        angle: angle
+    });
 }
 
-// ----------------- نظام الأشكال (Shapes) -----------------
-function getShapePath() {
-    let path = new Path2D();
-    let r = baseRadius;
-    let count = balls.length;
+// إعادة اللعبة
+document.getElementById("restart-btn").addEventListener("click", () => {
+    score = 0;
+    isGameOver = false;
+    skulls = [];
+    skullSpeed = 1.5;
+    player.x = canvas.width / 2;
+    player.y = canvas.height / 2 + 200;
+    targetX = player.x;
+    targetY = player.y;
+    document.getElementById("score").innerText = "النجوم: 0";
+    document.getElementById("game-over").style.display = "none";
+    spawnStar();
+    lastSpawnTime = Date.now();
+});
 
-    if (count < 50) {
-        // دائرة
-        path.arc(centerX, centerY, r, 0, Math.PI * 2);
-    } else if (count < 150) {
-        // بيضاوي
-        path.ellipse(centerX, centerY, r + 40, r - 40, 0, 0, Math.PI * 2);
-    } else if (count < 300) {
-        // سداسي
-        let sides = 6;
-        for (let i = 0; i < sides; i++) {
-            let angle = (Math.PI * 2 / sides) * i - Math.PI / 2;
-            let x = centerX + Math.cos(angle) * r;
-            let y = centerY + Math.sin(angle) * r;
-            if (i === 0) path.moveTo(x, y);
-            else path.lineTo(x, y);
-        }
-        path.closePath();
-    } else if (count < 500) {
-        // نجمة
-        let spikes = 5;
-        for (let i = 0; i < spikes * 2; i++) {
-            let rot = (Math.PI / spikes) * i - Math.PI/2;
-            let pr = (i % 2 === 0) ? r : r * 0.5;
-            let x = centerX + Math.cos(rot) * pr;
-            let y = centerY + Math.sin(rot) * pr;
-            if (i === 0) path.moveTo(x, y);
-            else path.lineTo(x, y);
-        }
-        path.closePath();
-    } else {
-        // جمجمة (Skull)
-        // رسم الجمجمة باستخدام الأقواس والخطوط
-        // الجزء العلوي
-        path.arc(centerX, centerY - 40, 150, Math.PI, 0, false);
-        // الفك الأيمن
-        path.lineTo(centerX + 100, centerY + 80);
-        path.lineTo(centerX + 60, centerY + 160);
-        // الفك السفلي
-        path.lineTo(centerX - 60, centerY + 160);
-        // الفك الأيسر
-        path.lineTo(centerX - 100, centerY + 80);
-        path.closePath();
+function loop(timestamp) {
+    if (isGameOver) {
+        // تأثير الشاشة الحمراء عند الموت
+        ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        requestAnimationFrame(loop);
+        return;
     }
-    return path;
-}
 
-function drawMorphShape() {
-    let count = balls.length;
-    let shapePath = getShapePath();
-    
-    // تغيير اللون حسب المرحلة
-    let hue = (Date.now() * 0.05) % 360;
-    if (count >= 500) hue = 0; // أحمر للجمجمة
+    // خلفية سوداء مع أثر خفيف
+    ctx.fillStyle = "rgba(5, 5, 5, 0.3)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
-    ctx.shadowBlur = 30;
-    ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
-    
-    // رسم حدود الشكل
-    ctx.stroke(shapePath);
+    // تحرك اللاعب بسلاسة نحو الهدف (اللمس)
+    player.x += (targetX - player.x) * player.speed;
+    player.y += (targetY - player.y) * player.speed;
+
+    // رسم اللاعب
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
+    ctx.fillStyle = "#00ffff";
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "#00ffff";
+    ctx.fill();
     ctx.shadowBlur = 0;
 
-    // رسم النقاط الذهبية (إذا كانت داخل الشكل، أو نتركها ثابتة)
-    goldPoints.forEach(gp => {
-        ctx.beginPath();
-        ctx.arc(gp.x, gp.y, gp.r, 0, Math.PI * 2);
-        ctx.fillStyle = "#ffd700";
-        if (gp.flash > 0) {
-            ctx.shadowBlur = 30 * gp.flash;
-            gp.flash -= 0.05;
-        } else {
-            ctx.shadowBlur = 15;
+    // إدارة النجوم
+    stars.forEach((star, index) => {
+        ctx.font = "30px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("⭐", star.x, star.y);
+
+        // اصطدام اللاعب بالنجمة
+        if (Math.hypot(player.x - star.x, player.y - star.y) < player.r + star.r) {
+            score++;
+            document.getElementById("score").innerText = "النجوم: " + score;
+            
+            // زيادة الصعوبة
+            if (score % 3 === 0) skullSpeed += 0.5;
+            
+            spawnStar();
+            // إضافة جمجمة مع كل نجمة
+            spawnSkull(); 
         }
-        ctx.shadowColor = "#ffd700";
-        ctx.fill();
-        ctx.shadowBlur = 0;
     });
 
-    return shapePath;
-}
-
-// ----------------- الأحداث -----------------
-const eventText = document.getElementById("event-text");
-const evolutionText = document.getElementById("evolutionText");
-
-function updateEvolution() {
-    let count = balls.length;
-    
-    if (count > 100 && count < 300) document.body.style.background = "#120022";
-    if (count >= 300 && count < 500) document.body.style.background = "#001a33";
-    if (count >= 500) document.body.style.background = "#220000"; // خلفية حمراء داكنة للجمجمة
-
-    let text = "EVOLUTION ZERO";
-    let color = "white";
-    if (count >= 50) { text = "ELLIPSE AGE"; color = "#00ffff"; }
-    if (count >= 150) { text = "HEXAGON AGE"; color = "#ff00ff"; }
-    if (count >= 300) { text = "STAR AGE"; color = "#ffff00"; }
-    if (count >= 500) { text = "SKULL EVOLUTION"; color = "#ff0000"; }
-    
-    evolutionText.innerText = text;
-    evolutionText.style.color = color;
-    evolutionText.style.textShadow = `0 0 20px ${color}`;
-
-    if (count >= 200 && !exploded200) {
-        exploded200 = true;
-        explodeUniverse();
+    // إدارة الجماجم
+    let now = Date.now();
+    if (now - lastSpawnTime > spawnRate) {
+        spawnSkull();
+        lastSpawnTime = now;
+        // تسريع ظهور الجماجم تدريجياً
+        if (spawnRate > 400) spawnRate -= 50; 
     }
-}
 
-function explodeUniverse() {
-    eventText.innerText = "💥 COSMIC EXPLOSION 💥";
-    eventText.style.color = "#ff0000";
-    eventText.style.opacity = "1";
-    eventText.style.transform = "translate(-50%, -50%) scale(1.5)";
-    
-    setTimeout(() => {
-        eventText.style.opacity = "0";
-        eventText.style.transform = "translate(-50%, -50%) scale(1)";
-    }, 2000);
+    skulls.forEach((skull, index) => {
+        // حركة الجمجمة
+        skull.x += skull.vx;
+        skull.y += skull.vy;
 
-    for (let i = 0; i < 50; i++) {
-        let angle = Math.random() * Math.PI * 2;
-        let speed = 8 + Math.random() * 10;
-        spawnNewBall(centerX, centerY);
-        let b = balls[balls.length - 1];
-        b.vx = Math.cos(angle) * speed;
-        b.vy = Math.sin(angle) * speed;
-    }
-}
+        // ارتداد الجمجمة عن حواف الشاشة
+        if (skull.x < skull.r || skull.x > canvas.width - skull.r) skull.vx *= -1;
+        if (skull.y < skull.r || skull.y > canvas.height - skull.r) skull.vy *= -1;
 
-// ----------------- حلقة اللعبة -----------------
-function loop() {
-    if (isRunning) {
-        // مسح الشاشة
-        ctx.fillStyle = "rgba(0, 0, 0, 0.15)"; 
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // رسم الجمجمة
+        ctx.font = "40px Arial";
+        ctx.fillText("💀", skull.x, skull.y);
 
-        // 1. الحصول على مسار الشكل الحالي
-        let currentShapePath = drawMorphShape();
-
-        // 2. تطبيق القص (Clipping) - سحر بصري!
-        // هذا يجعل الكرات تختفي بمجرد خروجها من حدود الشكل
-        ctx.save();
-        ctx.clip(currentShapePath); 
-
-        // 3. رسم الكرات
-        for (let i = balls.length - 1; i >= 0; i--) {
-            balls[i].update();
-            balls[i].draw(ctx);
+        // اصطدام اللاعب بالجمجمة (الخسارة)
+        if (Math.hypot(player.x - skull.x, player.y - skull.y) < player.r + skull.r) {
+            isGameOver = true;
+            document.getElementById("game-over").style.display = "block";
+            // صوت انفجار بسيط
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.5);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
         }
+    });
 
-        ctx.restore(); // إلغاء القص لبقية العناصر
-
-        updateEvolution();
-    }
     requestAnimationFrame(loop);
 }
 
-// الأزرار
-document.getElementById("btn-pause").addEventListener("click", function() {
-    isRunning = !isRunning;
-    this.innerText = isRunning ? "⏸️ إيقاف" : "▶️ تشغيل";
-});
+// إعداد الصوت
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-document.getElementById("btn-reset").addEventListener("click", function() {
-    balls = [];
-    exploded200 = false;
-    document.body.style.background = "#000814";
-    spawnNewBall(centerX, centerY);
-    document.getElementById("counter").innerText = "Balls: 1";
-});
-
-const bgMusic = document.getElementById("bg-music");
-document.getElementById("btn-music").addEventListener("click", function() {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    if (bgMusic.paused) {
-        bgMusic.play();
-        this.innerText = "⏸️ إيقاف موسيقى";
-    } else {
-        bgMusic.pause();
-        this.innerText = "🎵 موسيقى";
-    }
-});
-
-// البدء
-spawnNewBall(centerX, centerY + 50);
-loop();
+// بدء اللعبة
+lastSpawnTime = Date.now();
+requestAnimationFrame(loop);
 </script>
 
 </body>
