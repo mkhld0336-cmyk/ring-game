@@ -1,315 +1,275 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Bouncing Game</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #050a14;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        /* واجهة المستخدم */
-        #ui {
-            position: absolute;
-            top: 50px;
-            width: 100%;
-            text-align: center;
-            z-index: 10;
-            pointer-events: none;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-        }
-
-        h1 {
-            color: white;
-            font-size: 24px;
-            margin: 0 0 10px 0;
-            letter-spacing: 2px;
-        }
-
-        #score {
-            color: #ffcc00;
-            font-size: 40px;
-            font-weight: bold;
-            margin: 0;
-            text-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
-        }
-
-        /* ميزة اللقطة الجانبية (Mini-map) */
-        #minimapContainer {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            width: 150px;
-            height: 250px;
-            border: 2px solid white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            z-index: 10;
-            background: #050a14;
-        }
-
-        #minimap {
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* أيقونة المشاركة الوهمية في اللقطة */
-        #minimap::after {
-            content: "🔗";
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 14px;
-            pointer-events: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Exploding Ring - Shorts</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Arial', sans-serif;
+    }
+    canvas {
+        background-color: #000814;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    #ui {
+        position: absolute;
+        top: 20px;
+        width: 100%;
+        text-align: center;
+        color: white;
+        pointer-events: none;
+        z-index: 10;
+    }
+    h1 {
+        font-size: 18px;
+        margin: 0;
+        text-shadow: 0 0 10px #fff;
+        letter-spacing: 1px;
+        padding: 0 10px;
+        line-height: 1.4;
+    }
+    h2 {
+        font-size: 30px;
+        color: #ffd700;
+        margin-top: 5px;
+        text-shadow: 0 0 15px #ffd700;
+    }
+    /* زر تشغيل الموسيقى */
+    #music-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid #fff;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: Arial;
+    }
+</style>
 </head>
 <body>
 
-    <!-- الشاشة الرئيسية -->
-    <canvas id="gameCanvas"></canvas>
+<!-- زر الموسيقى (يمكنك تغيير الرابط لاحقاً لموسيقى من اختيارك) -->
+<button id="music-btn">🎵 تشغيل الموسيقى</button>
+<audio id="bg-music" loop>
+    <!-- ضع رابط ملف صوتي هنا -->
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<div id="ui">
+    <h1>كل كرة تمر عبر نقطة ذهبية = كرة جديدة واحدة</h1>
+    <h2 id="counter">الكرات: 1</h2>
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+canvas.width = 720;
+canvas.height = 1280;
+
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const ringRadius = 280;
+
+let balls = [];
+const MAX_BALLS = 500; 
+
+const goldPoints = [
+    { x: centerX, y: centerY - 120, r: 8 },
+    { x: centerX, y: centerY + 120, r: 8 }
+];
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playBeep(freq) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    let osc = audioCtx.createOscillator();
+    let gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
+}
+
+function randomColor() {
+    // جعل الألوان أكثر إشراقاً
+    return `hsl(${Math.random() * 360}, 100%, 60%)`;
+}
+
+class Ball {
+    constructor(x, y, vx, vy, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.r = 5;
+        this.color = color || randomColor();
+        this.trail = [];
+        this.hitGold = false; 
+    }
+
+    update() {
+        // الخط الذي لا ينتهي (نحتفظ بآخر 2000 نقطة كحد أقصى لتجنب تعليق الجوال)
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > 2000) this.trail.shift(); 
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        let dx = this.x - centerX;
+        let dy = this.y - centerY;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+
+        // إجبار الكرة على الارتداد داخل الدائرة الزرقاء
+        if (dist + this.r >= ringRadius) {
+            let nx = dx / dist;
+            let ny = dy / dist;
+            let dot = this.vx * nx + this.vy * ny;
+            this.vx -= 2 * dot * nx;
+            this.vy -= 2 * dot * ny;
+
+            // تصحيح الموقع لضمان بقاء الكرة داخل الإطار
+            this.x = centerX + nx * (ringRadius - this.r);
+            this.y = centerY + ny * (ringRadius - this.r);
+        }
+
+        if (!this.hitGold && balls.length < MAX_BALLS) {
+            goldPoints.forEach(gp => {
+                let gdx = this.x - gp.x;
+                let gdy = this.y - gp.y;
+                let gdist = Math.sqrt(gdx * gdx + gdy * gdy);
+
+                if (gdist < gp.r + this.r + 5) {
+                    this.hitGold = true; 
+                    spawnNewBall(this.x, this.y);
+                    playBeep(400 + Math.random() * 400);
+                    gp.flash = 1.0; 
+                }
+            });
+        }
+    }
+
+    draw(ctx) {
+        // رسم الخط الذي لا ينتهي
+        if (this.trail.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(this.trail[0].x, this.trail[0].y);
+            for (let i = 1; i < this.trail.length; i++) {
+                ctx.lineTo(this.trail[i].x, this.trail[i].y);
+            }
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.3; // شفافية الخط
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+        }
+
+        // رسم الكرة نفسها
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.color;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+}
+
+function spawnNewBall(x, y) {
+    let angle = Math.random() * Math.PI * 2;
+    let speed = 3 + Math.random() * 3;
+    balls.push(new Ball(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed));
+    document.getElementById("counter").innerText = "الكرات: " + balls.length;
+}
+
+spawnNewBall(centerX, centerY + 50);
+
+function drawRing() {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = "#55ccff";
+    ctx.lineWidth = 6;
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "#55ccff";
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+}
+
+function drawGoldPoints() {
+    goldPoints.forEach(gp => {
+        ctx.beginPath();
+        ctx.arc(gp.x, gp.y, gp.r, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffd700";
+        
+        if (gp.flash > 0) {
+            ctx.shadowBlur = 30 * gp.flash;
+            ctx.shadowColor = "#ffd700";
+            gp.flash -= 0.05;
+        } else {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#ffd700";
+        }
+        
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    });
+}
+
+function loop() {
+    // تقليل الشفافية لتترك مساحة للخطوط التي لا تنتهي
+    ctx.fillStyle = "rgba(0, 8, 20, 0.1)"; 
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    drawRing();
+    drawGoldPoints();
+
+    for (let i = balls.length - 1; i >= 0; i--) {
+        balls[i].update();
+        balls[i].draw(ctx);
+    }
+
+    requestAnimationFrame(loop);
+}
+
+// التحكم بالموسيقى
+const musicBtn = document.getElementById("music-btn");
+const bgMusic = document.getElementById("bg-music");
+
+musicBtn.addEventListener("click", () => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     
-    <!-- واجهة النصوص -->
-    <div id="ui">
-        <h1>EVERY BALL THROUGH A GOLD POINT = 1 NEW BALL</h1>
-        <p id="score">Balls: 1</p>
-    </div>
+    if (bgMusic.paused) {
+        bgMusic.play();
+        musicBtn.innerText = "⏸️ إيقاف الموسيقى";
+    } else {
+        bgMusic.pause();
+        musicBtn.innerText = "🎵 تشغيل الموسيقى";
+    }
+});
 
-    <!-- ميزة اللقطة الجانبية -->
-    <div id="minimapContainer">
-        <canvas id="minimap"></canvas>
-    </div>
+loop();
+</script>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        const minimap = document.getElementById('minimap');
-        const mCtx = minimap.getContext('2d');
-
-        let width, height;
-        let balls = [];
-        let goldPoints = [];
-        
-        // إعدادات اللعبة
-        const BALL_RADIUS = 8;
-        const POINT_RADIUS = 10;
-        const MAX_SPEED = 4;
-
-        // دالة لتغيير حجم الشاشة
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            
-            minimap.width = 150;
-            minimap.height = 250;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // كلاس الكرة
-        class Ball {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                // سرعة عشوائية
-                this.vx = (Math.random() - 0.5) * MAX_SPEED * 2;
-                this.vy = (Math.random() - 0.5) * MAX_SPEED * 2;
-                this.color = '#00ff44'; // أخضر نيون
-                this.history = []; // لتأثير الذيل (Trail)
-            }
-
-            update() {
-                // حفظ الموقع القديم لتأثير الذيل
-                this.history.push({ x: this.x, y: this.y });
-                if (this.history.length > 10) this.history.shift();
-
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // الاصطدام بالحواف (دائرة الشاشة)
-                // لتبسيط الأمر، سنستخدم حدود الشاشة كساحة
-                if (this.x < BALL_RADIUS || this.x > width - BALL_RADIUS) {
-                    this.vx *= -1;
-                    this.x = Math.max(BALL_RADIUS, Math.min(width - BALL_RADIUS, this.x));
-                }
-                if (this.y < BALL_RADIUS || this.y > height - BALL_RADIUS) {
-                    this.vy *= -1;
-                    this.y = Math.max(BALL_RADIUS, Math.min(height - BALL_RADIUS, this.y));
-                }
-            }
-
-            draw(context, scale = 1, offsetX = 0, offsetY = 0) {
-                const drawX = (this.x * scale) + offsetX;
-                const drawY = (this.y * scale) + offsetY;
-                const drawRadius = BALL_RADIUS * scale;
-
-                // رسم الذيل
-                context.beginPath();
-                for (let i = 0; i < this.history.length; i++) {
-                    const hx = (this.history[i].x * scale) + offsetX;
-                    const hy = (this.history[i].y * scale) + offsetY;
-                    context.moveTo(hx, hy);
-                    context.lineTo(hx + 0.1, hy + 0.1); // نقطة صغيرة جداً
-                }
-                context.strokeStyle = 'rgba(0, 255, 68, 0.4)';
-                context.lineWidth = drawRadius * 0.8;
-                context.lineCap = 'round';
-                context.stroke();
-
-                // رسم الكرة نفسها
-                context.beginPath();
-                context.arc(drawX, drawY, drawRadius, 0, Math.PI * 2);
-                context.fillStyle = '#ffffff';
-                context.shadowBlur = 15 * scale;
-                context.shadowColor = this.color;
-                context.fill();
-                context.shadowBlur = 0; // إعادة تعيين
-            }
-        }
-
-        // كلاس النقطة الذهبية
-        class GoldPoint {
-            constructor() {
-                // توليد النقطة بعيداً عن الحواف
-                this.x = Math.random() * (width - 200) + 100;
-                this.y = Math.random() * (height - 200) + 100;
-                this.radius = POINT_RADIUS;
-            }
-
-            draw(context, scale = 1, offsetX = 0, offsetY = 0) {
-                const drawX = (this.x * scale) + offsetX;
-                const drawY = (this.y * scale) + offsetY;
-                const drawRadius = this.radius * scale;
-
-                context.beginPath();
-                context.arc(drawX, drawY, drawRadius, 0, Math.PI * 2);
-                context.fillStyle = '#ffcc00'; // أصفر ذهبي
-                context.shadowBlur = 25 * scale;
-                context.shadowColor = '#ffcc00';
-                context.fill();
-                context.shadowBlur = 0;
-            }
-        }
-
-        // تهيئة اللعبة
-        function init() {
-            balls.push(new Ball(width / 2, height / 2));
-            for (let i = 0; i < 3; i++) {
-                goldPoints.push(new GoldPoint());
-            }
-        }
-
-        // تحديث وإدارة التصادم
-        function updateGame() {
-            // تحديث الكرات
-            balls.forEach(ball => ball.update());
-
-            // فحص التصادم
-            for (let i = balls.length - 1; i >= 0; i--) {
-                let ball = balls[i];
-                for (let j = goldPoints.length - 1; j >= 0; j--) {
-                    let point = goldPoints[j];
-                    let dx = ball.x - point.x;
-                    let dy = ball.y - point.y;
-                    let distance = Math.hypot(dx, dy);
-
-                    // إذا اصطدمت الكرة بالنقطة الذهبية
-                    if (distance < BALL_RADIUS + POINT_RADIUS) {
-                        // إزالة النقطة الذهبية
-                        goldPoints.splice(j, 1);
-                        
-                        // توليد كرة جديدة
-                        balls.push(new Ball(ball.x, ball.y));
-                        
-                        // توليد نقطة ذهبية جديدة في مكان آخر
-                        goldPoints.push(new GoldPoint());
-                        
-                        // تحديث العداد في الشاشة
-                        document.getElementById('score').innerText = `Balls: ${balls.length}`;
-                    }
-                }
-            }
-        }
-
-        // رسم الحدود الزرقاء (تأثير الساحة)
-        function drawArena(context, w, h, scale = 1) {
-            context.beginPath();
-            context.arc(w/2, h/2, Math.min(w, h)/2.2, 0, Math.PI * 2);
-            context.strokeStyle = '#0088ff';
-            context.lineWidth = 4 * scale;
-            context.shadowBlur = 20 * scale;
-            context.shadowColor = '#0088ff';
-            context.stroke();
-            context.shadowBlur = 0;
-        }
-
-        // حلقة الرسم الرئيسية
-        function draw() {
-            // مسح الشاشة
-            ctx.fillStyle = '#050a14';
-            ctx.fillRect(0, 0, width, height);
-
-            // رسم الساحة
-            drawArena(ctx, width, height);
-
-            // رسم النقاط
-            goldPoints.forEach(point => point.draw(ctx));
-            // رسم الكرات
-            balls.forEach(ball => ball.draw(ctx));
-
-            // -------------------------
-            // رسم اللقطة المصغرة (Mini-map)
-            // -------------------------
-            mCtx.fillStyle = '#050a14';
-            mCtx.fillRect(0, 0, minimap.width, minimap.height);
-            
-            const scale = minimap.width / width;
-            
-            drawArena(mCtx, width, height, scale);
-            goldPoints.forEach(point => point.draw(mCtx, scale));
-            balls.forEach(ball => ball.draw(mCtx, scale));
-        }
-
-        // حلقة اللعبة (Game Loop)
-        function gameLoop() {
-            updateGame();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        // بدء اللعبة
-        init();
-        gameLoop();
-
-    </script>
 </body>
 </html>
