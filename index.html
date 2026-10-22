@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Morphing Universe V5</title>
+<title>Skull Mode - V6</title>
 <style>
     body {
         margin: 0;
@@ -85,20 +85,16 @@
         padding: 10px 20px;
         border-radius: 25px;
         cursor: pointer;
-        font-family: 'Arial';
         font-weight: bold;
         backdrop-filter: blur(5px);
-    }
-    .controls button:active {
-        background: rgba(255, 255, 255, 0.4);
     }
 </style>
 </head>
 <body>
 
 <div id="ui">
-    <h1>كل كرة تمر عبر نقطة ذهبية = كرة جديدة</h1>
-    <h2 id="counter">الكرات: 1</h2>
+    <h1>EVERY BALL THROUGH A GOLD POINT = 1 NEW BALL</h1>
+    <h2 id="counter">Balls: 1</h2>
 </div>
 <div id="evolutionText">EVOLUTION ZERO</div>
 <div id="event-text"></div>
@@ -124,24 +120,20 @@ canvas.height = 1280;
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-let ringRadius = 280;
+const baseRadius = 280;
 
 let balls = [];
 let isFrozen = false;
 let isGravity = false;
 let isRunning = true;
 let exploded200 = false;
-const MAX_BALLS = 800; 
+const MAX_BALLS = 1000; 
 
+// النقاط الذهبية
 const goldPoints = [
     { x: centerX, y: centerY - 120, r: 8 },
     { x: centerX, y: centerY + 120, r: 8 }
 ];
-
-// نظام الألوان
-let baseHue = 180; // أزرق سماوي
-let bgColor = "rgba(0, 8, 20, 0.15)"; 
-document.body.style.background = "#000814";
 
 // الموسيقى
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -192,7 +184,6 @@ class Ball {
         this.trail.push({ x: this.x, y: this.y });
         if (this.trail.length > maxTrail) this.trail.shift(); 
 
-        // الجاذبية
         if (isGravity) {
             let gdx = centerX - this.x;
             let gdy = centerY - this.y;
@@ -203,23 +194,21 @@ class Ball {
         this.x += this.vx;
         this.y += this.vy;
 
-        // حساب مسافة الارتداد (دائرة أو بيضاوي)
+        // الفيزياء تعتمد على دائرة وهمية لضمان عدم خروج الكرات 
+        // (سيتم قصها بصرياً لتبدو داخل الشكل)
         let dx = this.x - centerX;
         let dy = this.y - centerY;
-        
-        // ارتداد داخل الشكل (نستخدم معادلة مرنة تناسب الأشكال)
         let dist = Math.sqrt(dx*dx + dy*dy);
-        let currentRadius = ringRadius + Math.sin(Date.now() / 1000) * 20; // نبض خفيف
 
-        if (dist + this.r >= currentRadius) {
+        if (dist + this.r >= baseRadius) {
             let nx = dx / dist;
             let ny = dy / dist;
             let dot = this.vx * nx + this.vy * ny;
             this.vx -= 2 * dot * nx;
             this.vy -= 2 * dot * ny;
 
-            this.x = centerX + nx * (currentRadius - this.r);
-            this.y = centerY + ny * (currentRadius - this.r);
+            this.x = centerX + nx * (baseRadius - this.r);
+            this.y = centerY + ny * (baseRadius - this.r);
         }
 
         if (!this.hitGold && balls.length < MAX_BALLS) {
@@ -264,55 +253,83 @@ function spawnNewBall(x, y) {
     let angle = Math.random() * Math.PI * 2;
     let speed = 3 + Math.random() * 3;
     balls.push(new Ball(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed));
-    document.getElementById("counter").innerText = "الكرات: " + balls.length;
+    document.getElementById("counter").innerText = "Balls: " + balls.length;
 }
 
-// نظام رسم الشكل المتحول (Morphing)
-function drawMorphShape() {
-    let progress = 0;
-    if (balls.length > 50) progress = Math.min((balls.length - 50) / 100, 1); // 0 to 1
+// ----------------- نظام الأشكال (Shapes) -----------------
+function getShapePath() {
+    let path = new Path2D();
+    let r = baseRadius;
+    let count = balls.length;
 
-    // تحول الشكل من دائرة إلى بيضاوي
-    let radiusX = ringRadius + (ringRadius * 0.3 * progress);
-    let radiusY = ringRadius - (ringRadius * 0.2 * progress);
-
-    // ألوان النيون المتحركة
-    let hue = (Date.now() * 0.03) % 360;
-    if (balls.length > 150) hue = (hue + 180) % 360; // تغيير اللون في مرحلة الفوضى
-
-    ctx.beginPath();
-    
-    // إذا وصلنا لمرحلة متقدمة، نرسم شكل نجمة (باستخدام مثلثات)
-    if (balls.length > 300) {
+    if (count < 50) {
+        // دائرة
+        path.arc(centerX, centerY, r, 0, Math.PI * 2);
+    } else if (count < 150) {
+        // بيضاوي
+        path.ellipse(centerX, centerY, r + 40, r - 40, 0, 0, Math.PI * 2);
+    } else if (count < 300) {
+        // سداسي
+        let sides = 6;
+        for (let i = 0; i < sides; i++) {
+            let angle = (Math.PI * 2 / sides) * i - Math.PI / 2;
+            let x = centerX + Math.cos(angle) * r;
+            let y = centerY + Math.sin(angle) * r;
+            if (i === 0) path.moveTo(x, y);
+            else path.lineTo(x, y);
+        }
+        path.closePath();
+    } else if (count < 500) {
+        // نجمة
         let spikes = 5;
         for (let i = 0; i < spikes * 2; i++) {
-            let rot = (Math.PI / spikes) * i;
-            let r = (i % 2 === 0) ? radiusX : radiusX * 0.5;
-            let x = centerX + Math.cos(rot) * r;
-            let y = centerY + Math.sin(rot) * r;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            let rot = (Math.PI / spikes) * i - Math.PI/2;
+            let pr = (i % 2 === 0) ? r : r * 0.5;
+            let x = centerX + Math.cos(rot) * pr;
+            let y = centerY + Math.sin(rot) * pr;
+            if (i === 0) path.moveTo(x, y);
+            else path.lineTo(x, y);
         }
-        ctx.closePath();
+        path.closePath();
     } else {
-        // دائرة أو بيضاوي
-        ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+        // جمجمة (Skull)
+        // رسم الجمجمة باستخدام الأقواس والخطوط
+        // الجزء العلوي
+        path.arc(centerX, centerY - 40, 150, Math.PI, 0, false);
+        // الفك الأيمن
+        path.lineTo(centerX + 100, centerY + 80);
+        path.lineTo(centerX + 60, centerY + 160);
+        // الفك السفلي
+        path.lineTo(centerX - 60, centerY + 160);
+        // الفك الأيسر
+        path.lineTo(centerX - 100, centerY + 80);
+        path.closePath();
     }
+    return path;
+}
+
+function drawMorphShape() {
+    let count = balls.length;
+    let shapePath = getShapePath();
+    
+    // تغيير اللون حسب المرحلة
+    let hue = (Date.now() * 0.05) % 360;
+    if (count >= 500) hue = 0; // أحمر للجمجمة
 
     ctx.lineWidth = 6;
     ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
     ctx.shadowBlur = 30;
     ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
-    ctx.stroke();
+    
+    // رسم حدود الشكل
+    ctx.stroke(shapePath);
     ctx.shadowBlur = 0;
-}
 
-function drawGoldPoints() {
+    // رسم النقاط الذهبية (إذا كانت داخل الشكل، أو نتركها ثابتة)
     goldPoints.forEach(gp => {
         ctx.beginPath();
         ctx.arc(gp.x, gp.y, gp.r, 0, Math.PI * 2);
         ctx.fillStyle = "#ffd700";
-        
         if (gp.flash > 0) {
             ctx.shadowBlur = 30 * gp.flash;
             gp.flash -= 0.05;
@@ -323,33 +340,32 @@ function drawGoldPoints() {
         ctx.fill();
         ctx.shadowBlur = 0;
     });
+
+    return shapePath;
 }
 
-// ----------------- الأحداث الأسطورية -----------------
+// ----------------- الأحداث -----------------
 const eventText = document.getElementById("event-text");
 const evolutionText = document.getElementById("evolutionText");
 
 function updateEvolution() {
     let count = balls.length;
     
-    // تغيير الخلفية
     if (count > 100 && count < 300) document.body.style.background = "#120022";
-    if (count >= 300 && count < 600) document.body.style.background = "#001a33";
-    if (count >= 600) document.body.style.background = "#220000";
+    if (count >= 300 && count < 500) document.body.style.background = "#001a33";
+    if (count >= 500) document.body.style.background = "#220000"; // خلفية حمراء داكنة للجمجمة
 
-    // تغيير النص
     let text = "EVOLUTION ZERO";
     let color = "white";
-    if (count > 50) { text = "ELLIPSE AGE"; color = "#00ffff"; }
-    if (count > 150) { text = "CHAOS AGE"; color = "#ff00ff"; }
-    if (count > 300) { text = "UNIVERSE AGE"; color = "#ff4444"; }
-    if (count > 600) { text = "SINGULARITY"; color = "#ffd700"; }
+    if (count >= 50) { text = "ELLIPSE AGE"; color = "#00ffff"; }
+    if (count >= 150) { text = "HEXAGON AGE"; color = "#ff00ff"; }
+    if (count >= 300) { text = "STAR AGE"; color = "#ffff00"; }
+    if (count >= 500) { text = "SKULL EVOLUTION"; color = "#ff0000"; }
     
     evolutionText.innerText = text;
     evolutionText.style.color = color;
     evolutionText.style.textShadow = `0 0 20px ${color}`;
 
-    // الانفجار الكوني عند 200 كرة
     if (count >= 200 && !exploded200) {
         exploded200 = true;
         explodeUniverse();
@@ -367,7 +383,7 @@ function explodeUniverse() {
         eventText.style.transform = "translate(-50%, -50%) scale(1)";
     }, 2000);
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
         let angle = Math.random() * Math.PI * 2;
         let speed = 8 + Math.random() * 10;
         spawnNewBall(centerX, centerY);
@@ -377,56 +393,30 @@ function explodeUniverse() {
     }
 }
 
-// أحداث التجميد والجاذبية
-setInterval(() => {
-    if (!isRunning || isGravity) return; 
-    isFrozen = true;
-    eventText.innerText = "❄️ تجميد";
-    eventText.style.color = "#00ffff";
-    eventText.style.opacity = "1";
-    eventText.style.transform = "translate(-50%, -50%) scale(1.2)";
-
-    setTimeout(() => {
-        isFrozen = false;
-        eventText.style.opacity = "0";
-        eventText.style.transform = "translate(-50%, -50%) scale(1)";
-        balls.forEach(ball => {
-            ball.vx *= 1.2; ball.vy *= 1.2;
-        });
-    }, 1500);
-}, 25000);
-
-setInterval(() => {
-    if (!isRunning) return;
-    isGravity = true;
-    eventText.innerText = "🌀 جاذبية";
-    eventText.style.color = "#ff00ff";
-    eventText.style.opacity = "1";
-    
-    setTimeout(() => {
-        isGravity = false;
-        eventText.style.opacity = "0";
-        balls.forEach(ball => {
-            ball.vx += (Math.random() - 0.5) * 10;
-            ball.vy += (Math.random() - 0.5) * 10;
-        });
-    }, 4000);
-}, 40000);
-
-// ----------------- حلقة اللعبة والتحكم -----------------
+// ----------------- حلقة اللعبة -----------------
 function loop() {
     if (isRunning) {
-        ctx.fillStyle = bgColor; 
+        // مسح الشاشة
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)"; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        drawMorphShape();
-        drawGoldPoints();
-        updateEvolution();
+        // 1. الحصول على مسار الشكل الحالي
+        let currentShapePath = drawMorphShape();
 
+        // 2. تطبيق القص (Clipping) - سحر بصري!
+        // هذا يجعل الكرات تختفي بمجرد خروجها من حدود الشكل
+        ctx.save();
+        ctx.clip(currentShapePath); 
+
+        // 3. رسم الكرات
         for (let i = balls.length - 1; i >= 0; i--) {
             balls[i].update();
             balls[i].draw(ctx);
         }
+
+        ctx.restore(); // إلغاء القص لبقية العناصر
+
+        updateEvolution();
     }
     requestAnimationFrame(loop);
 }
@@ -442,7 +432,7 @@ document.getElementById("btn-reset").addEventListener("click", function() {
     exploded200 = false;
     document.body.style.background = "#000814";
     spawnNewBall(centerX, centerY);
-    document.getElementById("counter").innerText = "الكرات: 1";
+    document.getElementById("counter").innerText = "Balls: 1";
 });
 
 const bgMusic = document.getElementById("bg-music");
