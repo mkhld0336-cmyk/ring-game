@@ -3,40 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MARSAD GAMES - Skull Realm</title>
+<title>MARSAD GAMES - Skull Realm V3</title>
 <style>
     body {
-        margin: 0;
-        padding: 0;
-        background-color: #050505;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
-        font-family: 'Arial', sans-serif;
-        touch-action: none;
-        color: white;
+        margin: 0; padding: 0; background-color: #050505;
+        display: flex; justify-content: center; align-items: center;
+        height: 100vh; overflow: hidden; font-family: 'Arial', sans-serif;
+        touch-action: none; color: white;
     }
-    canvas {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        background: #000;
-    }
-    /* واجهة المستخدم */
+    canvas { max-width: 100%; max-height: 100%; object-fit: contain; background: #000; }
     #hud {
-        position: absolute;
-        top: 10px;
-        width: 100%;
-        padding: 0 20px;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        pointer-events: none;
-        z-index: 10;
-        font-weight: bold;
+        position: absolute; top: 10px; width: 100%; padding: 0 20px;
+        box-sizing: border-box; display: flex; justify-content: space-between;
+        align-items: flex-start; pointer-events: none; z-index: 10; font-weight: bold;
     }
     .hud-left { text-align: left; }
     .hud-right { text-align: right; }
@@ -47,42 +26,26 @@
         position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
         opacity: 0; transition: opacity 0.3s, transform 0.3s;
     }
-    
-    /* شاشات البداية والنهاية */
     .screen {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 50;
-        text-align: center;
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column;
+        justify-content: center; align-items: center; z-index: 50; text-align: center;
     }
     .screen h1 { font-size: 40px; color: #fff; text-shadow: 0 0 20px #00f5ff; margin-bottom: 5px; }
     .screen h2 { font-size: 20px; color: #888; margin-bottom: 30px; }
-    .screen p { font-size: 18px; margin-bottom: 10px; }
+    .screen p { font-size: 18px; margin-bottom: 10px; padding: 0 20px;}
     .btn {
-        background: #ff0040;
-        color: white;
-        border: none;
-        padding: 15px 50px;
-        font-size: 22px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-weight: bold;
-        box-shadow: 0 0 20px #ff0040;
-        margin-top: 20px;
+        background: #ff0040; color: white; border: none; padding: 15px 50px;
+        font-size: 22px; border-radius: 30px; cursor: pointer; font-weight: bold;
+        box-shadow: 0 0 20px #ff0040; margin-top: 20px;
     }
     .btn:active { transform: scale(0.95); }
-    #game-over { display: none; }
+    #game-over, #game-win { display: none; }
     #high-score-text { color: #ffd700; font-size: 22px; margin-top: 20px;}
 </style>
 </head>
 <body>
 
-<!-- واجهة اللعب -->
 <div id="hud">
     <div class="hud-left">
         <div id="score">0</div>
@@ -93,18 +56,17 @@
     </div>
 </div>
 
-<!-- شاشة البداية -->
 <div id="start-screen" class="screen">
     <h1>MARSAD GAMES</h1>
     <h2>Play Smart. Survive Longer.</h2>
     <h3 style="color:#00f5ff; margin:0;">إقليم الجماجم 💀</h3>
-    <p>اضغط على المربعات الآمنة عند وصولها للخط.</p>
-    <p style="color:#ff0040;">احذر: المربعات الخضراء قد تتحول لجماجم!</p>
+    <p>انقر على المربعات الآمنة عند وصولها للخط.</p>
+    <p style="color:#ff0040;">احذر: المربعات الخضراء تتحول لجماجم!</p>
+    <p style="color:#ffd700;">في آخر 5 ثوانٍ... استعد لمواجهة الزعيم! 👑</p>
     <div id="high-score-text">أفضل نتيجة: 0</div>
     <button class="btn" id="start-btn">ابدأ اللعبة</button>
 </div>
 
-<!-- شاشة النهاية -->
 <div id="game-over" class="screen">
     <h1 style="color:red; text-shadow:0 0 20px red;">GAME OVER</h1>
     <p id="game-over-reason"></p>
@@ -113,82 +75,62 @@
     <button class="btn" id="restart-btn">إعادة المحاولة</button>
 </div>
 
+<div id="game-win" class="screen">
+    <h1 style="color:#ffd700; text-shadow:0 0 20px #ffd700;">VICTORY!</h1>
+    <p style="color:#fff;">لقد هزمت ملك الجماجم! 👑</p>
+    <h2 id="win-score" style="color:#00f5ff; font-size:40px; margin:10px 0;">0</h2>
+    <button class="btn" id="play-again-btn" style="background:#00f5ff; box-shadow: 0 0 20px #00f5ff;">العب مرة أخرى</button>
+</div>
+
 <canvas id="game"></canvas>
 
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+canvas.width = 720; canvas.height = 1280;
 
-canvas.width = 720;
-canvas.height = 1280;
-
-const COLS = 4;
-const colWidth = canvas.width / COLS;
-const hitZoneY = canvas.height - 200;
-const hitZoneHeight = 30;
+const COLS = 4; const colWidth = canvas.width / COLS;
+const hitZoneY = canvas.height - 200; const hitZoneHeight = 30;
 
 let isPlaying = false;
-let timeLeft = 30; 
-let lastTime = 0;
-let speed = 450; 
-let spawnTimer = 0;
-let score = 0;
-let combo = 0;
-let lives = 3;
+let timeLeft = 30; let lastTime = 0; let speed = 450; let spawnTimer = 0;
+let score = 0; let combo = 0; let lives = 3;
+let bossActive = false;
 
-let tiles = [];
-let particles = [];
-let shakeTime = 0;
-let flashTime = 0;
-let flashColor = "rgba(0,0,0,0)";
+let tiles = []; let particles = [];
+let shakeTime = 0; let flashTime = 0; let flashColor = "rgba(0,0,0,0)";
 
-// الألوان والهوية
 const colors = {
-    safe: "#00f5ff",
-    fake: "#00ff88",
-    skull: "#ff0040",
-    gold: "#ffd700",
-    life: "#ffffff",
-    slow: "#8a2be2"
+    safe: "#00f5ff", fake: "#00ff88", skull: "#ff0040",
+    gold: "#ffd700", life: "#ffffff", slow: "#8a2be2", boss: "#ff0000"
 };
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-// --- الأصوات ---
 function playSound(type) {
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    let osc = audioCtx.createOscillator();
-    let gain = audioCtx.createGain();
-    
+    let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
     if (type === 'explode') {
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.type = "sawtooth"; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.5);
         gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-        setTimeout(playLaugh, 300);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5); setTimeout(playLaugh, 300);
     } else if (type === 'tap') {
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(600 + combo * 20, audioCtx.currentTime);
+        osc.type = "sine"; osc.frequency.setValueAtTime(600 + combo * 20, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-    } else if (type === 'life') {
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.2);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    } else if (type === 'boss') {
+        osc.type = "square"; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(50, audioCtx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
     }
 }
-
 function playLaugh() {
-    let osc = audioCtx.createOscillator();
-    let gain = audioCtx.createGain();
-    osc.type = "square";
-    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+    osc.type = "square"; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
     osc.frequency.setValueAtTime(200, audioCtx.currentTime + 0.1);
     osc.frequency.setValueAtTime(300, audioCtx.currentTime + 0.2);
     osc.connect(gain); gain.connect(audioCtx.destination);
@@ -197,163 +139,104 @@ function playLaugh() {
     osc.start(); osc.stop(audioCtx.currentTime + 0.4);
 }
 
-// --- المربعات ---
 class Tile {
     constructor(col, type) {
         this.col = col;
-        this.x = col * colWidth;
+        this.isBoss = (type === 'boss');
+        this.width = this.isBoss ? colWidth * 2 : colWidth - 10;
+        this.x = this.isBoss ? colWidth : col * colWidth;
         this.y = -100;
-        this.width = colWidth - 10;
-        this.height = 80;
-        this.type = type; // safe, fake, skull, gold, life, slow
-        this.revealed = false;
-        this.color = colors[type];
-        if(type === 'skull') this.color = colors.skull;
+        this.height = this.isBoss ? 150 : 80;
+        this.type = type; this.revealed = false; this.color = colors[type];
     }
-
     update(dt) {
         this.y += speed * dt;
-
-        // الخداع البصري
         if (this.type === 'fake' && !this.revealed && this.y > hitZoneY - 150) {
-            this.revealed = true;
-            this.type = 'skull';
-            this.color = colors.skull;
+            this.revealed = true; this.type = 'skull'; this.color = colors.skull;
         }
     }
-
     draw() {
-        ctx.fillStyle = this.color;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = this.color;
-        ctx.beginPath();
-        ctx.roundRect(this.x + 5, this.y, this.width, this.height, 15);
-        ctx.fill();
+        ctx.fillStyle = this.color; ctx.shadowBlur = 15; ctx.shadowColor = this.color;
+        ctx.beginPath(); ctx.roundRect(this.x + 5, this.y, this.width, this.height, 15); ctx.fill();
         ctx.shadowBlur = 0;
-
-        ctx.font = "40px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        
-        let cx = this.x + colWidth/2;
-        let cy = this.y + this.height/2;
-
-        if (this.type === 'skull') ctx.fillText("💀", cx, cy);
+        ctx.font = this.isBoss ? "80px Arial" : "40px Arial";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        let cx = this.x + this.width/2; let cy = this.y + this.height/2;
+        if (this.isBoss) ctx.fillText("👑💀", cx, cy);
+        else if (this.type === 'skull') ctx.fillText("💀", cx, cy);
         else if (this.type === 'gold') ctx.fillText("⭐", cx, cy);
         else if (this.type === 'life') ctx.fillText("❤️", cx, cy);
         else if (this.type === 'slow') ctx.fillText("⏳", cx, cy);
     }
 }
 
-// --- الجسيمات (Particles) ---
 class Particle {
     constructor(x, y, color) {
         this.x = x; this.y = y;
-        this.vx = (Math.random() - 0.5) * 400;
-        this.vy = (Math.random() - 0.5) * 400;
-        this.life = 1;
-        this.color = color;
+        this.vx = (Math.random() - 0.5) * 400; this.vy = (Math.random() - 0.5) * 400;
+        this.life = 1; this.color = color;
     }
-    update(dt) {
-        this.x += this.vx * dt;
-        this.y += this.vy * dt;
-        this.life -= dt * 2;
-    }
+    update(dt) { this.x += this.vx * dt; this.y += this.vy * dt; this.life -= dt * 2; }
     draw() {
-        ctx.globalAlpha = Math.max(0, this.life);
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.globalAlpha = Math.max(0, this.life); ctx.fillStyle = this.color;
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.isBoss? 10:4, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
     }
 }
+function spawnParticles(x, y, color) { for(let i=0; i<15; i++) particles.push(new Particle(x, y, color)); }
 
-function spawnParticles(x, y, color) {
-    for(let i=0; i<10; i++) particles.push(new Particle(x, y, color));
-}
-
-// --- نظام النقاط ---
 function updateScoreUI() {
     document.getElementById("score").innerText = score;
-    if (combo > 1) {
+    if (combo > 1 && !bossActive) {
         let text = "COMBO x" + combo;
-        if (combo > 5) text = "رائع! 🔥";
-        if (combo > 10) text = "أسطوري! 🌟";
-        if (combo > 15) text = "مرصدي! 🚀";
+        if (combo > 5) text = "رائع! 🔥"; if (combo > 10) text = "أسطوري! 🌟"; if (combo > 15) text = "مرصدي! 🚀";
         let ct = document.getElementById("combo-text");
-        ct.innerText = text;
-        ct.style.opacity = 1;
-        ct.style.transform = "translate(-50%, -50%) scale(1.2)";
+        ct.innerText = text; ct.style.opacity = 1; ct.style.transform = "translate(-50%, -50%) scale(1.2)";
         setTimeout(() => ct.style.opacity = 0, 500);
     }
 }
-
 function updateLivesUI() {
-    let str = "";
-    for(let i=0; i<lives; i++) str += "❤️";
+    let str = ""; for(let i=0; i<lives; i++) str += "❤️";
     document.getElementById("lives").innerText = str;
 }
 
-// --- إدارة اللمس ---
 canvas.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    if (!isPlaying) return;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const touchX = (e.touches[0].clientX - rect.left) * scaleX;
-    const touchY = (e.touches[0].clientY - rect.top) * (canvas.height / rect.height);
-    handleTap(touchX, touchY);
+    e.preventDefault(); if (!isPlaying) return;
+    const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width;
+    handleTap((e.touches[0].clientX - rect.left) * scaleX, (e.touches[0].clientY - rect.top) * (canvas.height / rect.height));
 }, { passive: false });
-
 canvas.addEventListener("mousedown", (e) => {
     if (!isPlaying) return;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const touchX = (e.clientX - rect.left) * scaleX;
-    const touchY = (e.clientY - rect.top) * (canvas.height / rect.height);
-    handleTap(touchX, touchY);
+    const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width;
+    handleTap((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * (canvas.height / rect.height));
 });
 
 function handleTap(x, y) {
-    let col = Math.floor(x / colWidth);
     for (let i = tiles.length - 1; i >= 0; i--) {
         let tile = tiles[i];
-        if (tile.col === col && tile.y + tile.height > hitZoneY && tile.y < hitZoneY + hitZoneHeight) {
-            let cx = tile.x + colWidth/2;
-            let cy = tile.y + tile.height/2;
-
-            if (tile.type === 'skull') {
-                // خسارة قلب
-                lives--;
-                updateLivesUI();
-                playSound('explode');
-                shakeTime = 0.5; flashTime = 0.5; flashColor = "rgba(255,0,0,0.5)";
-                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                spawnParticles(cx, cy, colors.skull);
-                combo = 0;
-                tiles.splice(i, 1);
-                if (lives <= 0) gameOver("لقد نفدت قلوبك!");
-            } else {
-                // نجاح
-                combo++;
-                if (tile.type === 'gold') { score += 50; playSound('life'); } 
-                else if (tile.type === 'life') { 
-                    if(lives < 5) lives++;
-                    updateLivesUI(); playSound('life');
-                }
-                else if (tile.type === 'slow') {
-                    speed = 200; // تبطيء
-                    setTimeout(() => { if(isPlaying) speed = Math.min(speed + 400, 1200); }, 3000);
-                }
-                else { score += 10 + (combo * 2); }
-
-                playSound('tap');
-                spawnParticles(cx, cy, tile.color);
-                updateScoreUI();
-                tiles.splice(i, 1);
+        // التحقق من النقر داخل المربع
+        if (x > tile.x && x < tile.x + tile.width && y > tile.y && y < tile.y + tile.height) {
+            if (tile.isBoss) {
+                winGame(); return;
             }
-            return;
+            if (tile.y + tile.height > hitZoneY && tile.y < hitZoneY + hitZoneHeight) {
+                let cx = tile.x + tile.width/2; let cy = tile.y + tile.height/2;
+                if (tile.type === 'skull') {
+                    lives--; updateLivesUI(); playSound('explode');
+                    shakeTime = 0.5; flashTime = 0.5; flashColor = "rgba(255,0,0,0.5)";
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                    spawnParticles(cx, cy, colors.skull); combo = 0; tiles.splice(i, 1);
+                    if (lives <= 0) gameOver("لقد نفدت قلوبك!");
+                } else {
+                    combo++;
+                    if (tile.type === 'gold') { score += 50; playSound('life'); }
+                    else if (tile.type === 'life') { if(lives < 5) lives++; updateLivesUI(); playSound('life'); }
+                    else if (tile.type === 'slow') { speed = 200; setTimeout(() => { if(isPlaying) speed = Math.min(speed + 400, 1200); }, 3000); }
+                    else { score += 10 + (combo * 2); }
+                    playSound('tap'); spawnParticles(cx, cy, tile.color); updateScoreUI(); tiles.splice(i, 1);
+                }
+                return;
+            }
         }
     }
 }
@@ -364,128 +247,96 @@ function gameOver(reason) {
     document.getElementById("game-over").style.display = "flex";
     document.getElementById("game-over-reason").innerText = reason + ` (صمدت ${survived} ثانية)`;
     document.getElementById("final-score").innerText = score;
-
-    // حفظ أفضل نتيجة
+    saveHighScore();
+}
+function winGame() {
+    isPlaying = false; playSound('boss');
+    document.getElementById("game-win").style.display = "flex";
+    document.getElementById("win-score").innerText = score + 500; // مكافأة الزعيم
+    score += 500; saveHighScore();
+}
+function saveHighScore() {
     let hs = parseInt(localStorage.getItem("marsad_highscore") || "0");
-    if (score > hs) {
-        localStorage.setItem("marsad_highscore", score);
-        document.getElementById("new-high-score").style.display = "block";
-    } else {
-        document.getElementById("new-high-score").style.display = "none";
-    }
+    if (score > hs) { localStorage.setItem("marsad_highscore", score); document.getElementById("new-high-score").style.display = "block"; }
+    else { document.getElementById("new-high-score").style.display = "none"; }
 }
 
-// --- حلقة اللعبة ---
 function loop(timestamp) {
     if (!isPlaying) return;
-    let dt = (timestamp - lastTime) / 1000;
-    lastTime = timestamp;
-
+    let dt = (timestamp - lastTime) / 1000; lastTime = timestamp;
     timeLeft -= dt;
-    if (timeLeft <= 0) { timeLeft = 0; gameOver("أنت من الـ 2% الذين نجوا! 🏆"); return; }
 
-    // التصعيد
-    if (timeLeft < 10) speed = 1000;
-    else if (timeLeft < 20) speed = 700;
-
-    spawnTimer += dt;
-    let spawnRate = timeLeft < 10 ? 0.3 : (timeLeft < 20 ? 0.5 : 0.8);
-    if (spawnTimer > spawnRate) { spawnTile(); spawnTimer = 0; }
-
-    // الاهتزاز
-    ctx.save();
-    if (shakeTime > 0) {
-        ctx.translate((Math.random()-0.5)*30*shakeTime, (Math.random()-0.5)*30*shakeTime);
-        shakeTime -= dt;
+    // تفعيل الزعيم
+    if (timeLeft <= 5 && !bossActive) {
+        bossActive = true; tiles = []; speed = 150; // يتباطأ الزعيم
+        tiles.push(new Tile(1, 'boss')); playSound('boss');
+        document.getElementById("hud").style.opacity = "0.2"; // إخفاء الواجهة قليلاً للتركيز
     }
 
+    if (timeLeft <= 0 && !bossActive) { timeLeft = 0; gameOver("انتهى الوقت!"); return; }
+
+    if (!bossActive) {
+        if (timeLeft < 10) speed = 1000; else if (timeLeft < 20) speed = 700;
+        spawnTimer += dt; let spawnRate = timeLeft < 10 ? 0.3 : (timeLeft < 20 ? 0.5 : 0.8);
+        if (spawnTimer > spawnRate) { spawnTile(); spawnTimer = 0; }
+    }
+
+    ctx.save();
+    if (shakeTime > 0) { ctx.translate((Math.random()-0.5)*30*shakeTime, (Math.random()-0.5)*30*shakeTime); shakeTime -= dt; }
     ctx.fillStyle = "#050505"; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-    // خطوط الأعمدة
-    ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 2;
-    for (let i = 1; i < COLS; i++) {
-        ctx.beginPath(); ctx.moveTo(i*colWidth, 0); ctx.lineTo(i*colWidth, canvas.height); ctx.stroke();
+    // خلفية الزعيم (رعب)
+    if (bossActive) {
+        ctx.fillStyle = "rgba(255, 0, 0, 0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
     }
 
-    // خط النقر
-    ctx.fillStyle = "rgba(0, 245, 255, 0.1)"; ctx.fillRect(0, hitZoneY, canvas.width, hitZoneHeight);
-    ctx.strokeStyle = colors.safe; ctx.strokeRect(0, hitZoneY, canvas.width, hitZoneHeight);
+    ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 2;
+    for (let i = 1; i < COLS; i++) { ctx.beginPath(); ctx.moveTo(i*colWidth, 0); ctx.lineTo(i*colWidth, canvas.height); ctx.stroke(); }
+    ctx.fillStyle = bossActive ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 245, 255, 0.1)"; 
+    ctx.fillRect(0, hitZoneY, canvas.width, hitZoneHeight);
+    ctx.strokeStyle = bossActive ? colors.skull : colors.safe; 
+    ctx.strokeRect(0, hitZoneY, canvas.width, hitZoneHeight);
 
     for (let i = tiles.length - 1; i >= 0; i--) {
-        let tile = tiles[i];
-        tile.update(dt);
-        tile.draw();
+        let tile = tiles[i]; tile.update(dt); tile.draw();
+        // إذا فات الزعيم
+        if (tile.isBoss && tile.y > hitZoneY + hitZoneHeight) { gameOver("هرب ملك الجماجم! 👑💨"); return; }
         if (tile.y > canvas.height) {
-            if (tile.type !== 'skull' && tile.type !== 'fake') { combo = 0; } // خسر الكومبو لأنه لم يضغط
+            if (tile.type !== 'skull' && tile.type !== 'fake' && !tile.isBoss) { combo = 0; }
             tiles.splice(i, 1);
         }
     }
-
-    for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].update(dt);
-        particles[i].draw();
-        if (particles[i].life <= 0) particles.splice(i, 1);
-    }
-
+    for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(dt); particles[i].draw(); if (particles[i].life <= 0) particles.splice(i, 1); }
     ctx.restore();
-
-    if (flashTime > 0) {
-        ctx.fillStyle = flashColor;
-        ctx.fillRect(0,0,canvas.width, canvas.height);
-        flashTime -= dt;
-    }
-
+    if (flashTime > 0) { ctx.fillStyle = flashColor; ctx.fillRect(0,0,canvas.width,canvas.height); flashTime -= dt; }
     requestAnimationFrame(loop);
 }
 
 function spawnTile() {
     let col = Math.floor(Math.random() * COLS);
     for (let t of tiles) { if (t.col === col && t.y < 200) return; }
-
-    let rand = Math.random();
-    let type = 'safe';
-    
-    if (rand < 0.25) type = 'skull';
-    else if (rand < 0.4) type = 'fake';
-    else if (rand < 0.45) type = 'gold';
-    else if (rand < 0.48) type = 'life';
-    else if (rand < 0.52) type = 'slow';
-
+    let rand = Math.random(); let type = 'safe';
+    if (rand < 0.25) type = 'skull'; else if (rand < 0.4) type = 'fake';
+    else if (rand < 0.45) type = 'gold'; else if (rand < 0.48) type = 'life'; else if (rand < 0.52) type = 'slow';
     tiles.push(new Tile(col, type));
 }
 
-// --- تشغيل اللعبة ---
 function startGame() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("game-over").style.display = "none";
-    
-    isPlaying = true;
-    timeLeft = 30;
-    speed = 450;
-    spawnTimer = 0;
-    score = 0;
-    combo = 0;
-    lives = 3;
-    tiles = [];
-    particles = [];
-    shakeTime = 0;
-    flashTime = 0;
-    
-    updateScoreUI();
-    updateLivesUI();
-    
-    lastTime = performance.now();
-    requestAnimationFrame(loop);
+    document.getElementById("game-win").style.display = "none";
+    document.getElementById("hud").style.opacity = "1";
+    isPlaying = true; timeLeft = 30; speed = 450; spawnTimer = 0; score = 0; combo = 0; lives = 3;
+    tiles = []; particles = []; shakeTime = 0; flashTime = 0; bossActive = false;
+    updateScoreUI(); updateLivesUI(); lastTime = performance.now(); requestAnimationFrame(loop);
 }
 
-// تحميل أفضل نتيجة في البداية
 let hs = localStorage.getItem("marsad_highscore") || "0";
 document.getElementById("high-score-text").innerText = "أفضل نتيجة: " + hs;
-
 document.getElementById("start-btn").addEventListener("click", startGame);
 document.getElementById("restart-btn").addEventListener("click", startGame);
+document.getElementById("play-again-btn").addEventListener("click", startGame);
 
-// دعم المتصفحات القديمة
 if(!CanvasRenderingContext2D.prototype.roundRect) {
     CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
         if (w < 2 * r) r = w / 2; if (h < 2 * r) r = h / 2;
