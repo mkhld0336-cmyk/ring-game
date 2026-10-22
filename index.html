@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Exploding Ring - Shorts</title>
+<title>Exploding Ring V3</title>
 <style>
     body {
         margin: 0;
@@ -15,9 +15,9 @@
         height: 100vh;
         overflow: hidden;
         font-family: 'Arial', sans-serif;
+        transition: background-color 1s;
     }
     canvas {
-        background-color: #000814;
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
@@ -32,20 +32,18 @@
         z-index: 10;
     }
     h1 {
-        font-size: 18px;
+        font-size: 16px;
         margin: 0;
         text-shadow: 0 0 10px #fff;
-        letter-spacing: 1px;
         padding: 0 10px;
-        line-height: 1.4;
     }
     h2 {
-        font-size: 30px;
+        font-size: 28px;
         color: #ffd700;
         margin-top: 5px;
         text-shadow: 0 0 15px #ffd700;
+        transition: color 0.5s;
     }
-    /* زر تشغيل الموسيقى */
     #music-btn {
         position: absolute;
         top: 20px;
@@ -54,24 +52,40 @@
         background: rgba(255, 255, 255, 0.2);
         border: 1px solid #fff;
         color: white;
-        padding: 10px 15px;
+        padding: 8px 12px;
         border-radius: 20px;
         cursor: pointer;
         font-family: Arial;
+        font-size: 12px;
+    }
+    /* مؤشر التجميد */
+    #freeze-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #00ffff;
+        font-size: 50px;
+        font-weight: bold;
+        text-shadow: 0 0 20px #00ffff;
+        display: none;
+        z-index: 30;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
     }
 </style>
 </head>
 <body>
 
-<!-- زر الموسيقى (يمكنك تغيير الرابط لاحقاً لموسيقى من اختيارك) -->
 <button id="music-btn">🎵 تشغيل الموسيقى</button>
+<div id="freeze-text">❄️</div>
 <audio id="bg-music" loop>
-    <!-- ضع رابط ملف صوتي هنا -->
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
 
 <div id="ui">
-    <h1>كل كرة تمر عبر نقطة ذهبية = كرة جديدة واحدة</h1>
+    <h1>كل كرة تمر عبر نقطة ذهبية = كرة جديدة</h1>
     <h2 id="counter">الكرات: 1</h2>
 </div>
 
@@ -89,31 +103,55 @@ const centerY = canvas.height / 2;
 const ringRadius = 280;
 
 let balls = [];
+let isFrozen = false;
 const MAX_BALLS = 500; 
 
+// النقاط الذهبية
 const goldPoints = [
     { x: centerX, y: centerY - 120, r: 8 },
     { x: centerX, y: centerY + 120, r: 8 }
 ];
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+// إعدادات نظام الأيام
+const today = new Date().getDay();
+let ringColor = "#55ccff"; // الافتراضي
+let bgColor = "rgba(0, 8, 20, 0.1)"; // لون مسح الشاشة
 
-function playBeep(freq) {
+switch(today) {
+    case 0: ringColor = "#00ff88"; bgColor = "rgba(0, 20, 10, 0.1)"; break; // الأحد
+    case 1: ringColor = "#0099ff"; bgColor = "rgba(0, 10, 20, 0.1)"; break; // الاثنين
+    case 2: ringColor = "#bb55ff"; bgColor = "rgba(15, 0, 20, 0.1)"; break; // الثلاثاء
+    case 3: ringColor = "#ff4444"; bgColor = "rgba(20, 0, 0, 0.1)"; break; // الأربعاء
+    case 4: ringColor = "#ffd700"; bgColor = "rgba(20, 15, 0, 0.1)"; break; // الخميس
+    case 5: ringColor = "#00ffff"; bgColor = "rgba(0, 20, 20, 0.1)"; break; // الجمعة
+    case 6: ringColor = "rainbow"; break; // السبت
+}
+
+// إعدادات الموسيقى والنغمات (دو، ري، مي، فا، صول، لا، سي)
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88]; 
+let noteIndex = 0;
+
+function playNote() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     let osc = audioCtx.createOscillator();
     let gain = audioCtx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = freq;
+    
+    // العزف بنغمات متتالية (لحن)
+    osc.frequency.value = notes[noteIndex];
+    noteIndex = (noteIndex + 1) % notes.length; 
+
+    osc.type = "triangle"; // نوع الصوت
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+    
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.2);
+    osc.stop(audioCtx.currentTime + 0.3);
 }
 
 function randomColor() {
-    // جعل الألوان أكثر إشراقاً
     return `hsl(${Math.random() * 360}, 100%, 60%)`;
 }
 
@@ -130,7 +168,8 @@ class Ball {
     }
 
     update() {
-        // الخط الذي لا ينتهي (نحتفظ بآخر 2000 نقطة كحد أقصى لتجنب تعليق الجوال)
+        if (isFrozen) return; // إذا كان التجميد مفعلاً، لا تتحرك الكرة
+
         this.trail.push({ x: this.x, y: this.y });
         if (this.trail.length > 2000) this.trail.shift(); 
 
@@ -141,7 +180,6 @@ class Ball {
         let dy = this.y - centerY;
         let dist = Math.sqrt(dx * dx + dy * dy);
 
-        // إجبار الكرة على الارتداد داخل الدائرة الزرقاء
         if (dist + this.r >= ringRadius) {
             let nx = dx / dist;
             let ny = dy / dist;
@@ -149,7 +187,6 @@ class Ball {
             this.vx -= 2 * dot * nx;
             this.vy -= 2 * dot * ny;
 
-            // تصحيح الموقع لضمان بقاء الكرة داخل الإطار
             this.x = centerX + nx * (ringRadius - this.r);
             this.y = centerY + ny * (ringRadius - this.r);
         }
@@ -163,7 +200,7 @@ class Ball {
                 if (gdist < gp.r + this.r + 5) {
                     this.hitGold = true; 
                     spawnNewBall(this.x, this.y);
-                    playBeep(400 + Math.random() * 400);
+                    playNote(); // تشغيل النغمة الموسيقية
                     gp.flash = 1.0; 
                 }
             });
@@ -171,7 +208,6 @@ class Ball {
     }
 
     draw(ctx) {
-        // رسم الخط الذي لا ينتهي
         if (this.trail.length > 1) {
             ctx.beginPath();
             ctx.moveTo(this.trail[0].x, this.trail[0].y);
@@ -180,12 +216,11 @@ class Ball {
             }
             ctx.strokeStyle = this.color;
             ctx.lineWidth = 1.5;
-            ctx.globalAlpha = 0.3; // شفافية الخط
+            ctx.globalAlpha = 0.3;
             ctx.stroke();
             ctx.globalAlpha = 1.0;
         }
 
-        // رسم الكرة نفسها
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
@@ -208,10 +243,18 @@ spawnNewBall(centerX, centerY + 50);
 function drawRing() {
     ctx.beginPath();
     ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = "#55ccff";
+    
+    // نظام ألوان قوس قزح ليوم السبت
+    if (ringColor === "rainbow") {
+        let time = Date.now() / 1000;
+        ctx.strokeStyle = `hsl(${(time * 100) % 360}, 100%, 60%)`;
+    } else {
+        ctx.strokeStyle = ringColor;
+    }
+    
     ctx.lineWidth = 6;
     ctx.shadowBlur = 20;
-    ctx.shadowColor = "#55ccff";
+    ctx.shadowColor = ctx.strokeStyle;
     ctx.stroke();
     ctx.shadowBlur = 0;
 }
@@ -236,9 +279,28 @@ function drawGoldPoints() {
     });
 }
 
+// مؤثر التجميد
+const freezeText = document.getElementById("freeze-text");
+setInterval(() => {
+    isFrozen = true;
+    freezeText.style.display = "block";
+    freezeText.style.opacity = "1";
+
+    setTimeout(() => {
+        isFrozen = false;
+        freezeText.style.opacity = "0";
+        setTimeout(() => freezeText.style.display = "none", 300);
+        
+        // زيادة السرعة بعد التجميد
+        balls.forEach(ball => {
+            ball.vx *= 1.3;
+            ball.vy *= 1.3;
+        });
+    }, 1200);
+}, 20000); // كل 20 ثانية
+
 function loop() {
-    // تقليل الشفافية لتترك مساحة للخطوط التي لا تنتهي
-    ctx.fillStyle = "rgba(0, 8, 20, 0.1)"; 
+    ctx.fillStyle = bgColor; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     drawRing();
