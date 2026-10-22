@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Exploding Ring V3</title>
+<title>Exploding Ring V4</title>
 <style>
     body {
         margin: 0;
@@ -15,7 +15,6 @@
         height: 100vh;
         overflow: hidden;
         font-family: 'Arial', sans-serif;
-        transition: background-color 1s;
     }
     canvas {
         max-width: 100%;
@@ -35,14 +34,25 @@
         font-size: 16px;
         margin: 0;
         text-shadow: 0 0 10px #fff;
-        padding: 0 10px;
     }
     h2 {
         font-size: 28px;
         color: #ffd700;
         margin-top: 5px;
         text-shadow: 0 0 15px #ffd700;
-        transition: color 0.5s;
+    }
+    #event-text {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 40px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 30;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s, transform 0.5s;
     }
     #music-btn {
         position: absolute;
@@ -55,31 +65,13 @@
         padding: 8px 12px;
         border-radius: 20px;
         cursor: pointer;
-        font-family: Arial;
-        font-size: 12px;
-    }
-    /* مؤشر التجميد */
-    #freeze-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: #00ffff;
-        font-size: 50px;
-        font-weight: bold;
-        text-shadow: 0 0 20px #00ffff;
-        display: none;
-        z-index: 30;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.3s;
     }
 </style>
 </head>
 <body>
 
 <button id="music-btn">🎵 تشغيل الموسيقى</button>
-<div id="freeze-text">❄️</div>
+<div id="event-text"></div>
 <audio id="bg-music" loop>
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
@@ -100,34 +92,40 @@ canvas.height = 1280;
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-const ringRadius = 280;
+
+// إعدادات الشكل المتحول (دائرة / بيضاوي)
+let radiusX = 280;
+let radiusY = 280;
+let targetRadiusX = 280;
+let targetRadiusY = 280;
+let isEllipse = false;
 
 let balls = [];
 let isFrozen = false;
-const MAX_BALLS = 500; 
+let isGravity = false;
+const MAX_BALLS = 800; 
 
-// النقاط الذهبية
 const goldPoints = [
     { x: centerX, y: centerY - 120, r: 8 },
     { x: centerX, y: centerY + 120, r: 8 }
 ];
 
-// إعدادات نظام الأيام
+// نظام الأيام
 const today = new Date().getDay();
-let ringColor = "#55ccff"; // الافتراضي
-let bgColor = "rgba(0, 8, 20, 0.1)"; // لون مسح الشاشة
+let themeColor = "#55ccff"; 
+let bgColor = "rgba(0, 8, 20, 0.15)"; 
 
 switch(today) {
-    case 0: ringColor = "#00ff88"; bgColor = "rgba(0, 20, 10, 0.1)"; break; // الأحد
-    case 1: ringColor = "#0099ff"; bgColor = "rgba(0, 10, 20, 0.1)"; break; // الاثنين
-    case 2: ringColor = "#bb55ff"; bgColor = "rgba(15, 0, 20, 0.1)"; break; // الثلاثاء
-    case 3: ringColor = "#ff4444"; bgColor = "rgba(20, 0, 0, 0.1)"; break; // الأربعاء
-    case 4: ringColor = "#ffd700"; bgColor = "rgba(20, 15, 0, 0.1)"; break; // الخميس
-    case 5: ringColor = "#00ffff"; bgColor = "rgba(0, 20, 20, 0.1)"; break; // الجمعة
-    case 6: ringColor = "rainbow"; break; // السبت
+    case 0: themeColor = "#00ff88"; break; // الأحد
+    case 1: themeColor = "#0099ff"; break; // الاثنين
+    case 2: themeColor = "#bb55ff"; break; // الثلاثاء
+    case 3: themeColor = "#ff4444"; break; // الأربعاء
+    case 4: themeColor = "#ffd700"; break; // الخميس
+    case 5: themeColor = "#00ffff"; break; // الجمعة
+    case 6: themeColor = "#ff00ff"; break; // السبت
 }
 
-// إعدادات الموسيقى والنغمات (دو، ري، مي، فا، صول، لا، سي)
+// الموسيقى
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88]; 
 let noteIndex = 0;
@@ -136,17 +134,13 @@ function playNote() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     let osc = audioCtx.createOscillator();
     let gain = audioCtx.createGain();
-    
-    // العزف بنغمات متتالية (لحن)
     osc.frequency.value = notes[noteIndex];
     noteIndex = (noteIndex + 1) % notes.length; 
-
-    osc.type = "triangle"; // نوع الصوت
+    osc.type = "sine";
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-    
     osc.start();
     osc.stop(audioCtx.currentTime + 0.3);
 }
@@ -161,34 +155,59 @@ class Ball {
         this.y = y;
         this.vx = vx;
         this.vy = vy;
-        this.r = 5;
+        this.r = 4;
         this.color = color || randomColor();
         this.trail = [];
         this.hitGold = false; 
     }
 
     update() {
-        if (isFrozen) return; // إذا كان التجميد مفعلاً، لا تتحرك الكرة
+        if (isFrozen) return;
+
+        // الخطوط الذكية: تقليل طول الخط كلما زادت الكرات
+        let maxTrail = 800;
+        if (balls.length > 30) maxTrail = 200;
+        if (balls.length > 80) maxTrail = 50;
+        if (balls.length > 150) maxTrail = 15;
+        if (balls.length > 300) maxTrail = 5;
 
         this.trail.push({ x: this.x, y: this.y });
-        if (this.trail.length > 2000) this.trail.shift(); 
+        if (this.trail.length > maxTrail) this.trail.shift(); 
+
+        // تأثير الجاذبية
+        if (isGravity) {
+            let gdx = centerX - this.x;
+            let gdy = centerY - this.y;
+            this.vx += gdx * 0.002;
+            this.vy += gdy * 0.002;
+        }
 
         this.x += this.vx;
         this.y += this.vy;
 
+        // معادلة الارتداد داخل الشكل البيضاوي أو الدائرة
         let dx = this.x - centerX;
         let dy = this.y - centerY;
-        let dist = Math.sqrt(dx * dx + dy * dy);
+        
+        // حساب المسافة بالنسبة للشكل الحالي
+        let normX = dx / radiusX;
+        let normY = dy / radiusY;
+        let dist = Math.sqrt(normX*normX + normY*normY);
 
-        if (dist + this.r >= ringRadius) {
-            let nx = dx / dist;
-            let ny = dy / dist;
+        if (dist + (this.r/radiusX) >= 1) {
+            // ارتداد فيزيائي دقيق للبيضاوي
+            let nx = dx / (radiusX * radiusX);
+            let ny = dy / (radiusY * radiusY);
+            let len = Math.sqrt(nx*nx + ny*ny);
+            nx /= len; ny /= len;
+
             let dot = this.vx * nx + this.vy * ny;
             this.vx -= 2 * dot * nx;
             this.vy -= 2 * dot * ny;
 
-            this.x = centerX + nx * (ringRadius - this.r);
-            this.y = centerY + ny * (ringRadius - this.r);
+            // تصحيح الموقع لمنع الخروج
+            this.x = centerX + (dx / dist) * radiusX * 0.98;
+            this.y = centerY + (dy / dist) * radiusY * 0.98;
         }
 
         if (!this.hitGold && balls.length < MAX_BALLS) {
@@ -200,7 +219,7 @@ class Ball {
                 if (gdist < gp.r + this.r + 5) {
                     this.hitGold = true; 
                     spawnNewBall(this.x, this.y);
-                    playNote(); // تشغيل النغمة الموسيقية
+                    playNote();
                     gp.flash = 1.0; 
                 }
             });
@@ -215,8 +234,8 @@ class Ball {
                 ctx.lineTo(this.trail[i].x, this.trail[i].y);
             }
             ctx.strokeStyle = this.color;
-            ctx.lineWidth = 1.5;
-            ctx.globalAlpha = 0.3;
+            ctx.lineWidth = balls.length > 100 ? 0.8 : 1.5;
+            ctx.globalAlpha = 0.4;
             ctx.stroke();
             ctx.globalAlpha = 1.0;
         }
@@ -224,10 +243,7 @@ class Ball {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = this.color;
         ctx.fill();
-        ctx.shadowBlur = 0;
     }
 }
 
@@ -241,19 +257,23 @@ function spawnNewBall(x, y) {
 spawnNewBall(centerX, centerY + 50);
 
 function drawRing() {
+    // تحويل سلس بين الدائرة والبيضاوي
+    radiusX += (targetRadiusX - radiusX) * 0.05;
+    radiusY += (targetRadiusY - radiusY) * 0.05;
+
     ctx.beginPath();
-    ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
+    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
     
-    // نظام ألوان قوس قزح ليوم السبت
-    if (ringColor === "rainbow") {
+    // تأثير قوس قزح ليوم السبت
+    if (today === 6) {
         let time = Date.now() / 1000;
         ctx.strokeStyle = `hsl(${(time * 100) % 360}, 100%, 60%)`;
     } else {
-        ctx.strokeStyle = ringColor;
+        ctx.strokeStyle = themeColor;
     }
     
-    ctx.lineWidth = 6;
-    ctx.shadowBlur = 20;
+    ctx.lineWidth = 5;
+    ctx.shadowBlur = 15;
     ctx.shadowColor = ctx.strokeStyle;
     ctx.stroke();
     ctx.shadowBlur = 0;
@@ -267,37 +287,69 @@ function drawGoldPoints() {
         
         if (gp.flash > 0) {
             ctx.shadowBlur = 30 * gp.flash;
-            ctx.shadowColor = "#ffd700";
             gp.flash -= 0.05;
         } else {
             ctx.shadowBlur = 15;
-            ctx.shadowColor = "#ffd700";
         }
-        
+        ctx.shadowColor = "#ffd700";
         ctx.fill();
         ctx.shadowBlur = 0;
     });
 }
 
-// مؤثر التجميد
-const freezeText = document.getElementById("freeze-text");
+// ----------------- الأحداث العشوائية -----------------
+const eventText = document.getElementById("event-text");
+
+// 1. حدث التحول للبيضاوي (كل 15 ثانية)
 setInterval(() => {
+    isEllipse = !isEllipse;
+    if (isEllipse) {
+        targetRadiusX = 320;
+        targetRadiusY = 200;
+    } else {
+        targetRadiusX = 280;
+        targetRadiusY = 280;
+    }
+}, 15000);
+
+// 2. حدث التجميد (كل 25 ثانية)
+setInterval(() => {
+    if (isGravity) return; 
     isFrozen = true;
-    freezeText.style.display = "block";
-    freezeText.style.opacity = "1";
+    eventText.innerText = "❄️ تجميد";
+    eventText.style.color = "#00ffff";
+    eventText.style.opacity = "1";
+    eventText.style.transform = "translate(-50%, -50%) scale(1.2)";
 
     setTimeout(() => {
         isFrozen = false;
-        freezeText.style.opacity = "0";
-        setTimeout(() => freezeText.style.display = "none", 300);
-        
-        // زيادة السرعة بعد التجميد
+        eventText.style.opacity = "0";
+        eventText.style.transform = "translate(-50%, -50%) scale(1)";
         balls.forEach(ball => {
-            ball.vx *= 1.3;
-            ball.vy *= 1.3;
+            ball.vx *= 1.2;
+            ball.vy *= 1.2;
         });
-    }, 1200);
-}, 20000); // كل 20 ثانية
+    }, 1500);
+}, 25000);
+
+// 3. حدث الجاذبية (كل 40 ثانية)
+setInterval(() => {
+    isGravity = true;
+    eventText.innerText = "🌀 جاذبية";
+    eventText.style.color = "#ff00ff";
+    eventText.style.opacity = "1";
+    
+    setTimeout(() => {
+        isGravity = false;
+        eventText.style.opacity = "0";
+        // إعطاء دفعة عشوائية بعد انتهاء الجاذبية
+        balls.forEach(ball => {
+            ball.vx += (Math.random() - 0.5) * 10;
+            ball.vy += (Math.random() - 0.5) * 10;
+        });
+    }, 4000);
+}, 40000);
+
 
 function loop() {
     ctx.fillStyle = bgColor; 
@@ -314,19 +366,18 @@ function loop() {
     requestAnimationFrame(loop);
 }
 
-// التحكم بالموسيقى
+// الموسيقى
 const musicBtn = document.getElementById("music-btn");
 const bgMusic = document.getElementById("bg-music");
 
 musicBtn.addEventListener("click", () => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    
     if (bgMusic.paused) {
         bgMusic.play();
-        musicBtn.innerText = "⏸️ إيقاف الموسيقى";
+        musicBtn.innerText = "⏸️ إيقاف";
     } else {
         bgMusic.pause();
-        musicBtn.innerText = "🎵 تشغيل الموسيقى";
+        musicBtn.innerText = "🎵 موسيقى";
     }
 });
 
