@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>إقليم الجماجم والرموز | Realm of Skulls</title>
+  <title>إقليم الجماجم والرموز | Realm of Skulls V4</title>
   <style>
     :root {
       --bg-dark: #080a10;
@@ -11,261 +11,54 @@
       --neon-cyan: #00f3ff;
       --neon-red: #ff0055;
       --neon-gold: #ffcc00;
-      --neon-green: #00ff66;
+      --neon-purple: #b900ff;
       --text-main: #f0f4f8;
       --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      font-family: var(--font-main);
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Game Container - Vertical Mobile Aspect Ratio */
-    #game-container {
-      position: relative;
-      width: 100%;
-      max-width: 450px;
-      height: 100vh;
-      max-height: 900px;
-      background: radial-gradient(circle at center, #121826 0%, #05070c 100%);
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-      overflow: hidden;
-      border-left: 1px solid rgba(0, 243, 255, 0.1);
-      border-right: 1px solid rgba(0, 243, 255, 0.1);
-    }
-
-    /* HUD Header */
-    #hud {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 10;
-      background: linear-gradient(180deg, rgba(5,7,12,0.9) 0%, rgba(5,7,12,0) 100%);
-      pointer-events: none;
-    }
-
-    .hud-box {
-      background: var(--panel-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 8px 16px;
-      border-radius: 12px;
-      backdrop-filter: blur(8px);
-    }
-
-    .hud-label {
-      font-size: 0.75rem;
-      color: #8a99ad;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .hud-value {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--neon-cyan);
-    }
-
-    /* Target / Danger Area */
-    #danger-line {
-      position: absolute;
-      bottom: 80px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
-      box-shadow: 0 0 10px var(--neon-red);
-      opacity: 0.6;
-    }
-
-    /* Canvas Grid */
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Start / Overlay Screen */
-    .overlay-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(5, 7, 12, 0.92);
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-      text-align: center;
-      z-index: 20;
-      transition: opacity 0.3s ease;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .title {
-      font-size: 2.2rem;
-      font-weight: 900;
-      background: linear-gradient(45deg, var(--neon-cyan), var(--neon-red));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-      text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-    }
-
-    .subtitle {
-      font-size: 0.95rem;
-      color: #a0aec0;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
-
-    .btn-main {
-      background: linear-gradient(135deg, var(--neon-cyan), #0088ff);
-      color: #000;
-      font-size: 1.2rem;
-      font-weight: 800;
-      padding: 16px 40px;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
-      transition: all 0.2s ease;
-      width: 80%;
-      max-width: 280px;
-    }
-
-    .btn-main:active {
-      transform: scale(0.96);
-    }
-
-    /* Game Over Modal Styling */
-    .modal-box {
-      background: rgba(18, 22, 34, 0.95);
-      border: 1px solid var(--neon-red);
-      border-radius: 20px;
-      padding: 25px;
-      width: 100%;
-      max-width: 360px;
-      box-shadow: 0 0 30px rgba(255, 0, 85, 0.3);
-    }
-
-    .go-title {
-      color: var(--neon-red);
-      font-size: 1.8rem;
-      font-weight: 900;
-      margin-bottom: 10px;
-    }
-
-    .provoke-text {
-      font-size: 0.9rem;
-      color: var(--neon-gold);
-      background: rgba(255, 204, 0, 0.1);
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .stat-card {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 12px;
-      border-radius: 10px;
-    }
-
-    .btn-retry {
-      background: linear-gradient(135deg, var(--neon-red), #cc0044);
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 800;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      width: 100%;
-      margin-bottom: 10px;
-      box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--neon-cyan);
-      border: 1px solid var(--neon-cyan);
-      font-size: 0.9rem;
-      font-weight: 700;
-      padding: 10px 15px;
-      border-radius: 10px;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    /* Screen Shake Effect */
-    .shake {
-      animation: shakeAnim 0.4s cubic-bezier(.36,.07,.19,.97) both;
-    }
-
-    @keyframes shakeAnim {
-      10%, 90% { transform: translate3d(-2px, 0, 0); }
-      20%, 80% { transform: translate3d(4px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
-      40%, 60% { transform: translate3d(8px, 0, 0); }
-    }
-
-    #flash-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--neon-red);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 15;
-      transition: opacity 0.1s ease-out;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+    body { background-color: var(--bg-dark); color: var(--text-main); font-family: var(--font-main); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    #game-container { position: relative; width: 100%; max-width: 450px; height: 100vh; max-height: 900px; background: radial-gradient(circle at center, #121826 0%, #05070c 100%); box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); overflow: hidden; }
+    #hud { position: absolute; top: 0; left: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; background: linear-gradient(180deg, rgba(5,7,12,0.9) 0%, rgba(5,7,12,0) 100%); pointer-events: none; }
+    .hud-box { background: var(--panel-bg); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 12px; border-radius: 12px; backdrop-filter: blur(8px); text-align: center; min-width: 70px; }
+    .hud-label { font-size: 0.7rem; color: #8a99ad; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .hud-value { font-size: 1.3rem; font-weight: 800; color: var(--neon-cyan); }
+    #combo-display { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-size: 2.5rem; font-weight: 900; color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold), 0 0 40px var(--neon-red); opacity: 0; pointer-events: none; z-index: 15; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; width: 100%; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 7, 12, 0.92); backdrop-filter: blur(12px); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; z-index: 20; }
+    .hidden { display: none !important; }
+    .title { font-size: 2.2rem; font-weight: 900; background: linear-gradient(45deg, var(--neon-cyan), var(--neon-red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+    .subtitle { font-size: 0.95rem; color: #a0aec0; margin-bottom: 20px; line-height: 1.6; }
+    .best-score-text { font-size: 1.1rem; color: var(--neon-gold); font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+    .btn-main { background: linear-gradient(135deg, var(--neon-cyan), #0088ff); color: #000; font-size: 1.2rem; font-weight: 800; padding: 16px 40px; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); transition: all 0.2s ease; width: 80%; max-width: 280px; }
+    .btn-main:active { transform: scale(0.96); }
+    .modal-box { background: rgba(18, 22, 34, 0.95); border: 1px solid var(--neon-red); border-radius: 20px; padding: 25px; width: 100%; max-width: 360px; box-shadow: 0 0 30px rgba(255, 0, 85, 0.3); }
+    .go-title { color: var(--neon-red); font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
+    .provoke-text { font-size: 0.9rem; color: var(--neon-gold); background: rgba(255, 204, 0, 0.1); padding: 8px 12px; border-radius: 8px; margin-bottom: 20px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+    .stat-card { background: rgba(255, 255, 255, 0.05); padding: 10px 5px; border-radius: 10px; text-align: center;}
+    .btn-retry { background: linear-gradient(135deg, var(--neon-red), #cc0044); color: #fff; font-size: 1.1rem; font-weight: 800; padding: 14px 20px; border: none; border-radius: 12px; cursor: pointer; width: 100%; margin-bottom: 10px; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
+    .btn-secondary { background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan); font-size: 0.9rem; font-weight: 700; padding: 10px 15px; border-radius: 10px; cursor: pointer; width: 100%; }
+    .shake { animation: shakeAnim 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shakeAnim { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
+    #flash-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--neon-red); opacity: 0; pointer-events: none; z-index: 15; transition: opacity 0.1s ease-out; }
   </style>
 </head>
 <body>
 
   <div id="game-container">
     <div id="flash-overlay"></div>
+    <div id="combo-display">COMBO x2!</div>
 
-    <!-- HUD -->
     <div id="hud">
-      <div class="hud-box">
-        <div class="hud-label">النقاط</div>
-        <div class="hud-value" id="score-display">0</div>
+      <div style="display: flex; gap: 8px;">
+        <div class="hud-box">
+          <div class="hud-label">النقاط</div>
+          <div class="hud-value" id="score-display">0</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label">المستوى</div>
+          <div class="hud-value" id="level-display" style="color: var(--neon-purple);">1</div>
+        </div>
       </div>
       <div class="hud-box">
         <div class="hud-label">الزمن</div>
@@ -273,21 +66,21 @@
       </div>
     </div>
 
-    <div id="danger-line"></div>
     <canvas id="gameCanvas"></canvas>
 
-    <!-- Start Overlay -->
+    <!-- شاشة البداية -->
     <div id="start-screen" class="overlay-screen">
       <div class="title">إقليم الجماجم</div>
       <div class="subtitle">
-        انقر على الرموز الآمنة للتقدم.<br>
+        انقر على الرموز الآمنة بسرعة لصنع الكومبو!<br>
         <strong style="color: var(--neon-red);">القاعدة الذهبية: لمس الجمجمة = خسارة فورية!</strong><br>
-        احذر الرموز المتنكرة!
+        احذر: هناك جماجم متنكرة... وطُعم خادع!
       </div>
+      <div class="best-score-text">🏆 أفضل نتيجة: <span id="start-best-score">0</span></div>
       <button class="btn-main" onclick="startGame()">ابدأ التحدي 💀</button>
     </div>
 
-    <!-- Game Over Screen -->
+    <!-- شاشة الخسارة -->
     <div id="gameover-screen" class="overlay-screen hidden">
       <div class="modal-box">
         <div class="go-title">سقوط مباشر! 💀</div>
@@ -299,8 +92,12 @@
             <div class="hud-value" id="go-score">0</div>
           </div>
           <div class="stat-card">
-            <div class="hud-label">الترتيب عالمياً</div>
-            <div class="hud-value" style="color: var(--neon-gold);" id="go-rank">Top 99%</div>
+            <div class="hud-label">الأفضل</div>
+            <div class="hud-value" style="color: var(--neon-gold);" id="go-best-score">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="hud-label">الترتيب</div>
+            <div class="hud-value" style="color: var(--neon-cyan); font-size: 1rem;" id="go-rank">Top 99%</div>
           </div>
         </div>
 
@@ -311,27 +108,24 @@
   </div>
 
   <script>
-    // --- Audio Synth Setup (No External Assets) ---
+    // --- إعدادات الصوت ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
-    function initAudio() {
-      if (!audioCtx) audioCtx = new AudioContext();
-    }
+    function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); }
 
-    function playSound(freq, type, duration) {
+    // دالة الصوت المعدلة لتدعم تغيير طبقة الصوت (Pitch)
+    function playSound(freq, type, duration, pitchMultiplier = 1) {
       if (!audioCtx) return;
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(freq * pitchMultiplier, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
       } catch (e) {}
     }
 
@@ -345,59 +139,97 @@
         osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4);
         gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.4);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.4);
       } catch (e) {}
     }
 
-    // --- Game Logic ---
+    // --- متغيرات اللعبة ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('game-container');
 
     let score = 0;
+    let bestScore = Number(localStorage.getItem('bestScore') || 0);
+    let level = 1;
+    let combo = 1;
+    let lastTapTime = 0;
+    let isNewRecord = false;
     let gameActive = false;
+    let timeScale = 1.0; // للتحكم في سرعة اللعبة (Slow-Mo)
     let startTime = 0;
     let timerInterval = null;
     let items = [];
-    let spawnRate = 900; // ms
+    let ripples = []; 
+    let spawnRate = 900; 
     let lastSpawn = 0;
+    let stars = [];
+
+    document.getElementById('start-best-score').innerText = bestScore;
 
     function resizeCanvas() {
       canvas.width = container.clientWidth;
       canvas.height = container.clientHeight;
+      initStars();
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
+
+    function initStars() {
+      stars = [];
+      for(let i=0; i<60; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          speed: Math.random() * 1.5 + 0.5,
+          alpha: Math.random()
+        });
+      }
+    }
+
+    class Ripple {
+      constructor(x, y) { this.x = x; this.y = y; this.radius = 10; this.alpha = 1; }
+      update() { this.radius += 5; this.alpha -= 0.05; }
+      draw() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 243, 255, ${this.alpha})`; ctx.lineWidth = 2; ctx.stroke();
+      }
+    }
 
     class GameItem {
       constructor() {
         this.size = 45;
         this.x = Math.random() * (canvas.width - this.size * 2) + this.size;
         this.y = -this.size;
-        this.speed = 2.5 + Math.random() * 2 + (score * 0.1);
+        this.baseSpeed = 2.5 + Math.random() * 2 + (score * 0.1); 
         
-        // 30% Skull, 70% Safe Symbol
         this.isSkull = Math.random() < 0.3;
-        
-        // Shapeshifter Trick Mechanic
         this.isShapeshifter = !this.isSkull && Math.random() < 0.25; 
         this.morphed = false;
         
+        // 3% فرصة لظهور "الطعم" الخادع (يبدو آمناً ولكنه مميت)
+        this.isTrap = !this.isSkull && !this.isShapeshifter && Math.random() < 0.03;
+
+        this.isGolden = this.isSkull && Math.random() < 0.05; 
+
         this.symbols = ['💎', '⚡', '🌙', '🌀', '🔮'];
         this.symbol = this.symbols[Math.floor(Math.random() * this.symbols.length)];
+        this.warningFlash = 0;
       }
 
       update() {
-        this.y += this.speed;
+        this.y += this.baseSpeed * timeScale;
 
-        // Trigger Morph Trick close to bottom
-        if (this.isShapeshifter && !this.morphed && this.y > canvas.height * 0.5) {
-          this.morphed = true;
-          this.isSkull = true;
-          playSound(600, 'sawtooth', 0.1);
+        if (this.isShapeshifter && !this.morphed && this.y > canvas.height * 0.55) {
+          this.warningFlash += 0.5;
+          this.x = Math.max(this.size, Math.min(canvas.width - this.size, this.x + (Math.random() - 0.5) * 8));
+          
+          if (this.y > canvas.height * 0.65) {
+            this.morphed = true;
+            this.isSkull = true;
+            playSound(600, 'sawtooth', 0.1);
+          }
         }
       }
 
@@ -408,12 +240,16 @@
         ctx.textBaseline = 'middle';
 
         if (this.isSkull) {
-          ctx.shadowColor = '#ff0055';
-          ctx.shadowBlur = 15;
-          ctx.fillText('💀', this.x, this.y);
+          if (this.isGolden) {
+            ctx.shadowColor = '#ffcc00'; ctx.shadowBlur = 20;
+            ctx.fillText('👑', this.x, this.y); 
+          } else {
+            ctx.shadowColor = '#ff0055'; ctx.shadowBlur = this.warningFlash > 0 ? 30 : 15;
+            if(this.warningFlash > 0 && !this.morphed) ctx.fillStyle = `rgba(255, 0, 85, ${0.5 + Math.sin(Date.now()*0.05)*0.5})`;
+            ctx.fillText('💀', this.x, this.y);
+          }
         } else {
-          ctx.shadowColor = '#00f3ff';
-          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 10;
           ctx.fillText(this.symbol, this.x, this.y);
         }
         ctx.restore();
@@ -423,11 +259,23 @@
     function startGame() {
       initAudio();
       score = 0;
+      bestScore = Number(localStorage.getItem('bestScore') || 0);
+      level = 1;
+      combo = 1;
+      timeScale = 1.0;
+      isNewRecord = false;
+      lastTapTime = 0;
       items = [];
+      ripples = [];
       gameActive = true;
+      spawnRate = 900;
+      lastSpawn = performance.now();
+      
       document.getElementById('score-display').innerText = '0';
+      document.getElementById('level-display').innerText = '1';
       document.getElementById('start-screen').classList.add('hidden');
       document.getElementById('gameover-screen').classList.add('hidden');
+      document.getElementById('combo-display').style.opacity = 0;
 
       startTime = Date.now();
       clearInterval(timerInterval);
@@ -448,27 +296,25 @@
       gameActive = false;
       clearInterval(timerInterval);
       playExplosion();
+      
+      // تصفير الحركة البطيئة
+      timeScale = 1.0;
 
-      // Visual Shake & Flash
       container.classList.add('shake');
       const flash = document.getElementById('flash-overlay');
       flash.style.opacity = '0.8';
-      setTimeout(() => {
-        flash.style.opacity = '0';
-        container.classList.remove('shake');
-      }, 300);
+      setTimeout(() => { flash.style.opacity = '0'; container.classList.remove('shake'); }, 300);
 
       document.getElementById('go-score').innerText = score;
+      document.getElementById('go-best-score').innerText = bestScore;
       
-      // Dynamic Provocation Text
       const provokes = [
         "سقطت في الفخ! الجماجم المتنكرة لا ترحم.",
         "خدعة بسيطة كفيلة بإعادة الصفر! حاول مجدداً.",
-        "وصلت لسرعة عالية لكنك فقدت التركيز!"
+        "لقد وقعت في فخ 'الطعم'! اللعبة ماكرة جداً."
       ];
       document.getElementById('provoke-msg').innerText = provokes[Math.floor(Math.random() * provokes.length)];
       
-      // Percentile Calculation
       const percentile = Math.max(1, Math.min(99, 100 - score * 2));
       document.getElementById('go-rank').innerText = `Top ${percentile}%`;
 
@@ -480,21 +326,36 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Spawn Items
+      // رسم النجوم (تتأثر بـ Slow Mo)
+      ctx.fillStyle = '#fff';
+      stars.forEach(star => {
+        star.y += star.speed * timeScale;
+        if (star.y > canvas.height) star.y = 0;
+        ctx.globalAlpha = star.alpha;
+        ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+
+      ripples.forEach((r, i) => {
+        r.update(); r.draw();
+        if (r.alpha <= 0) ripples.splice(i, 1);
+      });
+
       if (timestamp - lastSpawn > spawnRate) {
         items.push(new GameItem());
         lastSpawn = timestamp;
-        if (spawnRate > 400) spawnRate -= 5;
+        if (spawnRate > 400) spawnRate -= 10;
       }
 
-      // Update & Draw Items
       for (let i = items.length - 1; i >= 0; i--) {
         const item = items[i];
         item.update();
         item.draw();
 
-        // Remove item if out of screen
         if (item.y > canvas.height + 50) {
+          if (!item.isSkull && !item.isGolden && !item.isTrap) {
+            combo = 1; // تصفير الكومبو فقط إذا سقط رمز آمن
+          }
           items.splice(i, 1);
         }
       }
@@ -502,7 +363,6 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // Touch / Click Interaction Handling
     canvas.addEventListener('pointerdown', (e) => {
       if (!gameActive) return;
 
@@ -510,18 +370,85 @@
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
 
+      ripples.push(new Ripple(clickX, clickY));
+
       for (let i = items.length - 1; i >= 0; i--) {
         const item = items[i];
         const dist = Math.hypot(item.x - clickX, item.y - clickY);
 
         if (dist < item.size * 0.9) {
-          if (item.isSkull) {
+          
+          // إذا كان طعماً خادعاً (Is Trap)
+          if (item.isTrap) {
+            item.isSkull = true; // تحول لجمجمة في اللحظة الأخيرة
             triggerGameOver();
-          } else {
-            // Success Tap
-            score++;
+          }
+          // إذا كانت جمجمة عادية
+          else if (item.isSkull && !item.isGolden) {
+            triggerGameOver();
+          } 
+          // إذا كان آمناً أو تاجاً ذهبياً
+          else {
+            const now = performance.now();
+            if (now - lastTapTime < 1200) {
+              combo = Math.min(combo + 1, 10); 
+            } else {
+              combo = 1;
+            }
+            lastTapTime = now;
+
+            let points = 1;
+            if (item.isGolden) points = 10; 
+            
+            score += points * combo;
             document.getElementById('score-display').innerText = score;
-            playSound(400 + score * 10, 'sine', 0.08);
+
+            level = Math.floor(score / 20) + 1;
+            document.getElementById('level-display').innerText = level;
+
+            // تأثير الحركة البطيئة (Slow-Mo) عند الكومبو 5
+            if (combo === 5) {
+              timeScale = 0.5; // بطء
+              const cd = document.getElementById('combo-display');
+              cd.innerText = 'SLOW-MO! 🐢';
+              cd.style.color = 'var(--neon-cyan)';
+              cd.style.opacity = 1;
+              setTimeout(() => { timeScale = 1.0; }, 1500); // رجوع للسرعة بعد 1.5 ثانية
+            } 
+            // تأثير الكومبو العادي
+            else if (combo > 1) {
+              const cd = document.getElementById('combo-display');
+              cd.innerText = `COMBO x${combo}!`;
+              cd.style.color = 'var(--neon-gold)';
+              cd.style.opacity = 1;
+              cd.style.transform = 'translate(-50%, -50%) scale(1.2)';
+              setTimeout(() => {
+                cd.style.opacity = 0;
+                cd.style.transform = 'translate(-50%, -50%) scale(0.5)';
+              }, 500);
+            }
+
+            if (score > bestScore) {
+              bestScore = score;
+              localStorage.setItem('bestScore', bestScore);
+              document.getElementById('start-best-score').innerText = bestScore;
+
+              if (!isNewRecord) {
+                isNewRecord = true;
+                const cd = document.getElementById('combo-display');
+                cd.innerText = '🏆 رقم قياسي جديد!';
+                cd.style.color = '#ffcc00';
+                cd.style.opacity = 1;
+                cd.style.transform = 'translate(-50%, -50%) scale(1.3)';
+                setTimeout(() => {
+                  cd.style.opacity = 0;
+                  cd.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                }, 1500);
+              }
+            }
+
+            // صوت النقر يزيد حدته مع الكومبو (Pitch Ramp)
+            playSound(400, 'sine', 0.08, 1 + (combo * 0.1));
             items.splice(i, 1);
           }
           break;
@@ -530,7 +457,7 @@
     });
 
     function shareChallenge() {
-      const text = `تحديت إقليم الجماجم وحققت ${score} نقطة! هل تستطيع تجاوز هذا الرقم؟ 💀`;
+      const text = `تحديت إقليم الجماجم وحققت ${score} نقطة! هل تستطيع تجاوز هذا الرقم؟ 💀\nالعب الآن: ${window.location.href}`;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text);
         alert('تم نسخ نص التحدي مع النتيجة! انشره في حسابك الآن 🚀');
