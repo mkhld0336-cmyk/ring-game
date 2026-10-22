@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Exploding Ring V4</title>
+<title>Morphing Universe V5</title>
 <style>
     body {
         margin: 0;
@@ -15,6 +15,7 @@
         height: 100vh;
         overflow: hidden;
         font-family: 'Arial', sans-serif;
+        transition: background-color 2s;
     }
     canvas {
         max-width: 100%;
@@ -23,7 +24,7 @@
     }
     #ui {
         position: absolute;
-        top: 20px;
+        top: 15px;
         width: 100%;
         text-align: center;
         color: white;
@@ -31,22 +32,36 @@
         z-index: 10;
     }
     h1 {
-        font-size: 16px;
+        font-size: 14px;
         margin: 0;
         text-shadow: 0 0 10px #fff;
     }
     h2 {
-        font-size: 28px;
+        font-size: 24px;
         color: #ffd700;
         margin-top: 5px;
         text-shadow: 0 0 15px #ffd700;
     }
+    #evolutionText {
+        position: absolute;
+        top: 90px;
+        width: 100%;
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 0 0 20px cyan, 0 0 40px cyan;
+        z-index: 15;
+        pointer-events: none;
+        letter-spacing: 2px;
+        transition: color 0.5s;
+    }
     #event-text {
         position: absolute;
-        top: 40%;
+        top: 45%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 40px;
+        font-size: 45px;
         font-weight: bold;
         text-align: center;
         z-index: 30;
@@ -54,34 +69,51 @@
         opacity: 0;
         transition: opacity 0.5s, transform 0.5s;
     }
-    #music-btn {
+    .controls {
         position: absolute;
-        top: 20px;
-        left: 20px;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
         z-index: 20;
-        background: rgba(255, 255, 255, 0.2);
+    }
+    .controls button {
+        background: rgba(255, 255, 255, 0.15);
         border: 1px solid #fff;
         color: white;
-        padding: 8px 12px;
-        border-radius: 20px;
+        padding: 10px 20px;
+        border-radius: 25px;
         cursor: pointer;
+        font-family: 'Arial';
+        font-weight: bold;
+        backdrop-filter: blur(5px);
+    }
+    .controls button:active {
+        background: rgba(255, 255, 255, 0.4);
     }
 </style>
 </head>
 <body>
 
-<button id="music-btn">🎵 تشغيل الموسيقى</button>
-<div id="event-text"></div>
-<audio id="bg-music" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-
 <div id="ui">
     <h1>كل كرة تمر عبر نقطة ذهبية = كرة جديدة</h1>
     <h2 id="counter">الكرات: 1</h2>
 </div>
+<div id="evolutionText">EVOLUTION ZERO</div>
+<div id="event-text"></div>
+
+<audio id="bg-music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
 
 <canvas id="game"></canvas>
+
+<div class="controls">
+    <button id="btn-pause">⏸️ إيقاف</button>
+    <button id="btn-reset">🔄 إعادة</button>
+    <button id="btn-music">🎵 موسيقى</button>
+</div>
 
 <script>
 const canvas = document.getElementById("game");
@@ -92,17 +124,13 @@ canvas.height = 1280;
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-
-// إعدادات الشكل المتحول (دائرة / بيضاوي)
-let radiusX = 280;
-let radiusY = 280;
-let targetRadiusX = 280;
-let targetRadiusY = 280;
-let isEllipse = false;
+let ringRadius = 280;
 
 let balls = [];
 let isFrozen = false;
 let isGravity = false;
+let isRunning = true;
+let exploded200 = false;
 const MAX_BALLS = 800; 
 
 const goldPoints = [
@@ -110,20 +138,10 @@ const goldPoints = [
     { x: centerX, y: centerY + 120, r: 8 }
 ];
 
-// نظام الأيام
-const today = new Date().getDay();
-let themeColor = "#55ccff"; 
+// نظام الألوان
+let baseHue = 180; // أزرق سماوي
 let bgColor = "rgba(0, 8, 20, 0.15)"; 
-
-switch(today) {
-    case 0: themeColor = "#00ff88"; break; // الأحد
-    case 1: themeColor = "#0099ff"; break; // الاثنين
-    case 2: themeColor = "#bb55ff"; break; // الثلاثاء
-    case 3: themeColor = "#ff4444"; break; // الأربعاء
-    case 4: themeColor = "#ffd700"; break; // الخميس
-    case 5: themeColor = "#00ffff"; break; // الجمعة
-    case 6: themeColor = "#ff00ff"; break; // السبت
-}
+document.body.style.background = "#000814";
 
 // الموسيقى
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -162,11 +180,11 @@ class Ball {
     }
 
     update() {
-        if (isFrozen) return;
+        if (isFrozen || !isRunning) return;
 
-        // الخطوط الذكية: تقليل طول الخط كلما زادت الكرات
-        let maxTrail = 800;
-        if (balls.length > 30) maxTrail = 200;
+        // الخطوط الذكية
+        let maxTrail = 600;
+        if (balls.length > 30) maxTrail = 150;
         if (balls.length > 80) maxTrail = 50;
         if (balls.length > 150) maxTrail = 15;
         if (balls.length > 300) maxTrail = 5;
@@ -174,40 +192,34 @@ class Ball {
         this.trail.push({ x: this.x, y: this.y });
         if (this.trail.length > maxTrail) this.trail.shift(); 
 
-        // تأثير الجاذبية
+        // الجاذبية
         if (isGravity) {
             let gdx = centerX - this.x;
             let gdy = centerY - this.y;
-            this.vx += gdx * 0.002;
-            this.vy += gdy * 0.002;
+            this.vx += gdx * 0.003;
+            this.vy += gdy * 0.003;
         }
 
         this.x += this.vx;
         this.y += this.vy;
 
-        // معادلة الارتداد داخل الشكل البيضاوي أو الدائرة
+        // حساب مسافة الارتداد (دائرة أو بيضاوي)
         let dx = this.x - centerX;
         let dy = this.y - centerY;
         
-        // حساب المسافة بالنسبة للشكل الحالي
-        let normX = dx / radiusX;
-        let normY = dy / radiusY;
-        let dist = Math.sqrt(normX*normX + normY*normY);
+        // ارتداد داخل الشكل (نستخدم معادلة مرنة تناسب الأشكال)
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        let currentRadius = ringRadius + Math.sin(Date.now() / 1000) * 20; // نبض خفيف
 
-        if (dist + (this.r/radiusX) >= 1) {
-            // ارتداد فيزيائي دقيق للبيضاوي
-            let nx = dx / (radiusX * radiusX);
-            let ny = dy / (radiusY * radiusY);
-            let len = Math.sqrt(nx*nx + ny*ny);
-            nx /= len; ny /= len;
-
+        if (dist + this.r >= currentRadius) {
+            let nx = dx / dist;
+            let ny = dy / dist;
             let dot = this.vx * nx + this.vy * ny;
             this.vx -= 2 * dot * nx;
             this.vy -= 2 * dot * ny;
 
-            // تصحيح الموقع لمنع الخروج
-            this.x = centerX + (dx / dist) * radiusX * 0.98;
-            this.y = centerY + (dy / dist) * radiusY * 0.98;
+            this.x = centerX + nx * (currentRadius - this.r);
+            this.y = centerY + ny * (currentRadius - this.r);
         }
 
         if (!this.hitGold && balls.length < MAX_BALLS) {
@@ -234,7 +246,7 @@ class Ball {
                 ctx.lineTo(this.trail[i].x, this.trail[i].y);
             }
             ctx.strokeStyle = this.color;
-            ctx.lineWidth = balls.length > 100 ? 0.8 : 1.5;
+            ctx.lineWidth = balls.length > 100 ? 0.5 : 1.5;
             ctx.globalAlpha = 0.4;
             ctx.stroke();
             ctx.globalAlpha = 1.0;
@@ -248,33 +260,49 @@ class Ball {
 }
 
 function spawnNewBall(x, y) {
+    if (balls.length >= MAX_BALLS) return;
     let angle = Math.random() * Math.PI * 2;
     let speed = 3 + Math.random() * 3;
     balls.push(new Ball(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed));
     document.getElementById("counter").innerText = "الكرات: " + balls.length;
 }
 
-spawnNewBall(centerX, centerY + 50);
+// نظام رسم الشكل المتحول (Morphing)
+function drawMorphShape() {
+    let progress = 0;
+    if (balls.length > 50) progress = Math.min((balls.length - 50) / 100, 1); // 0 to 1
 
-function drawRing() {
-    // تحويل سلس بين الدائرة والبيضاوي
-    radiusX += (targetRadiusX - radiusX) * 0.05;
-    radiusY += (targetRadiusY - radiusY) * 0.05;
+    // تحول الشكل من دائرة إلى بيضاوي
+    let radiusX = ringRadius + (ringRadius * 0.3 * progress);
+    let radiusY = ringRadius - (ringRadius * 0.2 * progress);
+
+    // ألوان النيون المتحركة
+    let hue = (Date.now() * 0.03) % 360;
+    if (balls.length > 150) hue = (hue + 180) % 360; // تغيير اللون في مرحلة الفوضى
 
     ctx.beginPath();
-    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
     
-    // تأثير قوس قزح ليوم السبت
-    if (today === 6) {
-        let time = Date.now() / 1000;
-        ctx.strokeStyle = `hsl(${(time * 100) % 360}, 100%, 60%)`;
+    // إذا وصلنا لمرحلة متقدمة، نرسم شكل نجمة (باستخدام مثلثات)
+    if (balls.length > 300) {
+        let spikes = 5;
+        for (let i = 0; i < spikes * 2; i++) {
+            let rot = (Math.PI / spikes) * i;
+            let r = (i % 2 === 0) ? radiusX : radiusX * 0.5;
+            let x = centerX + Math.cos(rot) * r;
+            let y = centerY + Math.sin(rot) * r;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
     } else {
-        ctx.strokeStyle = themeColor;
+        // دائرة أو بيضاوي
+        ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
     }
-    
-    ctx.lineWidth = 5;
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = ctx.strokeStyle;
+
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
+    ctx.shadowBlur = 30;
+    ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
     ctx.stroke();
     ctx.shadowBlur = 0;
 }
@@ -297,24 +325,61 @@ function drawGoldPoints() {
     });
 }
 
-// ----------------- الأحداث العشوائية -----------------
+// ----------------- الأحداث الأسطورية -----------------
 const eventText = document.getElementById("event-text");
+const evolutionText = document.getElementById("evolutionText");
 
-// 1. حدث التحول للبيضاوي (كل 15 ثانية)
-setInterval(() => {
-    isEllipse = !isEllipse;
-    if (isEllipse) {
-        targetRadiusX = 320;
-        targetRadiusY = 200;
-    } else {
-        targetRadiusX = 280;
-        targetRadiusY = 280;
+function updateEvolution() {
+    let count = balls.length;
+    
+    // تغيير الخلفية
+    if (count > 100 && count < 300) document.body.style.background = "#120022";
+    if (count >= 300 && count < 600) document.body.style.background = "#001a33";
+    if (count >= 600) document.body.style.background = "#220000";
+
+    // تغيير النص
+    let text = "EVOLUTION ZERO";
+    let color = "white";
+    if (count > 50) { text = "ELLIPSE AGE"; color = "#00ffff"; }
+    if (count > 150) { text = "CHAOS AGE"; color = "#ff00ff"; }
+    if (count > 300) { text = "UNIVERSE AGE"; color = "#ff4444"; }
+    if (count > 600) { text = "SINGULARITY"; color = "#ffd700"; }
+    
+    evolutionText.innerText = text;
+    evolutionText.style.color = color;
+    evolutionText.style.textShadow = `0 0 20px ${color}`;
+
+    // الانفجار الكوني عند 200 كرة
+    if (count >= 200 && !exploded200) {
+        exploded200 = true;
+        explodeUniverse();
     }
-}, 15000);
+}
 
-// 2. حدث التجميد (كل 25 ثانية)
+function explodeUniverse() {
+    eventText.innerText = "💥 COSMIC EXPLOSION 💥";
+    eventText.style.color = "#ff0000";
+    eventText.style.opacity = "1";
+    eventText.style.transform = "translate(-50%, -50%) scale(1.5)";
+    
+    setTimeout(() => {
+        eventText.style.opacity = "0";
+        eventText.style.transform = "translate(-50%, -50%) scale(1)";
+    }, 2000);
+
+    for (let i = 0; i < 100; i++) {
+        let angle = Math.random() * Math.PI * 2;
+        let speed = 8 + Math.random() * 10;
+        spawnNewBall(centerX, centerY);
+        let b = balls[balls.length - 1];
+        b.vx = Math.cos(angle) * speed;
+        b.vy = Math.sin(angle) * speed;
+    }
+}
+
+// أحداث التجميد والجاذبية
 setInterval(() => {
-    if (isGravity) return; 
+    if (!isRunning || isGravity) return; 
     isFrozen = true;
     eventText.innerText = "❄️ تجميد";
     eventText.style.color = "#00ffff";
@@ -326,14 +391,13 @@ setInterval(() => {
         eventText.style.opacity = "0";
         eventText.style.transform = "translate(-50%, -50%) scale(1)";
         balls.forEach(ball => {
-            ball.vx *= 1.2;
-            ball.vy *= 1.2;
+            ball.vx *= 1.2; ball.vy *= 1.2;
         });
     }, 1500);
 }, 25000);
 
-// 3. حدث الجاذبية (كل 40 ثانية)
 setInterval(() => {
+    if (!isRunning) return;
     isGravity = true;
     eventText.innerText = "🌀 جاذبية";
     eventText.style.color = "#ff00ff";
@@ -342,7 +406,6 @@ setInterval(() => {
     setTimeout(() => {
         isGravity = false;
         eventText.style.opacity = "0";
-        // إعطاء دفعة عشوائية بعد انتهاء الجاذبية
         balls.forEach(ball => {
             ball.vx += (Math.random() - 0.5) * 10;
             ball.vy += (Math.random() - 0.5) * 10;
@@ -350,37 +413,52 @@ setInterval(() => {
     }, 4000);
 }, 40000);
 
-
+// ----------------- حلقة اللعبة والتحكم -----------------
 function loop() {
-    ctx.fillStyle = bgColor; 
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (isRunning) {
+        ctx.fillStyle = bgColor; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawRing();
-    drawGoldPoints();
+        drawMorphShape();
+        drawGoldPoints();
+        updateEvolution();
 
-    for (let i = balls.length - 1; i >= 0; i--) {
-        balls[i].update();
-        balls[i].draw(ctx);
+        for (let i = balls.length - 1; i >= 0; i--) {
+            balls[i].update();
+            balls[i].draw(ctx);
+        }
     }
-
     requestAnimationFrame(loop);
 }
 
-// الموسيقى
-const musicBtn = document.getElementById("music-btn");
-const bgMusic = document.getElementById("bg-music");
+// الأزرار
+document.getElementById("btn-pause").addEventListener("click", function() {
+    isRunning = !isRunning;
+    this.innerText = isRunning ? "⏸️ إيقاف" : "▶️ تشغيل";
+});
 
-musicBtn.addEventListener("click", () => {
+document.getElementById("btn-reset").addEventListener("click", function() {
+    balls = [];
+    exploded200 = false;
+    document.body.style.background = "#000814";
+    spawnNewBall(centerX, centerY);
+    document.getElementById("counter").innerText = "الكرات: 1";
+});
+
+const bgMusic = document.getElementById("bg-music");
+document.getElementById("btn-music").addEventListener("click", function() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     if (bgMusic.paused) {
         bgMusic.play();
-        musicBtn.innerText = "⏸️ إيقاف";
+        this.innerText = "⏸️ إيقاف موسيقى";
     } else {
         bgMusic.pause();
-        musicBtn.innerText = "🎵 موسيقى";
+        this.innerText = "🎵 موسيقى";
     }
 });
 
+// البدء
+spawnNewBall(centerX, centerY + 50);
 loop();
 </script>
 
