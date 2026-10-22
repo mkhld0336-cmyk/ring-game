@@ -1,246 +1,146 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exploding Ring - Shorts</title>
+<title>Ring Beats</title>
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
-        font-family: 'Arial', sans-serif;
-    }
-    canvas {
-        background-color: #000814;
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-    }
-    #ui {
-        position: absolute;
-        top: 40px;
-        width: 100%;
-        text-align: center;
-        color: white;
-        pointer-events: none;
-        z-index: 10;
-    }
-    h1 {
-        font-size: 24px;
-        margin: 0;
-        text-shadow: 0 0 10px #fff;
-        letter-spacing: 2px;
-    }
-    h2 {
-        font-size: 36px;
-        color: #ffd700;
-        margin-top: 10px;
-        text-shadow: 0 0 15px #ffd700;
-    }
+body{
+    margin:0;
+    background:#000814;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+}
+canvas{
+    background:#001233;
+}
+#counter{
+    position:absolute;
+    top:20px;
+    color:white;
+    font-size:32px;
+    font-family:Arial;
+}
 </style>
 </head>
 <body>
 
-<div id="ui">
-    <h1>EVERY BALL THROUGH A GOLD POINT = 1 NEW BALL</h1>
-    <h2 id="counter">Balls: 1</h2>
-</div>
-
+<div id="counter">Hits: 0</div>
 <canvas id="game"></canvas>
 
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-// أبعاد مناسبة للشورتس (9:16)
-canvas.width = 720;
-canvas.height = 1280;
+canvas.width = 600;
+canvas.height = 800;
 
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const ringRadius = 320;
+const centerX = canvas.width/2;
+const centerY = canvas.height/2;
+const ringRadius = 250;
 
-// مصفوفة الكرات
-let balls = [];
-const MAX_BALLS = 600; // الحد الأقصى لتجنب تهنيج المتصفح
+let hits = 0;
 
-// النقاط الذهبية
-const goldPoints = [
-    { x: centerX, y: centerY - 150, r: 8 },
-    { x: centerX, y: centerY + 150, r: 8 }
-];
+let ball = {
+    x:centerX,
+    y:centerY+50,
+    vx:4,
+    vy:-3,
+    r:10,
+    color:"orange"
+};
 
-// إعدادات الصوت
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audio = new (window.AudioContext || window.webkitAudioContext)();
 
-function playBeep(freq) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    let osc = audioCtx.createOscillator();
-    let gain = audioCtx.createGain();
-    osc.type = "sine";
+function beep(freq){
+    let osc = audio.createOscillator();
+    let gain = audio.createGain();
+
     osc.frequency.value = freq;
+    osc.type = "sine";
+
     osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+    gain.connect(audio.destination);
+
+    gain.gain.value = 0.08;
+
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.2);
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audio.currentTime + 0.15
+    );
+
+    osc.stop(audio.currentTime + 0.15);
 }
 
-function randomColor() {
-    return `hsl(${Math.random() * 360}, 100%, 65%)`;
+function randomColor(){
+    return `hsl(${Math.random()*360},100%,60%)`;
 }
 
-class Ball {
-    constructor(x, y, vx, vy, color) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
-        this.r = 5;
-        this.color = color || randomColor();
-        this.trail = [];
-        this.hitGold = false; 
-    }
+function update(){
 
-    update() {
-        // حفظ المسار
-        this.trail.push({ x: this.x, y: this.y });
-        if (this.trail.length > 15) this.trail.shift(); // طول الخط
+    ball.x += ball.vx;
+    ball.y += ball.vy;
 
-        this.x += this.vx;
-        this.y += this.vy;
+    let dx = ball.x - centerX;
+    let dy = ball.y - centerY;
 
-        let dx = this.x - centerX;
-        let dy = this.y - centerY;
-        let dist = Math.sqrt(dx * dx + dy * dy);
+    let dist = Math.sqrt(dx*dx + dy*dy);
 
-        // الاصطدام بالحلقة
-        if (dist + this.r >= ringRadius) {
-            let nx = dx / dist;
-            let ny = dy / dist;
-            let dot = this.vx * nx + this.vy * ny;
-            this.vx -= 2 * dot * nx;
-            this.vy -= 2 * dot * ny;
+    if(dist + ball.r >= ringRadius){
 
-            // تصحيح الموقع لمنع الخروج
-            this.x = centerX + nx * (ringRadius - this.r);
-            this.y = centerY + ny * (ringRadius - this.r);
-        }
+        let nx = dx/dist;
+        let ny = dy/dist;
 
-        // الاصطدام بالنقاط الذهبية
-        if (!this.hitGold && balls.length < MAX_BALLS) {
-            goldPoints.forEach(gp => {
-                let gdx = this.x - gp.x;
-                let gdy = this.y - gp.y;
-                let gdist = Math.sqrt(gdx * gdx + gdy * gdy);
+        let dot = ball.vx*nx + ball.vy*ny;
 
-                if (gdist < gp.r + this.r + 5) {
-                    this.hitGold = true; // منع التكاثر المتكرر في نفس اللحظة
-                    spawnNewBall(this.x, this.y);
-                    playBeep(400 + Math.random() * 400);
-                    
-                    // وميض النقطة الذهبية
-                    gp.flash = 1.0; 
-                }
-            });
-        }
-    }
+        ball.vx -= 2*dot*nx;
+        ball.vy -= 2*dot*ny;
 
-    draw(ctx) {
-        // رسم المسار
-        if (this.trail.length > 1) {
-            ctx.beginPath();
-            ctx.moveTo(this.trail[0].x, this.trail[0].y);
-            for (let i = 1; i < this.trail.length; i++) {
-                ctx.lineTo(this.trail[i].x, this.trail[i].y);
-            }
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = 1.5;
-            ctx.globalAlpha = 0.4;
-            ctx.stroke();
-            ctx.globalAlpha = 1.0;
-        }
+        ball.color = randomColor();
 
-        // رسم الكرة
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = this.color;
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        hits++;
+        document.getElementById("counter").innerText =
+        "Hits: " + hits;
+
+        beep(200 + (hits % 20) * 35);
     }
 }
 
-function spawnNewBall(x, y) {
-    let angle = Math.random() * Math.PI * 2;
-    let speed = 3 + Math.random() * 3;
-    balls.push(new Ball(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed));
-    document.getElementById("counter").innerText = "Balls: " + balls.length;
-}
+function draw(){
 
-// الكرة الأولى
-spawnNewBall(centerX, centerY + 100);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-function drawRing() {
     ctx.beginPath();
-    ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = "#55ccff";
-    ctx.lineWidth = 6;
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = "#55ccff";
+    ctx.arc(centerX,centerY,ringRadius,0,Math.PI*2);
+    ctx.strokeStyle="#55ccff";
+    ctx.lineWidth=8;
+    ctx.shadowBlur=20;
+    ctx.shadowColor="#55ccff";
     ctx.stroke();
-    ctx.shadowBlur = 0;
+
+    ctx.shadowBlur=0;
+
+    ctx.beginPath();
+    ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);
+    ctx.fillStyle=ball.color;
+    ctx.fill();
 }
 
-function drawGoldPoints() {
-    goldPoints.forEach(gp => {
-        ctx.beginPath();
-        ctx.arc(gp.x, gp.y, gp.r, 0, Math.PI * 2);
-        ctx.fillStyle = "#ffd700";
-        
-        // تأثير الوميض
-        if (gp.flash > 0) {
-            ctx.shadowBlur = 30 * gp.flash;
-            ctx.shadowColor = "#ffd700";
-            gp.flash -= 0.05;
-        } else {
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = "#ffd700";
-        }
-        
-        ctx.fill();
-        ctx.shadowBlur = 0;
-    });
-}
-
-function loop() {
-    // بدلاً من مسح الشاشة بالكامل، نضع طبقة سوداء شفافة لترك أثر (Trail effect)
-    ctx.fillStyle = "rgba(0, 8, 20, 0.15)"; 
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    drawRing();
-    drawGoldPoints();
-
-    for (let i = balls.length - 1; i >= 0; i--) {
-        balls[i].update();
-        balls[i].draw(ctx);
-    }
-
+function loop(){
+    update();
+    draw();
     requestAnimationFrame(loop);
 }
 
-// تشغيل الصوت عند أول تفاعل
-document.body.addEventListener("click", () => {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-});
-
 loop();
+
+document.body.addEventListener("click", () => {
+    audio.resume();
+});
 </script>
 
 </body>
