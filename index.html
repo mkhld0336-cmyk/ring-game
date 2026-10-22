@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>إقليم الجماجم - Realm of Skulls</title>
+<title>MARSAD GAMES - Skull Realm</title>
 <style>
     body {
         margin: 0;
@@ -16,6 +16,7 @@
         overflow: hidden;
         font-family: 'Arial', sans-serif;
         touch-action: none;
+        color: white;
     }
     canvas {
         max-width: 100%;
@@ -23,71 +24,93 @@
         object-fit: contain;
         background: #000;
     }
-    #ui {
+    /* واجهة المستخدم */
+    #hud {
         position: absolute;
         top: 10px;
         width: 100%;
-        text-align: center;
-        color: white;
+        padding: 0 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
         pointer-events: none;
         z-index: 10;
+        font-weight: bold;
     }
-    h1 { font-size: 22px; margin: 0; color: #ff3333; text-shadow: 0 0 15px #ff3333; }
-    .timer-bar {
-        width: 80%;
-        height: 10px;
-        background: #333;
-        margin: 10px auto;
-        border-radius: 5px;
-        overflow: hidden;
+    .hud-left { text-align: left; }
+    .hud-right { text-align: right; }
+    #lives { font-size: 24px; letter-spacing: 2px; text-shadow: 0 0 10px red; margin-top: 5px;}
+    #score { font-size: 32px; color: #00f5ff; text-shadow: 0 0 15px #00f5ff; }
+    #combo-text { 
+        font-size: 40px; color: #ff0040; text-shadow: 0 0 20px #ff0040; 
+        position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+        opacity: 0; transition: opacity 0.3s, transform 0.3s;
     }
-    #timer-fill {
-        height: 100%;
-        width: 100%;
-        background: #00ffff;
-        transition: width 0.1s linear;
-    }
-    #game-over {
+    
+    /* شاشات البداية والنهاية */
+    .screen {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 50;
         text-align: center;
-        color: white;
-        display: none;
-        z-index: 20;
-        width: 90%;
-        background: rgba(0,0,0,0.8);
-        padding: 30px;
-        border-radius: 20px;
-        border: 2px solid #ff3333;
-        box-shadow: 0 0 30px #ff3333;
     }
-    #game-over h2 { font-size: 28px; color: red; margin-bottom: 10px; }
-    #game-over p { font-size: 18px; margin-bottom: 20px; color: #ccc; }
-    #restart-btn {
-        background: #ff3333;
+    .screen h1 { font-size: 40px; color: #fff; text-shadow: 0 0 20px #00f5ff; margin-bottom: 5px; }
+    .screen h2 { font-size: 20px; color: #888; margin-bottom: 30px; }
+    .screen p { font-size: 18px; margin-bottom: 10px; }
+    .btn {
+        background: #ff0040;
         color: white;
         border: none;
-        padding: 15px 40px;
-        font-size: 20px;
+        padding: 15px 50px;
+        font-size: 22px;
         border-radius: 30px;
         cursor: pointer;
         font-weight: bold;
+        box-shadow: 0 0 20px #ff0040;
+        margin-top: 20px;
     }
+    .btn:active { transform: scale(0.95); }
+    #game-over { display: none; }
+    #high-score-text { color: #ffd700; font-size: 22px; margin-top: 20px;}
 </style>
 </head>
 <body>
 
-<div id="ui">
-    <h1>إقليم الجماجم 💀</h1>
-    <div class="timer-bar"><div id="timer-fill"></div></div>
+<!-- واجهة اللعب -->
+<div id="hud">
+    <div class="hud-left">
+        <div id="score">0</div>
+        <div id="combo-text">COMBO!</div>
+    </div>
+    <div class="hud-right">
+        <div id="lives">❤️❤️❤️</div>
+    </div>
 </div>
 
-<div id="game-over">
-    <h2>💀 انتهت اللعبة 💀</h2>
-    <p id="game-over-text"></p>
-    <button id="restart-btn">المحاولة مجدداً</button>
+<!-- شاشة البداية -->
+<div id="start-screen" class="screen">
+    <h1>MARSAD GAMES</h1>
+    <h2>Play Smart. Survive Longer.</h2>
+    <h3 style="color:#00f5ff; margin:0;">إقليم الجماجم 💀</h3>
+    <p>اضغط على المربعات الآمنة عند وصولها للخط.</p>
+    <p style="color:#ff0040;">احذر: المربعات الخضراء قد تتحول لجماجم!</p>
+    <div id="high-score-text">أفضل نتيجة: 0</div>
+    <button class="btn" id="start-btn">ابدأ اللعبة</button>
+</div>
+
+<!-- شاشة النهاية -->
+<div id="game-over" class="screen">
+    <h1 style="color:red; text-shadow:0 0 20px red;">GAME OVER</h1>
+    <p id="game-over-reason"></p>
+    <h2 id="final-score" style="color:#00f5ff; font-size:40px; margin:10px 0;">0</h2>
+    <div id="new-high-score" style="color:#ffd700; font-size:20px; display:none;">🏆 رقم قياسي جديد!</div>
+    <button class="btn" id="restart-btn">إعادة المحاولة</button>
 </div>
 
 <canvas id="game"></canvas>
@@ -101,136 +124,185 @@ canvas.height = 1280;
 
 const COLS = 4;
 const colWidth = canvas.width / COLS;
-const hitZoneY = canvas.height - 200; // خط النقر
+const hitZoneY = canvas.height - 200;
 const hitZoneHeight = 30;
 
 let isPlaying = false;
-let timeLeft = 30; // 30 ثانية
+let timeLeft = 30; 
 let lastTime = 0;
-let speed = 400; // سرعة السقوط بالبكسل في الثانية
+let speed = 450; 
 let spawnTimer = 0;
 let score = 0;
+let combo = 0;
+let lives = 3;
 
 let tiles = [];
+let particles = [];
 let shakeTime = 0;
 let flashTime = 0;
+let flashColor = "rgba(0,0,0,0)";
+
+// الألوان والهوية
+const colors = {
+    safe: "#00f5ff",
+    fake: "#00ff88",
+    skull: "#ff0040",
+    gold: "#ffd700",
+    life: "#ffffff",
+    slow: "#8a2be2"
+};
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// أصوات اللعبة
-function playExplosion() {
+// --- الأصوات ---
+function playSound(type) {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     let osc = audioCtx.createOscillator();
     let gain = audioCtx.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.5);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.5);
+    
+    if (type === 'explode') {
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        setTimeout(playLaugh, 300);
+    } else if (type === 'tap') {
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(600 + combo * 20, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    } else if (type === 'life') {
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    }
 }
 
 function playLaugh() {
     let osc = audioCtx.createOscillator();
     let gain = audioCtx.createGain();
     osc.type = "square";
-    // ضحكة ساخرة (ترددات متقطعة)
-    osc.frequency.setValueAtTime(400, audioCtx.currentTime + 0.5);
-    osc.frequency.setValueAtTime(300, audioCtx.currentTime + 0.6);
-    osc.frequency.setValueAtTime(400, audioCtx.currentTime + 0.7);
-    osc.frequency.setValueAtTime(300, audioCtx.currentTime + 0.8);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime + 0.5);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.0);
-    osc.start(audioCtx.currentTime + 0.5);
-    osc.stop(audioCtx.currentTime + 1.0);
+    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(200, audioCtx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(300, audioCtx.currentTime + 0.2);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
 }
 
-// فئة المربع الساقط
+// --- المربعات ---
 class Tile {
-    constructor(col, isSkull) {
+    constructor(col, type) {
         this.col = col;
         this.x = col * colWidth;
         this.y = -100;
         this.width = colWidth - 10;
         this.height = 80;
-        this.isSkull = isSkull; 
-        this.isFake = isSkull && Math.random() > 0.5; // 50% من الجماجم متنكرة
+        this.type = type; // safe, fake, skull, gold, life, slow
         this.revealed = false;
-        this.color = this.isFake ? "#00ff88" : (isSkull ? "#ff3333" : "#00ffff"); // متنكر = أخضر، جمجمة = أحمر، آمن = أزرق
-        this.speed = 0; // سيتم تعيينها في التحديث
+        this.color = colors[type];
+        if(type === 'skull') this.color = colors.skull;
     }
 
     update(dt) {
-        // تسريع تدريجي
-        this.speed = speed;
-        this.y += this.speed * dt;
+        this.y += speed * dt;
 
-        // الخداع البصري: إذا كانت متنكرة، تتحول قبل خط النقر بـ 150 بكسل
-        if (this.isFake && !this.revealed && this.y > hitZoneY - 150) {
+        // الخداع البصري
+        if (this.type === 'fake' && !this.revealed && this.y > hitZoneY - 150) {
             this.revealed = true;
-            this.color = "#ff3333"; // تتحول للأحمر
-            this.isSkull = true; // تصبح مميتة
+            this.type = 'skull';
+            this.color = colors.skull;
         }
     }
 
     draw() {
         ctx.fillStyle = this.color;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 15;
         ctx.shadowColor = this.color;
-        
-        // رسم المربع
         ctx.beginPath();
         ctx.roundRect(this.x + 5, this.y, this.width, this.height, 15);
         ctx.fill();
         ctx.shadowBlur = 0;
 
-        // رسم الجمجمة إذا كانت كذلك
-        if (this.isSkull) {
-            ctx.font = "40px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText("💀", this.x + colWidth/2, this.y + this.height/2);
-        }
+        ctx.font = "40px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        
+        let cx = this.x + colWidth/2;
+        let cy = this.y + this.height/2;
+
+        if (this.type === 'skull') ctx.fillText("💀", cx, cy);
+        else if (this.type === 'gold') ctx.fillText("⭐", cx, cy);
+        else if (this.type === 'life') ctx.fillText("❤️", cx, cy);
+        else if (this.type === 'slow') ctx.fillText("⏳", cx, cy);
     }
 }
 
-// رسم الخلفية والأعمدة
-function drawBackground() {
-    ctx.fillStyle = "#050505";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // خطوط الأعمدة
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-    ctx.lineWidth = 2;
-    for (let i = 1; i < COLS; i++) {
+// --- الجسيمات (Particles) ---
+class Particle {
+    constructor(x, y, color) {
+        this.x = x; this.y = y;
+        this.vx = (Math.random() - 0.5) * 400;
+        this.vy = (Math.random() - 0.5) * 400;
+        this.life = 1;
+        this.color = color;
+    }
+    update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= dt * 2;
+    }
+    draw() {
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.moveTo(i * colWidth, 0);
-        ctx.lineTo(i * colWidth, canvas.height);
-        ctx.stroke();
+        ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
     }
-
-    // خط النقر (Hit Zone)
-    ctx.fillStyle = "rgba(0, 255, 255, 0.2)";
-    ctx.fillRect(0, hitZoneY, canvas.width, hitZoneHeight);
-    ctx.strokeStyle = "#00ffff";
-    ctx.strokeRect(0, hitZoneY, canvas.width, hitZoneHeight);
 }
 
-// إدارة اللمس
+function spawnParticles(x, y, color) {
+    for(let i=0; i<10; i++) particles.push(new Particle(x, y, color));
+}
+
+// --- نظام النقاط ---
+function updateScoreUI() {
+    document.getElementById("score").innerText = score;
+    if (combo > 1) {
+        let text = "COMBO x" + combo;
+        if (combo > 5) text = "رائع! 🔥";
+        if (combo > 10) text = "أسطوري! 🌟";
+        if (combo > 15) text = "مرصدي! 🚀";
+        let ct = document.getElementById("combo-text");
+        ct.innerText = text;
+        ct.style.opacity = 1;
+        ct.style.transform = "translate(-50%, -50%) scale(1.2)";
+        setTimeout(() => ct.style.opacity = 0, 500);
+    }
+}
+
+function updateLivesUI() {
+    let str = "";
+    for(let i=0; i<lives; i++) str += "❤️";
+    document.getElementById("lives").innerText = str;
+}
+
+// --- إدارة اللمس ---
 canvas.addEventListener("touchstart", (e) => {
     e.preventDefault();
     if (!isPlaying) return;
-    
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const touchX = (e.touches[0].clientX - rect.left) * scaleX;
     const touchY = (e.touches[0].clientY - rect.top) * (canvas.height / rect.height);
-    
     handleTap(touchX, touchY);
 }, { passive: false });
 
@@ -244,130 +316,122 @@ canvas.addEventListener("mousedown", (e) => {
 });
 
 function handleTap(x, y) {
-    // التحقق من العمود
     let col = Math.floor(x / colWidth);
-
-    // البحث عن مربع في هذا العمود داخل منطقة النقر
     for (let i = tiles.length - 1; i >= 0; i--) {
         let tile = tiles[i];
         if (tile.col === col && tile.y + tile.height > hitZoneY && tile.y < hitZoneY + hitZoneHeight) {
-            
-            if (tile.isSkull) {
-                // خسارة
-                gameOver();
+            let cx = tile.x + colWidth/2;
+            let cy = tile.y + tile.height/2;
+
+            if (tile.type === 'skull') {
+                // خسارة قلب
+                lives--;
+                updateLivesUI();
+                playSound('explode');
+                shakeTime = 0.5; flashTime = 0.5; flashColor = "rgba(255,0,0,0.5)";
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                spawnParticles(cx, cy, colors.skull);
+                combo = 0;
+                tiles.splice(i, 1);
+                if (lives <= 0) gameOver("لقد نفدت قلوبك!");
             } else {
                 // نجاح
-                score++;
-                tiles.splice(i, 1); // إزالة المربع
-                // تأثير بصري بسيط
-                flashTime = 0.1;
-                flashColor = "rgba(0, 255, 255, 0.3)"; // فلاش أزرق للنجاح
+                combo++;
+                if (tile.type === 'gold') { score += 50; playSound('life'); } 
+                else if (tile.type === 'life') { 
+                    if(lives < 5) lives++;
+                    updateLivesUI(); playSound('life');
+                }
+                else if (tile.type === 'slow') {
+                    speed = 200; // تبطيء
+                    setTimeout(() => { if(isPlaying) speed = Math.min(speed + 400, 1200); }, 3000);
+                }
+                else { score += 10 + (combo * 2); }
+
+                playSound('tap');
+                spawnParticles(cx, cy, tile.color);
+                updateScoreUI();
+                tiles.splice(i, 1);
             }
             return;
         }
     }
 }
 
-function gameOver() {
+function gameOver(reason) {
     isPlaying = false;
-    playExplosion();
-    setTimeout(playLaugh, 400);
-    
-    // اهتزاز الجوال (Haptics)
-    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
-
-    // اهتزاز الشاشة والفلاش
-    shakeTime = 0.5;
-    flashTime = 0.5;
-    flashColor = "rgba(255, 0, 0, 0.6)";
-
-    // إظهار شاشة النهاية
-    document.getElementById("game-over").style.display = "block";
     let survived = (30 - timeLeft).toFixed(1);
-    document.getElementById("game-over-text").innerText = 
-        `سقطت في الثانية ${survived}... \n 98% من الناس لا يستطيعون تجاوزك!`;
+    document.getElementById("game-over").style.display = "flex";
+    document.getElementById("game-over-reason").innerText = reason + ` (صمدت ${survived} ثانية)`;
+    document.getElementById("final-score").innerText = score;
+
+    // حفظ أفضل نتيجة
+    let hs = parseInt(localStorage.getItem("marsad_highscore") || "0");
+    if (score > hs) {
+        localStorage.setItem("marsad_highscore", score);
+        document.getElementById("new-high-score").style.display = "block";
+    } else {
+        document.getElementById("new-high-score").style.display = "none";
+    }
 }
 
-// إعادة اللعبة
-document.getElementById("restart-btn").addEventListener("click", () => {
-    isPlaying = true;
-    timeLeft = 30;
-    speed = 400;
-    spawnTimer = 0;
-    score = 0;
-    tiles = [];
-    shakeTime = 0;
-    flashTime = 0;
-    document.getElementById("game-over").style.display = "none";
-    lastTime = performance.now();
-    requestAnimationFrame(loop);
-});
-
-let flashColor = "rgba(255, 0, 0, 0)";
-
+// --- حلقة اللعبة ---
 function loop(timestamp) {
     if (!isPlaying) return;
-
     let dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
-    // تقليل الوقت
     timeLeft -= dt;
-    document.getElementById("timer-fill").style.width = `${(timeLeft / 30) * 100}%`;
-    
-    if (timeLeft <= 0) {
-        // فوز!
-        timeLeft = 0;
-        isPlaying = false;
-        document.getElementById("game-over").style.display = "block";
-        document.getElementById("game-over-text").innerText = "أنت من الـ 2% الذين نجوا! 🏆";
-        return;
-    }
+    if (timeLeft <= 0) { timeLeft = 0; gameOver("أنت من الـ 2% الذين نجوا! 🏆"); return; }
 
-    // تصعيد الصعوبة
-    if (timeLeft < 20 && timeLeft > 10) {
-        speed = 700;
-        spawnTimer += dt;
-        if (spawnTimer > 0.5) { spawnTile(); spawnTimer = 0; }
-    } else if (timeLeft <= 10) {
-        speed = 1000;
-        spawnTimer += dt;
-        if (spawnTimer > 0.3) { spawnTile(); spawnTimer = 0; }
-    } else {
-        spawnTimer += dt;
-        if (spawnTimer > 0.8) { spawnTile(); spawnTimer = 0; }
-    }
+    // التصعيد
+    if (timeLeft < 10) speed = 1000;
+    else if (timeLeft < 20) speed = 700;
 
-    // حفظ السياق لاهتزاز الشاشة
+    spawnTimer += dt;
+    let spawnRate = timeLeft < 10 ? 0.3 : (timeLeft < 20 ? 0.5 : 0.8);
+    if (spawnTimer > spawnRate) { spawnTile(); spawnTimer = 0; }
+
+    // الاهتزاز
     ctx.save();
     if (shakeTime > 0) {
-        let shakeX = (Math.random() - 0.5) * 30 * shakeTime;
-        let shakeY = (Math.random() - 0.5) * 30 * shakeTime;
-        ctx.translate(shakeX, shakeY);
+        ctx.translate((Math.random()-0.5)*30*shakeTime, (Math.random()-0.5)*30*shakeTime);
         shakeTime -= dt;
     }
 
-    drawBackground();
+    ctx.fillStyle = "#050505"; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-    // رسم وتحديث المربعات
+    // خطوط الأعمدة
+    ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 2;
+    for (let i = 1; i < COLS; i++) {
+        ctx.beginPath(); ctx.moveTo(i*colWidth, 0); ctx.lineTo(i*colWidth, canvas.height); ctx.stroke();
+    }
+
+    // خط النقر
+    ctx.fillStyle = "rgba(0, 245, 255, 0.1)"; ctx.fillRect(0, hitZoneY, canvas.width, hitZoneHeight);
+    ctx.strokeStyle = colors.safe; ctx.strokeRect(0, hitZoneY, canvas.width, hitZoneHeight);
+
     for (let i = tiles.length - 1; i >= 0; i--) {
         let tile = tiles[i];
         tile.update(dt);
         tile.draw();
-
-        // إذا خرج المربع من الشاشة دون النقر عليه (وانه ليس جمجمة متنكرة)
         if (tile.y > canvas.height) {
+            if (tile.type !== 'skull' && tile.type !== 'fake') { combo = 0; } // خسر الكومبو لأنه لم يضغط
             tiles.splice(i, 1);
-            // في بعض الألعاب، تفويت مربع آمن يخصم نقاط، لكننا هنا نركز على الجماجم
         }
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update(dt);
+        particles[i].draw();
+        if (particles[i].life <= 0) particles.splice(i, 1);
     }
 
     ctx.restore();
 
-    // فلاش الشاشة (Juice)
     if (flashTime > 0) {
         ctx.fillStyle = flashColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0,0,canvas.width, canvas.height);
         flashTime -= dt;
     }
 
@@ -376,51 +440,60 @@ function loop(timestamp) {
 
 function spawnTile() {
     let col = Math.floor(Math.random() * COLS);
-    
-    // التأكد من عدم وجود مربع في نفس العمود قريب جداً
-    for (let t of tiles) {
-        if (t.col === col && t.y < 200) return; 
-    }
+    for (let t of tiles) { if (t.col === col && t.y < 200) return; }
 
-    // احتمالية ظهور جمجمة (تزيد مع الوقت)
-    let isSkull = Math.random() < (timeLeft < 10 ? 0.5 : 0.3);
-    tiles.push(new Tile(col, isSkull));
+    let rand = Math.random();
+    let type = 'safe';
+    
+    if (rand < 0.25) type = 'skull';
+    else if (rand < 0.4) type = 'fake';
+    else if (rand < 0.45) type = 'gold';
+    else if (rand < 0.48) type = 'life';
+    else if (rand < 0.52) type = 'slow';
+
+    tiles.push(new Tile(col, type));
 }
 
-// البدء التلقائي عند أول لمسة
-canvas.addEventListener("touchstart", () => {
-    if (!isPlaying && timeLeft === 30 && document.getElementById("game-over").style.display === "none") {
-        isPlaying = true;
-        lastTime = performance.now();
-        requestAnimationFrame(loop);
-    }
-}, { once: true });
+// --- تشغيل اللعبة ---
+function startGame() {
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("game-over").style.display = "none";
+    
+    isPlaying = true;
+    timeLeft = 30;
+    speed = 450;
+    spawnTimer = 0;
+    score = 0;
+    combo = 0;
+    lives = 3;
+    tiles = [];
+    particles = [];
+    shakeTime = 0;
+    flashTime = 0;
+    
+    updateScoreUI();
+    updateLivesUI();
+    
+    lastTime = performance.now();
+    requestAnimationFrame(loop);
+}
 
-// البدء بالماوس للتجربة
-canvas.addEventListener("mousedown", () => {
-    if (!isPlaying && timeLeft === 30 && document.getElementById("game-over").style.display === "none") {
-        isPlaying = true;
-        lastTime = performance.now();
-        requestAnimationFrame(loop);
-    }
-}, { once: true });
+// تحميل أفضل نتيجة في البداية
+let hs = localStorage.getItem("marsad_highscore") || "0";
+document.getElementById("high-score-text").innerText = "أفضل نتيجة: " + hs;
 
-// دعم المتصفحات القديمة لـ roundRect
+document.getElementById("start-btn").addEventListener("click", startGame);
+document.getElementById("restart-btn").addEventListener("click", startGame);
+
+// دعم المتصفحات القديمة
 if(!CanvasRenderingContext2D.prototype.roundRect) {
     CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-        if (w < 2 * r) r = w / 2;
-        if (h < 2 * r) r = h / 2;
-        this.beginPath();
-        this.moveTo(x+r, y);
-        this.arcTo(x+w, y,   x+w, y+h, r);
-        this.arcTo(x+w, y+h, x,   y+h, r);
-        this.arcTo(x,   y+h, x,   y,   r);
-        this.arcTo(x,   y,   x+w, y,   r);
-        this.closePath();
-        return this;
+        if (w < 2 * r) r = w / 2; if (h < 2 * r) r = h / 2;
+        this.beginPath(); this.moveTo(x+r, y); this.arcTo(x+w, y, x+w, y+h, r);
+        this.arcTo(x+w, y+h, x, y+h, r); this.arcTo(x, y+h, x, y, r); this.arcTo(x, y, x+w, y, r);
+        this.closePath(); return this;
     }
 }
-
 </script>
 </body>
 </html>
