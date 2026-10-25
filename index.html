@@ -3,86 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>إقليم الجماجم | Realm of Skulls</title>
-  <style>
-    :root {
-      --bg-dark: #080a10;
-      --panel-bg: rgba(18, 22, 34, 0.85);
-      --neon-cyan: #00f3ff;
-      --neon-red: #ff0055;
-      --neon-gold: #ffcc00;
-      --neon-purple: #b900ff;
-      --text-main: #f0f4f8;
-      --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  <title>إقليم الجماجم | Jamam ID</title>
+  
+  <!-- Firebase SDK (Module) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // مفتاح الربط الخاص بك
+    const firebaseConfig = {
+      apiKey: "AIzaSyBW6mOTbpA-D7VRHsn--zvKSEVHMyj3IJo",
+      authDomain: "jamam-id.firebaseapp.com",
+      projectId: "jamam-id",
+      storageBucket: "jamam-id.firebasestorage.app",
+      messagingSenderId: "916247759960",
+      appId: "1:916247759960:web:c6100d1e67d51b945dce2d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // دالة حفظ النتيجة في السيرفر
+    async function saveScoreToDB(playerName, finalScore) {
+      try {
+        await addDoc(collection(db, "leaderboard"), {
+          name: playerName,
+          score: finalScore,
+          timestamp: serverTimestamp()
+        });
+        console.log("تم الحفظ بنجاح");
+        fetchLeaderboard(); // تحديث اللوحة بعد الحفظ
+      } catch (e) {
+        console.error("خطأ في الحفظ: ", e);
+      }
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+
+    // دالة جلب أفضل 10 لاعبين
+    async function fetchLeaderboard() {
+      const lbList = document.getElementById('leaderboard-list');
+      if(!lbList) return;
+      lbList.innerHTML = '<div style="color:#aaa; text-align:center; font-size:12px;">جاري تحميل الأبطال...</div>';
+      
+      try {
+        const q = query(collection(db, "leaderboard"), orderBy("score", "desc"), limit(10));
+        const querySnapshot = await getDocs(q);
+        lbList.innerHTML = '';
+        let rank = 1;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          lbList.innerHTML += `
+            <div style="display:flex; justify-content:space-between; padding:5px 10px; border-bottom:1px solid #333; font-size:14px;">
+              <span style="color:${rank <= 3 ? '#ffcc00' : '#fff'};">${rank}. ${data.name}</span>
+              <span style="color:var(--neon-cyan); font-weight:bold;">${data.score}</span>
+            </div>
+          `;
+          rank++;
+        });
+      } catch (e) {
+        console.error("خطأ في القراءة: ", e);
+        lbList.innerHTML = '<div style="color:red; text-align:center; font-size:12px;">خطأ في الاتصال</div>';
+      }
+    }
+
+    // تصدير الدوال لاستخدامها في كود اللعبة الأساسي
+    window.JamamAPI = { saveScoreToDB, fetchLeaderboard };
+  </script>
+
+  <style>
+    :root { --bg-dark: #080a10; --panel-bg: rgba(18, 22, 34, 0.85); --neon-cyan: #00f3ff; --neon-red: #ff0055; --neon-gold: #ffcc00; --neon-purple: #b900ff; --text-main: #f0f4f8; --font-main: 'Segoe UI', Tahoma, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; touch-action: manipulation; }
     body { background-color: var(--bg-dark); color: var(--text-main); font-family: var(--font-main); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-    #game-container { position: relative; width: 100%; max-width: 450px; height: 100vh; max-height: 900px; background: radial-gradient(circle at center, #121826 0%, #05070c 100%); box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); overflow: hidden; }
+    #game-container { position: relative; width: 100%; max-width: 450px; height: 100vh; max-height: 900px; background: radial-gradient(circle at center, #121826 0%, #05070c 100%); overflow: hidden; }
     
-    #hud { position: absolute; top: 0; left: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; background: linear-gradient(180deg, rgba(5,7,12,0.9) 0%, rgba(5,7,12,0) 100%); pointer-events: none; }
-    .hud-box { background: var(--panel-bg); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 12px; border-radius: 12px; backdrop-filter: blur(8px); text-align: center; min-width: 70px; }
-    .hud-label { font-size: 0.7rem; color: #8a99ad; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-    .hud-value { font-size: 1.3rem; font-weight: 800; color: var(--neon-cyan); transition: all 0.2s; }
+    #hud { position: absolute; top: 0; left: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
+    .hud-box { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 12px; text-align: center; min-width: 70px; }
+    .hud-label { font-size: 0.7rem; color: #8a99ad; }
+    .hud-value { font-size: 1.3rem; font-weight: 800; color: var(--neon-cyan); }
     
-    /* تأثير نبض الرقم القياسي */
-    @keyframes pulseGold { 0% { transform: scale(1); color: var(--neon-cyan); text-shadow: none;} 50% { transform: scale(1.3); color: var(--neon-gold); text-shadow: 0 0 15px var(--neon-gold);} 100% { transform: scale(1); color: var(--neon-cyan); text-shadow: none;} }
-    .near-miss { animation: pulseGold 0.6s infinite; }
-
-    #combo-display { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-size: 2.5rem; font-weight: 900; color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold), 0 0 40px var(--neon-red); opacity: 0; pointer-events: none; z-index: 15; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; width: 100%; }
-    
-    /* تنبيه التاج الذهبي */
-    #golden-alert { position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; font-weight: 900; color: var(--neon-gold); text-shadow: 0 0 15px var(--neon-gold); opacity: 0; pointer-events: none; z-index: 15; transition: opacity 0.3s; text-align: center; width: 100%; }
-
     canvas { display: block; width: 100%; height: 100%; }
-    .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 7, 12, 0.92); backdrop-filter: blur(12px); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; z-index: 20; }
+    .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 7, 12, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 20; }
     .hidden { display: none !important; }
-    .title { font-size: 2.2rem; font-weight: 900; background: linear-gradient(45deg, var(--neon-cyan), var(--neon-red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-    .subtitle { font-size: 0.95rem; color: #a0aec0; margin-bottom: 20px; line-height: 1.6; }
-    .best-score-text { font-size: 1.1rem; color: var(--neon-gold); font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
-    .btn-main { background: linear-gradient(135deg, var(--neon-cyan), #0088ff); color: #000; font-size: 1.2rem; font-weight: 800; padding: 16px 40px; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); transition: all 0.2s ease; width: 80%; max-width: 280px; }
-    .btn-main:active { transform: scale(0.96); }
+    .title { font-size: 2rem; font-weight: 900; color: var(--neon-cyan); margin-bottom: 10px; }
     
-    .modal-box { background: rgba(18, 22, 34, 0.95); border: 1px solid var(--neon-red); border-radius: 20px; padding: 25px; width: 100%; max-width: 360px; box-shadow: 0 0 30px rgba(255, 0, 85, 0.3); pointer-events: auto; }
-    .go-title { color: var(--neon-red); font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
-    .provoke-text { font-size: 0.95rem; color: var(--neon-gold); background: rgba(255, 204, 0, 0.1); padding: 10px 12px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+    .input-name { width: 80%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #333; background: #111; color: #fff; text-align: center; font-weight: bold; font-family: inherit; font-size: 16px; outline: none; }
+    .input-name:focus { border-color: var(--neon-cyan); }
     
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-    .stat-card { background: rgba(255, 255, 255, 0.05); padding: 10px 5px; border-radius: 10px; text-align: center;}
+    .btn-main { background: var(--neon-cyan); color: #000; font-weight: 800; padding: 15px 40px; border: none; border-radius: 50px; cursor: pointer; width: 80%; max-width: 280px; margin-top: 10px; font-size: 18px;}
     
-    .btn-retry { background: linear-gradient(135deg, var(--neon-red), #cc0044); color: #fff; font-size: 1.1rem; font-weight: 800; padding: 14px 20px; border: none; border-radius: 12px; cursor: pointer; width: 100%; margin-bottom: 10px; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
-    .btn-secondary { background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan); font-size: 0.9rem; font-weight: 700; padding: 10px 15px; border-radius: 10px; cursor: pointer; width: 100%; }
+    .modal-box { background: rgba(18, 22, 34, 0.95); border: 1px solid var(--neon-red); border-radius: 20px; padding: 20px; width: 100%; max-width: 360px; text-align: center; }
+    .go-title { color: var(--neon-red); font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; }
+    .provoke-text { font-size: 0.85rem; color: var(--neon-gold); background: rgba(255, 204, 0, 0.1); padding: 8px; border-radius: 8px; margin-bottom: 15px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+    .stat-card { background: rgba(255, 255, 255, 0.05); padding: 10px 5px; border-radius: 10px; }
+    .btn-retry { background: var(--neon-red); color: #fff; font-weight: 800; padding: 12px; border: none; border-radius: 10px; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 16px;}
+    .btn-secondary { background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan); font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 14px;}
     
-    /* نص إعادة المحاولة السريعة */
-    .instant-retry-hint { font-size: 0.8rem; color: #8a99ad; margin-top: 15px; animation: pulseOpacity 1.5s infinite; }
-    @keyframes pulseOpacity { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
     .shake { animation: shakeAnim 0.4s cubic-bezier(.36,.07,.19,.97) both; }
     @keyframes shakeAnim { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
-    #flash-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--neon-red); opacity: 0; pointer-events: none; z-index: 15; transition: opacity 0.1s ease-out; }
+    #flash-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--neon-red); opacity: 0; pointer-events: none; z-index: 15; }
+    
+    #leaderboard-container { width: 90%; max-width: 350px; max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); border-radius: 15px; margin-top: 15px; padding: 10px; border: 1px solid #333;}
+    .lb-title { color: var(--neon-cyan); font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; text-align: center; }
   </style>
 </head>
 <body>
 
   <div id="game-container">
     <div id="flash-overlay"></div>
-    <div id="combo-display">COMBO x2!</div>
-    <div id="golden-alert">👑 +10 نقاط!</div>
 
     <div id="hud">
       <div style="display: flex; gap: 8px;">
-        <div class="hud-box">
-          <div class="hud-label">النقاط</div>
-          <div class="hud-value" id="score-display">0</div>
-        </div>
-        <div class="hud-box">
-          <div class="hud-label">المستوى</div>
-          <div class="hud-value" id="level-display" style="color: var(--neon-purple);">1</div>
-        </div>
+        <div class="hud-box"><div class="hud-label">النقاط</div><div class="hud-value" id="score-display">0</div></div>
+        <div class="hud-box"><div class="hud-label">المستوى</div><div class="hud-value" id="level-display" style="color: var(--neon-purple);">1</div></div>
       </div>
-      <div class="hud-box">
-        <div class="hud-label">الزمن</div>
-        <div class="hud-value" id="timer-display">00:00</div>
-      </div>
+      <div class="hud-box"><div class="hud-label">الزمن</div><div class="hud-value" id="timer-display">00:00</div></div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -90,72 +124,64 @@
     <!-- شاشة البداية -->
     <div id="start-screen" class="overlay-screen">
       <div class="title">إقليم الجماجم</div>
-      <div class="subtitle">
-        انقر على الرموز الآمنة بسرعة لصنع الكومبو!<br>
-        <strong style="color: var(--neon-red);">القاعدة الذهبية: لمس الجمجمة = خسارة فورية!</strong><br>
+      <div class="subtitle" style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center; line-height:1.4;">
+        انقر على الرموز الآمنة بسرعة!<br>
+        <strong style="color: var(--neon-red);">لمس الجمجمة = خسارة فورية!</strong><br>
         احذر: هناك جماجم متنكرة... وطُعم خادع!
       </div>
-      <div class="best-score-text">🏆 أفضل نتيجة: <span id="start-best-score">0</span></div>
+      
+      <!-- إدخال اسم اللاعب (Jamam ID) -->
+      <input type="text" id="player-name" class="input-name" placeholder="اكتب اسمك (Jamam ID)" maxlength="12" autocomplete="off">
+      
       <button class="btn-main" onclick="startGame()">ابدأ التحدي 💀</button>
+      
+      <!-- لوحة الصدارة الحقيقية -->
+      <div id="leaderboard-container">
+        <div class="lb-title">🏆 أبطال الإقليم (أفضل 10)</div>
+        <div id="leaderboard-list"></div>
+      </div>
     </div>
 
-    <!-- شاشة الخسارة (سريعة ونفسية) -->
+    <!-- شاشة الخسارة -->
     <div id="gameover-screen" class="overlay-screen hidden">
       <div class="modal-box">
         <div class="go-title">سقوط مباشر! 💀</div>
         <div class="provoke-text" id="provoke-msg">سقطت ضحية الخدعة!</div>
         
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="hud-label">النتيجة</div>
-            <div class="hud-value" id="go-score">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="hud-label">الأفضل</div>
-            <div class="hud-value" style="color: var(--neon-gold);" id="go-best-score">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="hud-label">الترتيب</div>
-            <div class="hud-value" style="color: var(--neon-cyan); font-size: 1rem;" id="go-rank">Top 99%</div>
-          </div>
+          <div class="stat-card"><div class="hud-label">النتيجة</div><div class="hud-value" id="go-score">0</div></div>
+          <div class="stat-card"><div class="hud-label">الأفضل</div><div class="hud-value" style="color: var(--neon-gold);" id="go-best-score">0</div></div>
+          <div class="stat-card"><div class="hud-label">الترتيب</div><div class="hud-value" style="color: var(--neon-cyan); font-size: 1rem;" id="go-rank">Top 99%</div></div>
         </div>
 
         <button class="btn-retry" onclick="startGame()">محاولة جديدة ⚡</button>
         <button class="btn-secondary" onclick="shareChallenge()">نسخ رابط التحدي 🔗</button>
-        
-        <div class="instant-retry-hint">انقر في أي مكان بالشاشة لإعادة اللعب فوراً</div>
+        <div style="font-size:0.75rem; color:#8a99ad; margin-top:10px;">انقر في أي مكان بالشاشة لإعادة اللعب فوراً</div>
       </div>
     </div>
   </div>
 
   <script>
-    // --- إعدادات الصوت ---
+    // --- إعدادات الصوت والمتغيرات الأساسية ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
-
     function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); }
-
     function playSound(freq, type, duration, pitchMultiplier = 1) {
       if (!audioCtx) return;
       try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq * pitchMultiplier, audioCtx.currentTime);
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.type = type; osc.frequency.setValueAtTime(freq * pitchMultiplier, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + duration);
       } catch (e) {}
     }
-
     function playExplosion() {
       if (!audioCtx) return;
       try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(120, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4);
         gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
@@ -164,44 +190,16 @@
       } catch (e) {}
     }
 
-    // --- متغيرات اللعبة ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('game-container');
+    
+    let score = 0, bestScore = Number(localStorage.getItem('bestScore') || 0), level = 1, combo = 1, lastTapTime = 0, isNewRecord = false, gameActive = false, timeScale = 1.0, startTime = 0, timerInterval = null, items = [], ripples = [], spawnRate = 900, lastSpawn = 0, stars = [], spawnedCount = 0;
+    let currentPlayerName = "لاعب مجهول";
 
-    let score = 0;
-    let bestScore = Number(localStorage.getItem('bestScore') || 0);
-    let level = 1;
-    let combo = 1;
-    let lastTapTime = 0;
-    let isNewRecord = false;
-    let gameActive = false;
-    let timeScale = 1.0; 
-    let startTime = 0;
-    let timerInterval = null;
-    let items = [];
-    let ripples = []; 
-    let spawnRate = 900; 
-    let lastSpawn = 0;
-    let stars = [];
-    let spawnedCount = 0; // لضمان أول 4 عناصر آمنة
-
-    document.getElementById('start-best-score').innerText = bestScore;
-
-    function resizeCanvas() {
-      canvas.width = container.clientWidth;
-      canvas.height = container.clientHeight;
-      initStars();
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function initStars() {
-      stars = [];
-      for(let i=0; i<60; i++) {
-        stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2, speed: Math.random() * 1.5 + 0.5, alpha: Math.random() });
-      }
-    }
+    function resizeCanvas() { canvas.width = container.clientWidth; canvas.height = container.clientHeight; initStars(); }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+    function initStars() { stars = []; for(let i=0; i<60; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2, speed: Math.random() * 1.5 + 0.5, alpha: Math.random() }); } }
 
     class Ripple {
       constructor(x, y) { this.x = x; this.y = y; this.radius = 10; this.alpha = 1; }
@@ -211,306 +209,118 @@
 
     class GameItem {
       constructor() {
-        this.size = 45;
-        this.x = Math.random() * (canvas.width - this.size * 2) + this.size;
-        this.y = -this.size;
-        this.baseSpeed = 2.5 + Math.random() * 2 + (score * 0.1); 
+        this.size = 45; this.x = Math.random() * (canvas.width - this.size * 2) + this.size; this.y = -this.size;
+        this.baseSpeed = 2.5 + Math.random() * 2 + (score * 0.1); spawnedCount++;
         
-        spawnedCount++;
-
-        // أول 4 عناصر آمنة 100%
-        if (spawnedCount <= 4) {
-          this.isSkull = false;
-          this.isShapeshifter = false;
-          this.isTrap = false;
-          this.isGolden = false;
-        } else {
-          this.isSkull = Math.random() < 0.3;
+        if (spawnedCount <= 4) { this.isSkull = false; this.isShapeshifter = false; this.isTrap = false; this.isGolden = false; } 
+        else { 
+          this.isSkull = Math.random() < 0.3; 
           this.isShapeshifter = !this.isSkull && Math.random() < 0.25; 
-          this.isTrap = !this.isSkull && !this.isShapeshifter && Math.random() < 0.03;
+          this.isTrap = !this.isSkull && !this.isShapeshifter && Math.random() < 0.03; 
           this.isGolden = this.isSkull && Math.random() < 0.05; 
         }
-
-        this.morphed = false;
-        this.symbols = ['💎', '⚡', '🌙', '🌀', '🔮'];
-        this.symbol = this.symbols[Math.floor(Math.random() * this.symbols.length)];
-        this.warningFlash = 0;
-
-        // تنبيه التاج الذهبي
-        if (this.isGolden) {
-          const ga = document.getElementById('golden-alert');
-          ga.style.opacity = 1;
-          setTimeout(() => ga.style.opacity = 0, 1000);
-        }
+        
+        this.morphed = false; this.symbols = ['💎', '⚡', '🌙', '🌀', '🔮']; this.symbol = this.symbols[Math.floor(Math.random() * this.symbols.length)]; this.warningFlash = 0;
+        if (this.isGolden) { const ga = document.getElementById('golden-alert'); ga.style.opacity = 1; setTimeout(() => ga.style.opacity = 0, 1000); }
       }
-
       update() {
         this.y += this.baseSpeed * timeScale;
-
         if (this.isShapeshifter && !this.morphed && this.y > canvas.height * 0.55) {
           this.warningFlash += 0.5;
           this.x = Math.max(this.size, Math.min(canvas.width - this.size, this.x + (Math.random() - 0.5) * 8));
-          if (this.y > canvas.height * 0.65) {
-            this.morphed = true;
-            this.isSkull = true;
-            playSound(600, 'sawtooth', 0.1);
-          }
+          if (this.y > canvas.height * 0.65) { this.morphed = true; this.isSkull = true; playSound(600, 'sawtooth', 0.1); }
         }
       }
-
       draw() {
-        ctx.save();
-        ctx.font = `${this.size}px serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.save(); ctx.font = `${this.size}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         if (this.isSkull) {
-          if (this.isGolden) {
-            ctx.shadowColor = '#ffcc00'; ctx.shadowBlur = 20; ctx.fillText('👑', this.x, this.y); 
-          } else {
-            ctx.shadowColor = '#ff0055'; ctx.shadowBlur = this.warningFlash > 0 ? 30 : 15;
-            if(this.warningFlash > 0 && !this.morphed) ctx.fillStyle = `rgba(255, 0, 85, ${0.5 + Math.sin(Date.now()*0.05)*0.5})`;
-            ctx.fillText('💀', this.x, this.y);
-          }
-        } else {
-          ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 10; ctx.fillText(this.symbol, this.x, this.y);
-        }
+          if (this.isGolden) { ctx.shadowColor = '#ffcc00'; ctx.shadowBlur = 20; ctx.fillText('👑', this.x, this.y); } 
+          else { ctx.shadowColor = '#ff0055'; ctx.shadowBlur = this.warningFlash > 0 ? 30 : 15; if(this.warningFlash > 0 && !this.morphed) ctx.fillStyle = `rgba(255, 0, 85, ${0.5 + Math.sin(Date.now()*0.05)*0.5})`; ctx.fillText('💀', this.x, this.y); }
+        } else { ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 10; ctx.fillText(this.symbol, this.x, this.y); }
         ctx.restore();
       }
     }
 
     function startGame() {
       initAudio();
-      score = 0;
-      bestScore = Number(localStorage.getItem('bestScore') || 0);
-      level = 1;
-      combo = 1;
-      timeScale = 1.0;
-      isNewRecord = false;
-      lastTapTime = 0;
-      items = [];
-      ripples = [];
-      gameActive = true;
-      spawnRate = 900;
-      lastSpawn = performance.now();
-      spawnedCount = 0; // تصفير العداد للبداية الآمنة
+      // جلب الاسم من الحقل
+      const nameInput = document.getElementById('player-name').value.trim();
+      currentPlayerName = nameInput !== "" ? nameInput : "لاعب " + Math.floor(Math.random()*1000);
       
-      document.getElementById('score-display').innerText = '0';
-      document.getElementById('score-display').classList.remove('near-miss'); // إزالة تأثير النبض
-      document.getElementById('level-display').innerText = '1';
-      document.getElementById('start-screen').classList.add('hidden');
-      document.getElementById('gameover-screen').classList.add('hidden');
-      document.getElementById('combo-display').style.opacity = 0;
-
-      startTime = Date.now();
-      clearInterval(timerInterval);
-      timerInterval = setInterval(updateTimer, 1000);
-      requestAnimationFrame(gameLoop);
+      score = 0; bestScore = Number(localStorage.getItem('bestScore') || 0); level = 1; combo = 1; timeScale = 1.0; isNewRecord = false; lastTapTime = 0; items = []; ripples = []; gameActive = true; spawnRate = 900; lastSpawn = performance.now(); spawnedCount = 0;
+      
+      document.getElementById('score-display').innerText = '0'; document.getElementById('score-display').classList.remove('near-miss'); document.getElementById('level-display').innerText = '1';
+      document.getElementById('start-screen').classList.add('hidden'); document.getElementById('gameover-screen').classList.add('hidden');
+      
+      startTime = Date.now(); clearInterval(timerInterval); timerInterval = setInterval(updateTimer, 1000); requestAnimationFrame(gameLoop);
     }
 
     function updateTimer() {
       if (!gameActive) return;
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
-      const secs = String(elapsed % 60).padStart(2, '0');
-      document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+      document.getElementById('timer-display').innerText = `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}`;
     }
 
     function triggerGameOver(reason = 'normal') {
-      gameActive = false;
-      clearInterval(timerInterval);
-      playExplosion();
-      timeScale = 1.0;
-
-      container.classList.add('shake');
-      const flash = document.getElementById('flash-overlay');
-      flash.style.opacity = '0.8';
+      gameActive = false; clearInterval(timerInterval); playExplosion(); timeScale = 1.0;
+      container.classList.add('shake'); const flash = document.getElementById('flash-overlay'); flash.style.opacity = '0.8';
       setTimeout(() => { flash.style.opacity = '0'; container.classList.remove('shake'); }, 300);
 
-      document.getElementById('go-score').innerText = score;
-      document.getElementById('go-best-score').innerText = bestScore;
-      
-      // رسائل ديناميكية ومستفزة
-      let msg = "";
-      if (reason === 'trap') {
-        msg = "وقعت في أسهل طعم في اللعبة! 🤡";
-      } else if (score < 10) {
-        msg = "رد فعلك أبطأ من السلحفاة! 🐢 حاول مرة أخرى.";
-      } else if (score > bestScore - 5 && score < bestScore) {
-        msg = "خسارة مؤلمة... كنت على بعد ضغطة واحدة من الرقم القياسي!";
-      } else if (score >= bestScore && bestScore > 0) {
-        msg = "98% من الناس لن يصلوا لهذا الرقم.. صور الشاشة وأثبتها! 📸";
-      } else {
-        msg = "الجماجم المتنكرة لا ترحم. هل تجرؤ على المحاولة مجدداً؟";
-      }
+      document.getElementById('go-score').innerText = score; document.getElementById('go-best-score').innerText = bestScore;
+      let msg = reason === 'trap' ? "وقعت في أسهل طعم في اللعبة! 🤡" : (score < 10 ? "رد فعلك أبطأ من السلحفاة! 🐢" : (score >= bestScore && bestScore > 0 ? "98% من الناس لن يصلوا لهذا الرقم.. صور الشاشة! 📸" : "الجماجم المتنكرة لا ترحم."));
       document.getElementById('provoke-msg').innerText = msg;
+      document.getElementById('go-rank').innerText = `Top ${Math.max(1, Math.min(99, 100 - score * 2))}%`;
       
-      const percentile = Math.max(1, Math.min(99, 100 - score * 2));
-      document.getElementById('go-rank').innerText = `Top ${percentile}%`;
+      // حفظ النتيجة في Firebase (إذا كانت النقاط أكبر من 0)
+      if (window.JamamAPI && score > 0) {
+        window.JamamAPI.saveScoreToDB(currentPlayerName, score);
+      }
 
       document.getElementById('gameover-screen').classList.remove('hidden');
     }
 
     function gameLoop(timestamp) {
       if (!gameActive) return;
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = '#fff';
-      stars.forEach(star => {
-        star.y += star.speed * timeScale;
-        if (star.y > canvas.height) star.y = 0;
-        ctx.globalAlpha = star.alpha;
-        ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI*2); ctx.fill();
-      });
-      ctx.globalAlpha = 1;
-
-      ripples.forEach((r, i) => {
-        r.update(); r.draw();
-        if (r.alpha <= 0) ripples.splice(i, 1);
-      });
-
-      if (timestamp - lastSpawn > spawnRate) {
-        items.push(new GameItem());
-        lastSpawn = timestamp;
-        if (spawnRate > 400) spawnRate -= 10;
-      }
-
-      for (let i = items.length - 1; i >= 0; i--) {
-        const item = items[i];
-        item.update();
-        item.draw();
-
-        if (item.y > canvas.height + 50) {
-          if (!item.isSkull && !item.isGolden && !item.isTrap) {
-            combo = 1; 
-          }
-          items.splice(i, 1);
-        }
-      }
-
+      ctx.fillStyle = '#fff'; stars.forEach(star => { star.y += star.speed * timeScale; if (star.y > canvas.height) star.y = 0; ctx.globalAlpha = star.alpha; ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI*2); ctx.fill(); }); ctx.globalAlpha = 1;
+      ripples.forEach((r, i) => { r.update(); r.draw(); if (r.alpha <= 0) ripples.splice(i, 1); });
+      if (timestamp - lastSpawn > spawnRate) { items.push(new GameItem()); lastSpawn = timestamp; if (spawnRate > 400) spawnRate -= 10; }
+      for (let i = items.length - 1; i >= 0; i--) { const item = items[i]; item.update(); item.draw(); if (item.y > canvas.height + 50) { if (!item.isSkull && !item.isGolden && !item.isTrap) { combo = 1; } items.splice(i, 1); } }
       requestAnimationFrame(gameLoop);
     }
 
     canvas.addEventListener('pointerdown', (e) => {
       if (!gameActive) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
-
+      const rect = canvas.getBoundingClientRect(); const clickX = e.clientX - rect.left; const clickY = e.clientY - rect.top;
       ripples.push(new Ripple(clickX, clickY));
-
       for (let i = items.length - 1; i >= 0; i--) {
-        const item = items[i];
-        const dist = Math.hypot(item.x - clickX, item.y - clickY);
-
+        const item = items[i]; const dist = Math.hypot(item.x - clickX, item.y - clickY);
         if (dist < item.size * 0.9) {
-          
-          if (item.isTrap) {
-            item.isSkull = true;
-            triggerGameOver('trap'); // تمرير سبب الخسارة
-          }
-          else if (item.isSkull && !item.isGolden) {
-            triggerGameOver('skull');
-          } 
+          if (item.isTrap) { item.isSkull = true; triggerGameOver('trap'); } 
+          else if (item.isSkull && !item.isGolden) { triggerGameOver('skull'); } 
           else {
-            const now = performance.now();
-            if (now - lastTapTime < 1200) {
-              combo = Math.min(combo + 1, 10); 
-            } else {
-              combo = 1;
-            }
-            lastTapTime = now;
-
-            let points = 1;
-            if (item.isGolden) points = 10; 
-            
-            score += points * combo;
+            const now = performance.now(); if (now - lastTapTime < 1200) { combo = Math.min(combo + 1, 10); } else { combo = 1; } lastTapTime = now;
+            let points = item.isGolden ? 10 : 1; score += points * combo;
             document.getElementById('score-display').innerText = score;
-
-            // تأثير نبض "الاقتراب من الرقم القياسي"
-            if (bestScore > 0 && (bestScore - score) <= 3 && score < bestScore) {
-              document.getElementById('score-display').classList.add('near-miss');
-              // تشغيل صوت تحذيري خفيف (قلب ينبض)
-              playSound(300, 'sine', 0.05, 1.2);
-            } else {
-              document.getElementById('score-display').classList.remove('near-miss');
-            }
-
-            level = Math.floor(score / 20) + 1;
-            document.getElementById('level-display').innerText = level;
-
-            if (combo === 5) {
-              timeScale = 0.5; 
-              const cd = document.getElementById('combo-display');
-              cd.innerText = 'SLOW-MO! 🐢';
-              cd.style.color = 'var(--neon-cyan)';
-              cd.style.opacity = 1;
-              setTimeout(() => { timeScale = 1.0; }, 1500); 
-            } 
-            else if (combo > 1) {
-              const cd = document.getElementById('combo-display');
-              cd.innerText = `COMBO x${combo}!`;
-              cd.style.color = 'var(--neon-gold)';
-              cd.style.opacity = 1;
-              cd.style.transform = 'translate(-50%, -50%) scale(1.2)';
-              setTimeout(() => {
-                cd.style.opacity = 0;
-                cd.style.transform = 'translate(-50%, -50%) scale(0.5)';
-              }, 500);
-            }
-
-            if (score > bestScore) {
-              bestScore = score;
-              localStorage.setItem('bestScore', bestScore);
-              document.getElementById('start-best-score').innerText = bestScore;
-
-              if (!isNewRecord) {
-                isNewRecord = true;
-                const cd = document.getElementById('combo-display');
-                cd.innerText = '🏆 رقم قياسي جديد!';
-                cd.style.color = '#ffcc00';
-                cd.style.opacity = 1;
-                cd.style.transform = 'translate(-50%, -50%) scale(1.3)';
-                setTimeout(() => {
-                  cd.style.opacity = 0;
-                  cd.style.transform = 'translate(-50%, -50%) scale(0.5)';
-                }, 1500);
-              }
-            }
-
-            playSound(400, 'sine', 0.08, 1 + (combo * 0.1));
-            items.splice(i, 1);
+            if (bestScore > 0 && (bestScore - score) <= 3 && score < bestScore) { document.getElementById('score-display').classList.add('near-miss'); playSound(300, 'sine', 0.05, 1.2); } else { document.getElementById('score-display').classList.remove('near-miss'); }
+            level = Math.floor(score / 20) + 1; document.getElementById('level-display').innerText = level;
+            if (combo === 5) { timeScale = 0.5; const cd = document.getElementById('combo-display'); cd.innerText = 'SLOW-MO! 🐢'; cd.style.opacity = 1; setTimeout(() => { timeScale = 1.0; }, 1500); } 
+            else if (combo > 1) { const cd = document.getElementById('combo-display'); cd.innerText = `COMBO x${combo}!`; cd.style.opacity = 1; setTimeout(() => { cd.style.opacity = 0; }, 500); }
+            if (score > bestScore) { bestScore = score; localStorage.setItem('bestScore', bestScore); document.getElementById('start-best-score').innerText = bestScore; }
+            playSound(400, 'sine', 0.08, 1 + (combo * 0.1)); items.splice(i, 1);
           }
           break;
         }
       }
     });
 
-    // --- إعادة اللعب الفورية (Instant Restart) ---
-    // 1. النقر في أي مكان في شاشة الخسارة (بعيداً عن الأزرار)
-    document.getElementById('gameover-screen').addEventListener('pointerdown', (e) => {
-      // التأكد من أن النقر لم يكن على زر
-      if (e.target.tagName !== 'BUTTON') {
-        startGame();
-      }
-    });
+    document.getElementById('gameover-screen').addEventListener('pointerdown', (e) => { if (e.target.tagName !== 'BUTTON') { startGame(); } });
+    window.addEventListener('keydown', (e) => { if (e.code === 'Space' && !gameActive && !document.getElementById('gameover-screen').classList.contains('hidden')) { e.preventDefault(); startGame(); } });
 
-    // 2. الضغط على مفتاح المسافة في الكيبورد
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && !gameActive && !document.getElementById('gameover-screen').classList.contains('hidden')) {
-        e.preventDefault(); // منع تمرير الصفحة
-        startGame();
-      }
-    });
-
-    function shareChallenge() {
-      const text = `تحديت إقليم الجماجم وحققت ${score} نقطة! هل تستطيع تجاوز هذا الرقم؟ 💀\nالعب الآن: ${window.location.href}`;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(text);
-        alert('تم نسخ نص التحدي مع النتيجة! انشره في حسابك الآن 🚀');
-      }
-    }
+    function shareChallenge() { const text = `تحديت إقليم الجماجم وحققت ${score} نقطة! هل تستطيع تجاوز هذا الرقم؟ 💀\nالعب الآن: ${window.location.href}`; if (navigator.clipboard) { navigator.clipboard.writeText(text); alert('تم نسخ النص!'); } }
+    
+    // جلب لوحة الصدارة عند فتح الصفحة
+    window.addEventListener('load', () => { setTimeout(() => { if(window.JamamAPI) window.JamamAPI.fetchLeaderboard(); }, 1000); });
   </script>
 </body>
 </html>
