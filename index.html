@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>إقليم الجماجم | Jamam ID</title>
   
-  <!-- Firebase SDK (Module) -->
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // مفتاح الربط الخاص بك
     const firebaseConfig = {
       apiKey: "AIzaSyBW6mOTbpA-D7VRHsn--zvKSEVHMyj3IJo",
       authDomain: "jamam-id.firebaseapp.com",
@@ -23,7 +22,35 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // دالة حفظ النتيجة في السيرفر
+    // جلب بيانات العرش
+    async function fetchThrone() {
+      try {
+        const docRef = doc(db, "golden_throne", "current");
+        const docSnap = await getDoc(docRef);
+        const throneDisplay = document.getElementById('throne-holder');
+        const throneBox = document.getElementById('golden-throne');
+        
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const now = Date.now();
+          
+          if (data.name !== "فارغ" && data.expiresAt > now) {
+            const hoursLeft = Math.floor((data.expiresAt - now) / (1000 * 60 * 60));
+            const minsLeft = Math.floor(((data.expiresAt - now) % (1000 * 60 * 60)) / (1000 * 60));
+            throneDisplay.innerHTML = `👑 الملك: <b>${data.name}</b><br><span style="font-size:12px">متبقي: ${hoursLeft}س ${minsLeft}د</span>`;
+            throneBox.style.background = "linear-gradient(135deg, #ffd700, #b8860b)";
+            throneBox.style.color = "#000";
+          } else {
+            throneDisplay.innerHTML = `👑 العرش فارغ الآن<br><span style="font-size:12px">كن أول ملك جديد!</span>`;
+            throneBox.style.background = "rgba(255, 215, 0, 0.2)";
+            throneBox.style.color = "#ffd700";
+          }
+        }
+      } catch (e) {
+        console.error("خطأ في جلب العرش: ", e);
+      }
+    }
+
     async function saveScoreToDB(playerName, finalScore) {
       try {
         await addDoc(collection(db, "leaderboard"), {
@@ -31,14 +58,12 @@
           score: finalScore,
           timestamp: serverTimestamp()
         });
-        console.log("تم الحفظ بنجاح");
-        fetchLeaderboard(); // تحديث اللوحة بعد الحفظ
+        fetchLeaderboard();
       } catch (e) {
         console.error("خطأ في الحفظ: ", e);
       }
     }
 
-    // دالة جلب أفضل 10 لاعبين
     async function fetchLeaderboard() {
       const lbList = document.getElementById('leaderboard-list');
       if(!lbList) return;
@@ -48,13 +73,30 @@
         const q = query(collection(db, "leaderboard"), orderBy("score", "desc"), limit(10));
         const querySnapshot = await getDocs(q);
         lbList.innerHTML = '';
+        
+        const throneDoc = await getDoc(doc(db, "golden_throne", "current"));
+        const throneName = (throneDoc.exists() && throneDoc.data().expiresAt > Date.now()) ? throneDoc.data().name : null;
+
         let rank = 1;
+        
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          let rankClass = "";
+          let rankIcon = `#${rank}`;
+          
+          if (rank === 1) { rankClass = "rank-1"; rankIcon = "🥇"; }
+          else if (rank === 2) { rankClass = "rank-2"; rankIcon = "🥈"; }
+          else if (rank === 3) { rankClass = "rank-3"; rankIcon = "🥉"; }
+
+          let crown = (data.name === throneName) ? "👑 " : "";
+
           lbList.innerHTML += `
-            <div style="display:flex; justify-content:space-between; padding:5px 10px; border-bottom:1px solid #333; font-size:14px;">
-              <span style="color:${rank <= 3 ? '#ffcc00' : '#fff'};">${rank}. ${data.name}</span>
-              <span style="color:var(--neon-cyan); font-weight:bold;">${data.score}</span>
+            <div class="leaderboard-item ${rankClass}">
+              <div class="player-info">
+                <span class="rank-badge">${rankIcon}</span>
+                <span class="player-name">${crown}${data.name}</span>
+              </div>
+              <div class="player-score">${data.score} نقطة</div>
             </div>
           `;
           rank++;
@@ -65,8 +107,7 @@
       }
     }
 
-    // تصدير الدوال لاستخدامها في كود اللعبة الأساسي
-    window.JamamAPI = { saveScoreToDB, fetchLeaderboard };
+    window.JamamAPI = { saveScoreToDB, fetchLeaderboard, fetchThrone };
   </script>
 
   <style>
@@ -80,8 +121,11 @@
     .hud-label { font-size: 0.7rem; color: #8a99ad; }
     .hud-value { font-size: 1.3rem; font-weight: 800; color: var(--neon-cyan); }
     
+    #combo-display { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-size: 2.5rem; font-weight: 900; color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold), 0 0 40px var(--neon-red); opacity: 0; pointer-events: none; z-index: 15; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; width: 100%; }
+    #golden-alert { position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; font-weight: 900; color: var(--neon-gold); text-shadow: 0 0 15px var(--neon-gold); opacity: 0; pointer-events: none; z-index: 15; transition: opacity 0.3s; text-align: center; width: 100%; }
+
     canvas { display: block; width: 100%; height: 100%; }
-    .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 7, 12, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 20; }
+    .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 7, 12, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 20; overflow-y: auto;}
     .hidden { display: none !important; }
     .title { font-size: 2rem; font-weight: 900; color: var(--neon-cyan); margin-bottom: 10px; }
     
@@ -90,7 +134,7 @@
     
     .btn-main { background: var(--neon-cyan); color: #000; font-weight: 800; padding: 15px 40px; border: none; border-radius: 50px; cursor: pointer; width: 80%; max-width: 280px; margin-top: 10px; font-size: 18px;}
     
-    .modal-box { background: rgba(18, 22, 34, 0.95); border: 1px solid var(--neon-red); border-radius: 20px; padding: 20px; width: 100%; max-width: 360px; text-align: center; }
+    .modal-box { background: rgba(18, 22, 34, 0.95); border: 1px solid var(--neon-red); border-radius: 20px; padding: 20px; width: 100%; max-width: 360px; text-align: center; position: relative; z-index: 25;}
     .go-title { color: var(--neon-red); font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; }
     .provoke-text { font-size: 0.85rem; color: var(--neon-gold); background: rgba(255, 204, 0, 0.1); padding: 8px; border-radius: 8px; margin-bottom: 15px; }
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
@@ -102,14 +146,28 @@
     @keyframes shakeAnim { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
     #flash-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--neon-red); opacity: 0; pointer-events: none; z-index: 15; }
     
-    #leaderboard-container { width: 90%; max-width: 350px; max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); border-radius: 15px; margin-top: 15px; padding: 10px; border: 1px solid #333;}
-    .lb-title { color: var(--neon-cyan); font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; text-align: center; }
+    #golden-throne { width: 90%; max-width: 350px; text-align: center; padding: 12px; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--neon-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); cursor: pointer; font-weight: bold;}
+    
+    #leaderboard-container { width: 95%; max-width: 380px; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.6); border-radius: 15px; margin-top: 10px; padding: 10px; border: 1px solid #333;}
+    .lb-title { color: var(--neon-cyan); font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; text-align: center; }
+    #leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
+    .leaderboard-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; border-radius: 10px; background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 14px; }
+    .leaderboard-item.rank-1 { background: linear-gradient(135deg, #ffe100 0%, #d4af37 100%); color: #000; font-weight: 900; border: 2px solid #fff; box-shadow: 0 0 10px rgba(255, 225, 0, 0.5); }
+    .leaderboard-item.rank-2 { background: linear-gradient(135deg, #e0e0e0 0%, #9e9e9e 100%); color: #000; font-weight: 900; box-shadow: 0 0 8px rgba(220, 220, 220, 0.4); }
+    .leaderboard-item.rank-3 { background: linear-gradient(135deg, #cd7f32 0%, #8c531b 100%); color: #fff; font-weight: 900; box-shadow: 0 0 8px rgba(205, 127, 50, 0.4); }
+    .player-info { display: flex; align-items: center; gap: 10px; }
+    .rank-badge { font-size: 1.2rem; min-width: 25px; font-weight: bold;}
+    .player-score { font-family: monospace; font-weight: bold; font-size: 16px;}
+
+    .best-score-text { font-size: 0.9rem; color: var(--neon-gold); margin-top: 5px; font-weight: bold;}
   </style>
 </head>
 <body>
 
   <div id="game-container">
     <div id="flash-overlay"></div>
+    <div id="combo-display">COMBO x2!</div>
+    <div id="golden-alert">👑 +10 نقاط!</div>
 
     <div id="hud">
       <div style="display: flex; gap: 8px;">
@@ -124,20 +182,27 @@
     <!-- شاشة البداية -->
     <div id="start-screen" class="overlay-screen">
       <div class="title">إقليم الجماجم</div>
-      <div class="subtitle" style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center; line-height:1.4;">
+      <div class="subtitle" style="font-size:0.85rem; color:#aaa; margin-bottom:10px; text-align:center; line-height:1.4;">
         انقر على الرموز الآمنة بسرعة!<br>
         <strong style="color: var(--neon-red);">لمس الجمجمة = خسارة فورية!</strong><br>
         احذر: هناك جماجم متنكرة... وطُعم خادع!
       </div>
       
-      <!-- إدخال اسم اللاعب (Jamam ID) -->
+      <div class="best-score-text">🏆 أفضل نتيجة: <span id="start-best-score">0</span></div>
+      
+      <!-- العرش الذهبي - تم وضع رقمك هنا -->
+      <div id="golden-throne" onclick="window.open('https://wa.me/966592859590?text=' + encodeURIComponent('أريد حجز العرش الذهبي في إقليم الجماجم 👑'), '_blank')">
+        <span id="throne-holder">جاري تحميل العرش...</span>
+        <br><span style="font-size:10px; opacity:0.8;">(اضغط للحجز بـ 5$)</span>
+      </div>
+
       <input type="text" id="player-name" class="input-name" placeholder="اكتب اسمك (Jamam ID)" maxlength="12" autocomplete="off">
       
       <button class="btn-main" onclick="startGame()">ابدأ التحدي 💀</button>
       
-      <!-- لوحة الصدارة الحقيقية -->
+      <!-- لوحة الصدارة -->
       <div id="leaderboard-container">
-        <div class="lb-title">🏆 أبطال الإقليم (أفضل 10)</div>
+        <div class="lb-title">👑 المتصدرون - أفضل 10</div>
         <div id="leaderboard-list"></div>
       </div>
     </div>
@@ -156,13 +221,12 @@
 
         <button class="btn-retry" onclick="startGame()">محاولة جديدة ⚡</button>
         <button class="btn-secondary" onclick="shareChallenge()">نسخ رابط التحدي 🔗</button>
-        <div style="font-size:0.75rem; color:#8a99ad; margin-top:10px;">انقر في أي مكان بالشاشة لإعادة اللعب فوراً</div>
+        <div style="font-size:0.75rem; color:#8a99ad; margin-top:10px;">انقر خارج المربع لإعادة اللعب فوراً</div>
       </div>
     </div>
   </div>
 
   <script>
-    // --- إعدادات الصوت والمتغيرات الأساسية ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
     function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); }
@@ -196,6 +260,9 @@
     
     let score = 0, bestScore = Number(localStorage.getItem('bestScore') || 0), level = 1, combo = 1, lastTapTime = 0, isNewRecord = false, gameActive = false, timeScale = 1.0, startTime = 0, timerInterval = null, items = [], ripples = [], spawnRate = 900, lastSpawn = 0, stars = [], spawnedCount = 0;
     let currentPlayerName = "لاعب مجهول";
+    let comboTimeout; 
+
+    document.getElementById('start-best-score').innerText = bestScore;
 
     function resizeCanvas() { canvas.width = container.clientWidth; canvas.height = container.clientHeight; initStars(); }
     window.addEventListener('resize', resizeCanvas); resizeCanvas();
@@ -232,18 +299,17 @@
         }
       }
       draw() {
-        ctx.save(); ctx.font = `${this.size}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.save(); ctx.font = `${this.size}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         if (this.isSkull) {
-          if (this.isGolden) { ctx.shadowColor = '#ffcc00'; ctx.shadowBlur = 20; ctx.fillText('👑', this.x, this.y); } 
-          else { ctx.shadowColor = '#ff0055'; ctx.shadowBlur = this.warningFlash > 0 ? 30 : 15; if(this.warningFlash > 0 && !this.morphed) ctx.fillStyle = `rgba(255, 0, 85, ${0.5 + Math.sin(Date.now()*0.05)*0.5})`; ctx.fillText('💀', this.x, this.y); }
-        } else { ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 10; ctx.fillText(this.symbol, this.x, this.y); }
+          if (this.isGolden) { ctx.shadowColor = '#ffcc00'; ctx.shadowBlur = 15; ctx.fillText('👑', this.x, this.y); } 
+          else { ctx.shadowColor = '#ff0055'; ctx.shadowBlur = this.warningFlash > 0 ? 20 : 8; if(this.warningFlash > 0 && !this.morphed) ctx.fillStyle = `rgba(255, 0, 85, ${0.5 + Math.sin(Date.now()*0.05)*0.5})`; ctx.fillText('💀', this.x, this.y); }
+        } else { ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 8; ctx.fillText(this.symbol, this.x, this.y); }
         ctx.restore();
       }
     }
 
     function startGame() {
       initAudio();
-      // جلب الاسم من الحقل
       const nameInput = document.getElementById('player-name').value.trim();
       currentPlayerName = nameInput !== "" ? nameInput : "لاعب " + Math.floor(Math.random()*1000);
       
@@ -271,7 +337,6 @@
       document.getElementById('provoke-msg').innerText = msg;
       document.getElementById('go-rank').innerText = `Top ${Math.max(1, Math.min(99, 100 - score * 2))}%`;
       
-      // حفظ النتيجة في Firebase (إذا كانت النقاط أكبر من 0)
       if (window.JamamAPI && score > 0) {
         window.JamamAPI.saveScoreToDB(currentPlayerName, score);
       }
@@ -304,9 +369,29 @@
             document.getElementById('score-display').innerText = score;
             if (bestScore > 0 && (bestScore - score) <= 3 && score < bestScore) { document.getElementById('score-display').classList.add('near-miss'); playSound(300, 'sine', 0.05, 1.2); } else { document.getElementById('score-display').classList.remove('near-miss'); }
             level = Math.floor(score / 20) + 1; document.getElementById('level-display').innerText = level;
-            if (combo === 5) { timeScale = 0.5; const cd = document.getElementById('combo-display'); cd.innerText = 'SLOW-MO! 🐢'; cd.style.opacity = 1; setTimeout(() => { timeScale = 1.0; }, 1500); } 
-            else if (combo > 1) { const cd = document.getElementById('combo-display'); cd.innerText = `COMBO x${combo}!`; cd.style.opacity = 1; setTimeout(() => { cd.style.opacity = 0; }, 500); }
-            if (score > bestScore) { bestScore = score; localStorage.setItem('bestScore', bestScore); document.getElementById('start-best-score').innerText = bestScore; }
+            
+            const cd = document.getElementById('combo-display');
+            clearTimeout(comboTimeout); 
+            
+            if (combo === 5) { 
+              timeScale = 0.5; 
+              cd.innerText = 'SLOW-MO! 🐢'; 
+              cd.style.opacity = 1; 
+              setTimeout(() => { timeScale = 1.0; }, 1500); 
+            } 
+            else if (combo > 1) { 
+              cd.innerText = `COMBO x${combo}!`; 
+              cd.style.opacity = 1; 
+            }
+            
+            comboTimeout = setTimeout(() => { cd.style.opacity = 0; }, 800);
+
+            if (score > bestScore) { 
+              bestScore = score; 
+              localStorage.setItem('bestScore', bestScore); 
+              const sbs = document.getElementById('start-best-score');
+              if(sbs) sbs.innerText = bestScore; 
+            }
             playSound(400, 'sine', 0.08, 1 + (combo * 0.1)); items.splice(i, 1);
           }
           break;
@@ -314,13 +399,24 @@
       }
     });
 
-    document.getElementById('gameover-screen').addEventListener('pointerdown', (e) => { if (e.target.tagName !== 'BUTTON') { startGame(); } });
+    document.getElementById('gameover-screen').addEventListener('pointerdown', (e) => { 
+      if (e.target.id === 'gameover-screen') { 
+        startGame(); 
+      } 
+    });
+    
     window.addEventListener('keydown', (e) => { if (e.code === 'Space' && !gameActive && !document.getElementById('gameover-screen').classList.contains('hidden')) { e.preventDefault(); startGame(); } });
 
     function shareChallenge() { const text = `تحديت إقليم الجماجم وحققت ${score} نقطة! هل تستطيع تجاوز هذا الرقم؟ 💀\nالعب الآن: ${window.location.href}`; if (navigator.clipboard) { navigator.clipboard.writeText(text); alert('تم نسخ النص!'); } }
     
-    // جلب لوحة الصدارة عند فتح الصفحة
-    window.addEventListener('load', () => { setTimeout(() => { if(window.JamamAPI) window.JamamAPI.fetchLeaderboard(); }, 1000); });
+    window.addEventListener('load', () => { 
+      setTimeout(() => { 
+        if(window.JamamAPI) {
+          window.JamamAPI.fetchLeaderboard(); 
+          window.JamamAPI.fetchThrone();
+        }
+      }, 1000); 
+    });
   </script>
 </body>
 </html>
