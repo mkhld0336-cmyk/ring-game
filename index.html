@@ -10,7 +10,6 @@
             --neon-cyan: #00f3ff; --neon-red: #ff0055; --neon-gold: #ffcc00; --text-main: #f0f4f8;
             --font-main: 'Segoe UI', Tahoma, sans-serif;
         }
-        /* الثيمات */
         [data-theme="cyberpunk"] { --bg-dark: #120019; --panel-bg: rgba(35, 10, 45, 0.85); --neon-cyan: #ff007f; --neon-red: #00f3ff; --neon-gold: #ffe600; }
         [data-theme="toxic"] { --bg-dark: #051008; --panel-bg: rgba(10, 30, 15, 0.85); --neon-cyan: #00ff66; --neon-red: #ff3300; --neon-gold: #ccff00; }
         [data-theme="inferno"] { --bg-dark: #0e0517; --panel-bg: rgba(26, 12, 42, 0.85); --neon-cyan: #b900ff; --neon-red: #ff0055; --neon-gold: #ffaa00; }
@@ -20,7 +19,6 @@
         #game-container { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         canvas { display: block; width: 100%; height: 100%; z-index: 1; }
 
-        /* الواجهات */
         .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: rgba(8, 10, 16, 0.92); backdrop-filter: blur(8px); transition: opacity 0.3s ease, visibility 0.3s ease; }
         .hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .card { background: var(--panel-bg); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5); border-radius: 20px; padding: 24px; width: 100%; max-width: 420px; text-align: center; }
@@ -32,19 +30,15 @@
         .btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--neon-cyan), #0077ff); color: #000; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); transition: all 0.2s ease; margin-top: 10px; }
         .btn-secondary { width: 100%; padding: 10px; border: 1px solid var(--neon-cyan); border-radius: 12px; background: rgba(0, 0, 0, 0.3); color: var(--neon-cyan); font-size: 0.9rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
 
-        /* العرش الذهبي */
         #golden-throne { width: 100%; text-align: center; padding: 12px; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--neon-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); cursor: pointer; font-weight: bold; background: rgba(255, 215, 0, 0.1); color: var(--neon-gold);}
 
-        /* لوحة الصدارة */
         #leaderboard-container { width: 100%; max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 12px; margin-top: 15px; padding: 10px; }
         .lb-item { display: flex; justify-content: space-between; padding: 8px 12px; margin-bottom: 6px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; font-size: 0.85rem; }
         .lb-item.top3 { border: 1px solid var(--neon-gold); background: rgba(255, 204, 0, 0.08); }
 
-        /* الهيدر */
         #hud { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; z-index: 5; pointer-events: none; gap: 5px;}
         .hud-card { background: rgba(8, 10, 16, 0.7); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; text-align:center; flex: 1;}
 
-        /* الإنجازات والتقدم */
         .achievement-row { display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.03); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 8px; text-align: right; }
         .achievement-row.unlocked { border-color: var(--neon-gold); background: rgba(255, 215, 0, 0.07); }
         #achievement-toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 20px; font-weight: bold; z-index: 100; opacity: 0; transition: all 0.3s ease; pointer-events: none; font-size: 0.85rem; text-align: center; }
@@ -65,14 +59,13 @@
 
         <div id="achievement-toast">🏆 إنجاز جديد!</div>
 
-        <!-- شاشة البداية -->
         <div id="start-screen" class="overlay-screen">
             <div class="card">
                 <div class="title">إقليم الجماجم</div>
                 <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 15px;">انقر على الرموز الآمنة... وتجنب الجماجم!</div>
                 
                 <div id="golden-throne" onclick="window.open('https://wa.me/966592859590?text=' + encodeURIComponent('أريد حجز العرش الذهبي في إقليم الجماجم 👑'), '_blank')">
-                    <span id="throne-player">جاري تحميل العرش...</span>
+                    <span id="throne-player">👑 العرش فارغ الآن.. كن أول ملك!</span>
                     <br><span style="font-size:10px; opacity:0.8;">(اضغط للحجز بـ 5$)</span>
                 </div>
 
@@ -92,7 +85,6 @@
             </div>
         </div>
 
-        <!-- شاشة النهاية -->
         <div id="gameover-screen" class="overlay-screen hidden">
             <div class="card">
                 <div class="title" style="color: var(--neon-red);">سقوط مباشر! 💀</div>
@@ -103,7 +95,6 @@
             </div>
         </div>
 
-        <!-- شاشة الإنجازات -->
         <div id="achievements-modal" class="overlay-screen hidden" style="z-index: 30;">
             <div class="card">
                 <div class="title" style="font-size: 1.5rem; color: var(--neon-cyan);">سجل الإنجازات 🏆</div>
@@ -112,7 +103,6 @@
             </div>
         </div>
 
-        <!-- شاشة الإعدادات -->
         <div id="settings-modal" class="overlay-screen hidden" style="z-index: 30;">
             <div class="card">
                 <div class="title" style="font-size: 1.5rem; color: var(--neon-cyan);">الإعدادات ⚙️</div>
@@ -138,7 +128,6 @@
     <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        // تمت إضافة Auth
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, getDocs, query, orderBy, limit, serverTimestamp, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -156,21 +145,13 @@
         const auth = getAuth(app);
         let currentUserUID = null;
 
-        // تسجيل الدخول المجهول
         async function loginPlayer() {
-            try {
-                await signInAnonymously(auth);
-            } catch (err) {
-                console.error("Auth Error:", err);
-            }
+            try { await signInAnonymously(auth); } catch (err) { console.error("Auth Error:", err); }
         }
         loginPlayer();
 
         onAuthStateChanged(auth, user => {
-            if (user) {
-                currentUserUID = user.uid;
-                console.log("Logged in with UID:", user.uid);
-            }
+            if (user) { currentUserUID = user.uid; console.log("Logged in:", user.uid); }
         });
 
         function sanitize(str) { return str ? str.replace(/[<>]/g, '').substring(0, 15).trim() || "مجهول" : "مجهول"; }
@@ -180,35 +161,39 @@
                 const docRef = doc(db, "golden_throne", "current");
                 const docSnap = await getDoc(docRef);
                 const throneDisplay = document.getElementById('throne-player');
+                
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const now = Date.now();
                     const expireTime = typeof data.expiresAt === 'number' ? data.expiresAt : (data.expiresAt ? data.expiresAt.toMillis() : 0);
-                    if (data.name !== "فارغ" && expireTime > now) {
+                    
+                    // إذا كان هناك ملك ووقته لم ينته
+                    if (data.name && data.name !== "فارغ" && expireTime > now) {
                         const hoursLeft = Math.floor((expireTime - now) / (1000 * 60 * 60));
                         throneDisplay.innerHTML = `👑 الملك: ${sanitize(data.name)} (متبقي ${hoursLeft}س)`;
                     } else {
                         throneDisplay.innerHTML = `👑 العرش فارغ الآن.. كن أول ملك!`;
                     }
+                } else {
+                    // إذا لم تكن الوثيقة موجودة أصلاً
+                    throneDisplay.innerHTML = `👑 العرش فارغ الآن.. كن أول ملك!`;
                 }
-            } catch (e) {}
+            } catch (e) { 
+                document.getElementById('throne-player').innerHTML = `👑 العرش فارغ الآن.. كن أول ملك!`;
+            }
         }
 
         async function saveScoreToDB(playerName, finalScore, sessionDuration) {
-            if (!currentUserUID) return; // لا تحفظ إذا لم يتم تسجيل الدخول
+            if (!currentUserUID) return;
 
-            // 1. التحقق من الغش بناءً على الوقت (Anti-Cheat)
-            // الحد الأقصى المعقول هو 150 نقطة لكل ثانية (لأن التاج يعطي 100)
             const maxExpectedScore = sessionDuration * 150 + 50; 
             if (finalScore > maxExpectedScore) {
-                console.warn("تم اكتشاف محاولة غش! الوقت لا يكفي لهذه النقاط.");
-                alert("⚠️ خطأ: النتيجة غير منطقية مقارنة بوقت اللعب. تم رفض الحفظ.");
+                console.warn("Cheat detected.");
                 return;
             }
 
             try {
                 const sanitizedName = sanitize(playerName);
-                // استخدام UID كمعرف أساسي للوثيقة (يمنع شخص من انتحال اسم شخص آخر)
                 const docRef = doc(db, "leaderboard", currentUserUID);
                 const docSnap = await getDoc(docRef);
                 
@@ -247,7 +232,6 @@
 
     <!-- Game Logic -->
     <script>
-        // الإعدادات
         let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
         let vibrateEnabled = localStorage.getItem('vibrateEnabled') !== 'false';
         let currentTheme = localStorage.getItem('gameTheme') || 'default';
@@ -336,6 +320,9 @@
                     localStorage.setItem('unlockedAchievements', JSON.stringify(unlockedAchievements));
                     showAchievementToast(ach.title);
                     updateThemeSelectOptions();
+                    if (document.getElementById('achievements-modal').classList.contains('hidden') === false) {
+                        openAchievementsModal(); // تحديث القائمة إذا كانت مفتوحة
+                    }
                 }
             });
         }
@@ -349,6 +336,9 @@
         }
 
         function openAchievementsModal() {
+            // إعادة قراءة الإنجازات من الذاكرة لضمان التحديث
+            unlockedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+            
             const listEl = document.getElementById('achievements-list');
             let html = '';
             achievementsData.forEach(ach => {
@@ -367,7 +357,6 @@
         function toggleSoundSetting() { soundEnabled = document.getElementById('sound-toggle').checked; localStorage.setItem('soundEnabled', soundEnabled); }
         function toggleVibrateSetting() { vibrateEnabled = document.getElementById('vibrate-toggle').checked; localStorage.setItem('vibrateEnabled', vibrateEnabled); }
 
-        // محرك اللعبة
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
@@ -460,7 +449,16 @@
         }
 
         function startGame() {
-            initAudio(); const nameInput = document.getElementById('player-name').value.trim(); if(nameInput) localStorage.setItem('playerName', nameInput);
+            initAudio(); 
+            const nameInput = document.getElementById('player-name').value.trim(); 
+            
+            // إصلاح: منع اللعب بدون اسم
+            if (!nameInput) {
+                alert("⚠️ الرجاء إدخال اسمك (Jamam ID) أولاً لتتمكن من اللعب!");
+                return;
+            }
+            
+            localStorage.setItem('playerName', nameInput);
             
             score = 0; coins = Number(localStorage.getItem('coins') || 0); combo = 1; hasGoldenCollected = false; currentStage = 1;
             items = []; particles = []; gameActive = true; isPaused = false; spawnRate = 900; lastSpawn = performance.now(); spawnedCount = 0; lastTapTime = 0;
@@ -482,19 +480,15 @@
             const w = container.clientWidth; const h = container.clientHeight;
             ctx.clearRect(0, 0, w, h);
 
-            // النجوم
             ctx.fillStyle = '#fff'; stars.forEach(s => { s.y += s.speed * 60 * dt; if(s.y > h) s.y = 0; ctx.globalAlpha = s.alpha; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); }); ctx.globalAlpha = 1;
 
-            // الجسيمات
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i]; p.update(dt); p.draw();
                 if (p.alpha <= 0) particles.splice(i, 1);
             }
 
-            // توليد العناصر
             if (timestamp - lastSpawn > spawnRate) { items.push(new GameItem()); lastSpawn = timestamp; if (spawnRate > 400) spawnRate -= 10; }
             
-            // رسم العناصر
             for (let i = items.length - 1; i >= 0; i--) {
                 const item = items[i]; item.update(dt); item.draw();
                 if (item.y > h + 50) { 
@@ -555,20 +549,30 @@
             document.getElementById('gameover-screen').classList.remove('hidden');
             
             const name = localStorage.getItem('playerName') || 'محارب مجهول';
-            const sessionDuration = (Date.now() - startTime) / 1000; // حساب مدة اللعب
+            const sessionDuration = (Date.now() - startTime) / 1000;
             
             if (window.JamamAPI && score > 0) window.JamamAPI.saveScoreToDB(name, score, sessionDuration);
         }
 
-        function showStartScreen() { document.getElementById('gameover-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden'); if(window.JamamAPI) window.JamamAPI.loadLeaderboard(); }
+        function showStartScreen() { 
+            document.getElementById('gameover-screen').classList.add('hidden'); 
+            document.getElementById('start-screen').classList.remove('hidden'); 
+            if(window.JamamAPI) {
+                window.JamamAPI.loadLeaderboard(); 
+                window.JamamAPI.fetchThrone();
+            }
+        }
 
         window.addEventListener('load', () => {
             refreshThemeColors();
             applyTheme(currentTheme);
-            const savedName = localStorage.getItem('playerName'); if(savedName) document.getElementById('player-name').value = savedName;
+            const savedName = localStorage.getItem('playerName'); 
+            if(savedName) document.getElementById('player-name').value = savedName;
+            
             document.getElementById('sound-toggle').checked = soundEnabled;
             document.getElementById('vibrate-toggle').checked = vibrateEnabled;
             updateThemeSelectOptions();
+            
             setTimeout(() => { if(window.JamamAPI) { window.JamamAPI.loadLeaderboard(); window.JamamAPI.fetchThrone(); } }, 1000);
         });
 
