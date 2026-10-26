@@ -3,636 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#080b16">
-<meta name="description" content="JAMAM GAMES — تجربة ألعاب أركيد بطابع ملكي، واجهة سريعة ومتوافقة مع الجوال وتدعم 14 لغة.">
+<meta name="theme-color" content="#070817">
 <title>JAMAM GAMES | منصة الألعاب</title>
+<link rel="manifest" href="./manifest.json">
 <style>
-:root{--bg-dark:#070914;--panel-bg:#10172a;--neon-cyan:#57e8ff;--neon-pink:#ff4f9a;--neon-gold:#f7c969;--text-main:#f5f7ff;--font-main:system-ui,'Segoe UI',Tahoma,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg-dark);color:var(--text-main);font-family:var(--font-main);min-height:100%;overflow-x:hidden}
-body{display:flex;flex-direction:column;align-items:center;background-image:radial-gradient(ellipse at 50% -20%,rgba(87,232,255,.13),transparent 55%),radial-gradient(ellipse at 100% 55%,rgba(151,85,255,.08),transparent 42%)}
-.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(87,232,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(87,232,255,.035) 1px,transparent 1px);background-size:36px 36px;z-index:0;pointer-events:none;mask-image:linear-gradient(to bottom,#000,transparent 92%)}
-.bg-glow{position:fixed;top:-24rem;left:50%;transform:translateX(-50%);width:60rem;height:60rem;border-radius:50%;background:radial-gradient(circle,rgba(87,232,255,.12),rgba(127,91,255,.05) 35%,transparent 68%);z-index:0;pointer-events:none}
-header,main,footer{position:relative;z-index:1}
-header{width:100%;max-width:1040px;padding:26px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px}
-.logo{font-size:1.45rem;font-weight:950;color:#fff;text-shadow:0 0 24px rgba(87,232,255,.25);letter-spacing:1.5px}
-.logo span{color:var(--neon-cyan)}
-.header-right{display:flex;align-items:center;gap:12px}
-.header-chip{display:flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid rgba(247,201,105,.22);border-radius:999px;background:rgba(247,201,105,.06);font-size:.78rem;font-weight:800;color:#f7d994}
-.header-lang-btn{background:rgba(16,23,42,.85);border:1px solid rgba(87,232,255,.25);color:var(--neon-cyan);width:44px;height:44px;border-radius:15px;font-size:1.15rem;cursor:pointer;display:grid;place-items:center;transition:.2s}
-.header-lang-btn:hover,.header-lang-btn:active{background:rgba(87,232,255,.12);box-shadow:0 0 22px rgba(87,232,255,.12);transform:translateY(-2px)}
-main{width:100%;max-width:1040px;padding:8px 24px 54px;flex:1}
-.section-title{font-size:1rem;color:#b7c4dc;margin-bottom:16px;font-weight:850;border-inline-start:3px solid var(--neon-gold);padding-inline-start:12px;margin-top:38px;display:flex;align-items:center;gap:9px;letter-spacing:.1px}
-.featured-card{width:100%;border-radius:30px;background:linear-gradient(125deg,rgba(17,27,49,.97),rgba(12,16,34,.96) 56%,rgba(35,22,55,.92));border:1px solid rgba(247,201,105,.28);box-shadow:0 26px 70px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.06);padding:clamp(24px,5vw,48px);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;isolation:isolate}
-.featured-card:before{content:'♛';position:absolute;z-index:-1;inset-inline-end:2%;top:50%;transform:translateY(-55%);font-size:clamp(9rem,24vw,18rem);line-height:1;color:rgba(247,201,105,.045);text-shadow:0 0 70px rgba(247,201,105,.06);pointer-events:none}
-.featured-card:after{content:'';position:absolute;z-index:-1;inset-inline-end:-110px;top:-130px;width:300px;height:300px;border-radius:50%;background:rgba(87,232,255,.12);filter:blur(75px)}
-.badge{background:rgba(247,201,105,.1);color:#f7d994;padding:7px 13px;border-radius:999px;font-size:.78rem;font-weight:850;margin-bottom:19px;border:1px solid rgba(247,201,105,.25);letter-spacing:.2px}
-.featured-card h2{font-size:clamp(2.2rem,6vw,3.7rem);line-height:1.12;color:#fff;margin-bottom:14px;text-shadow:0 0 25px rgba(255,255,255,.1);letter-spacing:-1px}
-.featured-card p{color:#b4c1d8;font-size:1rem;margin-bottom:26px;line-height:1.9;max-width:540px}
-.btn-play{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(110deg,#ffe3a0,#f7c969 48%,#e9ad45);color:#171322;font-weight:950;font-size:1rem;padding:15px 27px;border-radius:15px;text-decoration:none;box-shadow:0 12px 30px rgba(247,201,105,.15),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .2s,filter .2s;min-width:170px}
-.btn-play:hover{transform:translateY(-3px);filter:brightness(1.06)}.btn-play:active{transform:scale(.97)}
-.stats-bar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:18px;width:100%}
-.stat-item{background:linear-gradient(145deg,rgba(16,23,42,.88),rgba(10,14,28,.85));border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:18px 12px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
-.stat-item span{display:block;font-size:.78rem;color:#8fa4c5;margin-bottom:7px}.stat-item b{font-size:1.15rem;color:var(--neon-cyan);display:inline-block}
-.games-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:15px}
-.game-card{background:linear-gradient(145deg,rgba(16,23,42,.9),rgba(10,14,28,.9));border:1px solid rgba(255,255,255,.075);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden;min-height:185px;transition:transform .2s,border-color .2s}
-.game-card:hover{transform:translateY(-3px);border-color:rgba(87,232,255,.2)}
-.game-card.disabled{opacity:.78}.game-card h3{color:#fff;font-size:1.1rem;margin-bottom:8px}.game-card span{color:var(--neon-pink);font-size:.78rem;font-weight:850;letter-spacing:.3px}.game-card .icon{font-size:2.5rem;margin-bottom:13px;filter:drop-shadow(0 0 14px rgba(87,232,255,.15))}
-footer{width:100%;max-width:1040px;padding:23px 24px 30px;text-align:center;color:#7283a2;font-size:.83rem;border-top:1px solid rgba(255,255,255,.06)}
-footer a{color:var(--neon-cyan);text-decoration:none}
-.fade-in{animation:fadeIn .65s ease-out both}@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.overlay{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;text-align:center;background:rgba(5,7,17,.88);backdrop-filter:blur(18px);transition:opacity .2s}
-.overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.overlay-title{font-size:1.7rem;font-weight:950;color:var(--neon-cyan);text-shadow:0 0 20px rgba(87,232,255,.25);margin-bottom:7px}
-.overlay-desc{color:#aab7d2;font-size:.9rem;margin-bottom:22px}
-.lang-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;width:100%;max-width:390px;margin-bottom:20px;max-height:56vh;overflow:auto;padding:2px}
-.lang-option{padding:12px 10px;border-radius:13px;border:1px solid rgba(87,232,255,.15);background:#10172a;color:var(--text-main);font-size:.9rem;font-weight:750;cursor:pointer;transition:all .15s;font-family:inherit;text-align:center}
-.lang-option:hover,.lang-option:active{border-color:rgba(87,232,255,.6);background:#14213a}.lang-option.active{border-color:var(--neon-cyan);background:rgba(87,232,255,.12);color:var(--neon-cyan);box-shadow:0 0 15px rgba(87,232,255,.1)}
-.overlay-close{background:linear-gradient(110deg,#ffe3a0,#f7c969);color:#171322;border:0;font-weight:900;font-size:.95rem;padding:12px 30px;border-radius:14px;cursor:pointer;box-shadow:0 8px 24px rgba(247,201,105,.12);min-width:180px}
-[dir="rtl"] .num{unicode-bidi:isolate;display:inline-block}
-button:focus-visible,a:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:4px}
-
-/* ---- Leaderboard ---- */
-.hub-leaderboard{width:100%;background:linear-gradient(145deg,rgba(16,23,42,.92),rgba(10,14,28,.92));border:1px solid rgba(247,201,105,.25);border-radius:22px;padding:22px 20px;box-shadow:0 12px 40px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.04)}
-.hub-leaderboard h3{color:var(--neon-gold);margin-bottom:15px;font-size:1rem;display:flex;align-items:center;gap:9px;font-weight:850;letter-spacing:.2px}
-.lb-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.94rem}
-.lb-row:last-child{border-bottom:none;padding-bottom:0}
-.lb-row .rank{color:var(--neon-gold);font-weight:900;flex-shrink:0;min-width:54px;text-align:start}
-.lb-row .name{flex:1;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-weight:700}
-.lb-row .score{color:var(--neon-cyan);font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0;font-family:'Courier New',monospace}
-.lb-empty{padding:20px 8px;text-align:center;color:#7283a2;font-size:.85rem;line-height:1.8}
-.lb-empty.lb-error{color:var(--neon-pink)}
-.lb-retry{background:transparent;border:1px solid currentColor;color:inherit;border-radius:8px;padding:5px 11px;font-size:.8rem;cursor:pointer;margin-inline-start:8px;font-family:inherit;font-weight:700}
-.lb-retry:hover{background:rgba(255,79,154,.1)}
-
-@media(max-width:560px){header{padding:20px 17px}.logo{font-size:1.16rem}.header-chip{font-size:.7rem;padding:8px 10px}main{padding:6px 17px 40px}.featured-card{border-radius:23px}.stats-bar{gap:8px}.stat-item{padding:14px 7px;border-radius:14px}.stat-item span{font-size:.7rem}.stat-item b{font-size:1rem}.games-grid{grid-template-columns:1fr}.game-card{min-height:155px}.section-title{margin-top:30px}.hub-leaderboard{padding:18px 16px;border-radius:18px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+:root{--bg:#070914;--card:#10172a;--cyan:#57e8ff;--gold:#f7c969;--text:#f5f7ff}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+header,main,footer{width:100%;max-width:1040px;padding:20px}
+header{display:flex;justify-content:space-between;align-items:center;padding-top:30px}
+.logo{font-size:1.5rem;font-weight:900}.logo span{color:var(--cyan)}
+.stats-bar{display:flex;gap:10px;margin-bottom:20px}
+.stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold}
+.featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px}
+.btn{background:var(--gold);color:#000;padding:12px 25px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px}
+.game-card{background:var(--card);padding:20px;border-radius:15px;text-align:center;text-decoration:none;color:#fff;border:1px solid #ffffff10}
+.game-card:hover{border-color:var(--cyan)}
+.icon{font-size:2rem;margin-bottom:10px}
+footer{text-align:center;color:#666;margin-top:auto;padding:30px}
 </style>
 </head>
 <body>
-
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
-
 <header>
   <div class="logo" dir="ltr">JAMAM <span>GAMES</span></div>
-  <div class="header-right">
-    <div class="header-chip"><span aria-hidden="true">♛</span><span data-i18n="royalEdition">النسخة الملكية</span></div>
-    <button class="header-lang-btn" id="langBtn" data-i18n-aria="changeLang" aria-label="Change Language" title="Change Language">🌐</button>
-  </div>
 </header>
 
-<main class="fade-in">
-  <!-- Featured game -->
-  <div class="section-title"><span aria-hidden="true">🔥</span><span data-i18n="officialGame">اللعبة الرسمية</span></div>
-  <div class="featured-card">
-    <div class="badge" data-i18n="badgeVersion">الإصدار 2.0</div>
-    <h2 data-i18n="neonTitle">نبض النيون</h2>
-    <p data-i18n="neonDesc">اختبر سرعة ردّ فعلك. اجمع الكريستالات، تجنب الجماجم، وتحدَّ أصدقاءك. لعبة أركيد سريعة تدعم 14 لغة.</p>
-    <a href="games/neon-pulse.html" class="btn-play" data-i18n="playNow">العب الآن ⚡</a>
-  </div>
-
-  <!-- Platform highlights -->
+<main>
   <div class="stats-bar">
-    <div class="stat-item"><span data-i18n="languages">اللغات</span><b class="num" dir="ltr">14</b></div>
-    <div class="stat-item"><span data-i18n="mobileReady">مناسبة للجوال</span><b>✓</b></div>
-    <div class="stat-item"><span data-i18n="arcadeAction">أركيد سريع</span><b>⚡</b></div>
+    <div class="stat-box">المستوى: <span id="ui-level" style="color:var(--cyan)">1</span></div>
+    <div class="stat-box">العملات: <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
   </div>
 
-  <!-- Global leaderboard -->
-  <div class="section-title"><span aria-hidden="true">🏆</span><span data-i18n="platformChampions">أبطال المنصة (أفضل 3)</span></div>
-  <div class="hub-leaderboard">
-    <h3>👑 <span data-i18n="hallOfFame">قاعة المشاهير</span></h3>
-    <div id="hub-lb-list">
-      <div class="lb-empty" data-i18n="lbLoading">جاري تحميل الأبطال...</div>
-    </div>
+  <div class="featured">
+    <h2>نبض النيون</h2>
+    <p>اختبر سرعة ردّ فعلك. اجمع الكريستالات وتحدَّ أصدقاءك.</p>
+    <a href="games/neon-pulse.html" class="btn">العب الآن ⚡</a>
   </div>
 
-  <!-- Coming soon -->
-  <div class="section-title"><span aria-hidden="true">🚀</span><span data-i18n="comingSoon">قريباً في المنصة</span></div>
   <div class="games-grid">
-    <div class="game-card disabled">
-      <div class="icon">💀</div>
-      <h3 data-i18n="skullRealm">إقليم الجماجم</h3>
-      <span data-i18n="soon">قريباً</span>
-    </div>
-    <div class="game-card disabled">
-      <div class="icon">📦</div>
-      <h3 data-i18n="ascentMode">وضع الصعود</h3>
-      <span data-i18n="soon">قريباً</span>
-    </div>
+    <a href="games/neon-flux.html" class="game-card"><div class="icon">🧪</div>نيون فلكس</a>
+    <a href="games/beat-slasher.html" class="game-card"><div class="icon">⚔️</div>بيت سلاشر</a>
+    <a href="games/ghost-of-me.html" class="game-card"><div class="icon">👻</div>شبح الماضي</a>
+    <a href="games/vanishing-floor.html" class="game-card"><div class="icon">🧱</div>الأرضية المتلاشية</a>
+    <a href="games/echo-sonar.html" class="game-card"><div class="icon">🦇</div>صدى الظلام</a>
   </div>
 </main>
 
-<footer>
-  <span data-i18n="footerText">صُنع بشغف بواسطة JAMAM GAMES © 2026</span>
-</footer>
+<footer>JAMAM GAMES © 2026</footer>
 
-<!-- Language picker -->
-<section id="langOverlay" class="overlay hidden" role="dialog" aria-modal="true">
-  <div class="overlay-title" data-i18n="langTitle">اختر اللغة</div>
-  <p class="overlay-desc" data-i18n="langDesc">اختر لغتك المفضلة</p>
-  <div class="lang-grid" id="langGrid"></div>
-  <button class="overlay-close" id="langClose" data-i18n="close">إغلاق</button>
-</section>
-
-<!-- ============================================================
-     FIREBASE — Dynamic import + XSS-safe leaderboard
-     ============================================================ -->
-<script type="module">
-'use strict';
-
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBW6mOTbpA-D7VRHsn--zvKSEVHMyj3IJo",
-  authDomain: "jamam-id.firebaseapp.com",
-  projectId: "jamam-id",
-  storageBucket: "jamam-id.firebasestorage.app",
-  messagingSenderId: "916247759960",
-  appId: "1:916247759960:web:c6100d1e67d51b945dce2d"
-};
-
-const lbState = { data: null, error: false, loading: true };
-let db = null;
-
-// CRITICAL: escape untrusted strings before inserting into DOM
-function escapeHTML(s){
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
-
-// Safe wrappers — fall back if main script not ready
-function t(key){
-  return (typeof window.JAMAM_t === 'function') ? window.JAMAM_t(key) : key;
-}
-function fmtNum(n){
-  return (typeof window.JAMAM_fmtNum === 'function') ? window.JAMAM_fmtNum(n) : String(n);
-}
-
-async function initFirebase(){
-  try {
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
-    const { getFirestore }   = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const app = initializeApp(FIREBASE_CONFIG);
-    db = getFirestore(app);
-    return true;
-  } catch(e){
-    console.error('[Firebase] init failed:', e);
-    return false;
-  }
-}
-
-async function fetchLeaderboard(){
-  lbState.loading = true;
-  lbState.error = false;
-  renderLeaderboard();
-
-  if (!db) {
-    lbState.error = true;
-    lbState.loading = false;
-    renderLeaderboard();
-    return;
-  }
-
-  try {
-    const { collection, getDocs, query, orderBy, limit } =
-      await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const q = query(collection(db, "leaderboard"), orderBy("score", "desc"), limit(3));
-    const snapshot = await getDocs(q);
-    lbState.data = snapshot.docs.map(d => {
-      const raw = d.data() || {};
-      return {
-        name: String(raw.name || '???').slice(0, 24),
-        score: Number(raw.score) || 0
-      };
-    });
-    lbState.error = false;
-  } catch(e){
-    console.error('[Leaderboard] fetch failed:', e);
-    lbState.error = true;
-    lbState.data = null;
-  } finally {
-    lbState.loading = false;
-    renderLeaderboard();
-  }
-}
-
-function renderLeaderboard(){
-  const listEl = document.getElementById('hub-lb-list');
-  if (!listEl) return;
-
-  if (lbState.loading) {
-    listEl.innerHTML = `<div class="lb-empty">${escapeHTML(t('lbLoading'))}</div>`;
-    return;
-  }
-
-  if (lbState.error) {
-    listEl.innerHTML = `<div class="lb-empty lb-error">${escapeHTML(t('lbError'))}<button class="lb-retry" id="lbRetryBtn" aria-label="Retry">↻</button></div>`;
-    const btn = document.getElementById('lbRetryBtn');
-    if (btn) btn.onclick = fetchLeaderboard;
-    return;
-  }
-
-  if (!lbState.data || lbState.data.length === 0) {
-    listEl.innerHTML = `<div class="lb-empty">${escapeHTML(t('lbEmpty'))}</div>`;
-    return;
-  }
-
-  const medals = ['🥇','🥈','🥉'];
-  listEl.innerHTML = lbState.data.map((row, i) => {
-    const safeName = escapeHTML(row.name);
-    return `<div class="lb-row">
-      <span class="rank">${medals[i] || ''} #${i+1}</span>
-      <span class="name" title="${safeName}">${safeName}</span>
-      <span class="score num" dir="ltr">${escapeHTML(fmtNum(row.score))}</span>
-    </div>`;
-  }).join('');
-}
-
-// Allow the main script to trigger a re-render on language change
-window.JAMAM_renderLB = renderLeaderboard;
-
-// Auto-refresh when user returns to the tab (e.g., after playing)
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && !lbState.loading) {
-    fetchLeaderboard();
-  }
-});
-
-// Boot
-(async () => {
-  const ok = await initFirebase();
-  if (ok) {
-    await fetchLeaderboard();
-  } else {
-    lbState.loading = false;
-    lbState.error = true;
-    renderLeaderboard();
-  }
-})();
-</script>
-
-<!-- ============================================================
-     MAIN — Language system with correct storage keys
-     ============================================================ -->
+<!-- JAMAM System -->
+<script src="./js/jamam-core.js"></script>
+<script src="./js/jamam-progress.js"></script>
+<script src="./js/jamam-achievements.js"></script>
 <script>
-(() => {
-'use strict';
-
-/* ============================================================
-   TRANSLATIONS — 14 Languages
-   ============================================================ */
-const translations = {
-en: {
-  pageTitle:"JAMAM GAMES | Game Platform",
-  royalEdition:"Royal Edition", languages:"Languages", mobileReady:"Mobile Ready", arcadeAction:"Fast Arcade",
-  officialGame:"Official Game", badgeVersion:"Version 2.0",
-  neonTitle:"Neon Pulse",
-  neonDesc:"Test your reflexes. Collect crystals, avoid the skulls, and challenge your friends. A fast arcade game supporting 14 languages.",
-  playNow:"Play Now ⚡",
-  platformChampions:"Platform Champions (Top 3)", hallOfFame:"Hall of Fame",
-  lbLoading:"Loading champions...", lbEmpty:"No results yet. Be the first champion!", lbError:"Could not load the leaderboard",
-  comingSoon:"Coming Soon to the Platform", skullRealm:"Skull Realm", ascentMode:"Ascent Mode", soon:"Coming Soon",
-  footerText:"Made with passion by JAMAM GAMES © 2026",
-  changeLang:"Change Language", langTitle:"Select Language", langDesc:"Choose your preferred language", close:"Close"
-},
-ar: {
-  pageTitle:"JAMAM GAMES | منصة الألعاب",
-  royalEdition:"النسخة الملكية", languages:"اللغات", mobileReady:"مناسبة للجوال", arcadeAction:"أركيد سريع",
-  officialGame:"اللعبة الرسمية", badgeVersion:"الإصدار 2.0",
-  neonTitle:"نبض النيون",
-  neonDesc:"اختبر سرعة ردّ فعلك. اجمع الكريستالات، تجنب الجماجم، وتحدَّ أصدقاءك. لعبة أركيد سريعة تدعم 14 لغة.",
-  playNow:"العب الآن ⚡",
-  platformChampions:"أبطال المنصة (أفضل 3)", hallOfFame:"قاعة المشاهير",
-  lbLoading:"جاري تحميل الأبطال...", lbEmpty:"لا توجد نتائج بعد. كن أول بطل!", lbError:"تعذر تحميل لوحة الشرف",
-  comingSoon:"قريباً في المنصة", skullRealm:"إقليم الجماجم", ascentMode:"وضع الصعود", soon:"قريباً",
-  footerText:"صُنع بشغف بواسطة JAMAM GAMES © 2026",
-  changeLang:"تغيير اللغة", langTitle:"اختر اللغة", langDesc:"اختر لغتك المفضلة", close:"إغلاق"
-},
-es: {
-  pageTitle:"JAMAM GAMES | Plataforma de Juegos",
-  royalEdition:"Edición Real", languages:"Idiomas", mobileReady:"Adaptado a móviles", arcadeAction:"Arcade rápido",
-  officialGame:"Juego Oficial", badgeVersion:"Versión 2.0",
-  neonTitle:"Pulso Neón",
-  neonDesc:"Pon a prueba tus reflejos. Recoge cristales, evita las calaveras y desafía a tus amigos. Un juego arcade rápido compatible con 14 idiomas.",
-  playNow:"Jugar Ahora ⚡",
-  platformChampions:"Campeones de la Plataforma (Top 3)", hallOfFame:"Salón de la Fama",
-  lbLoading:"Cargando campeones...", lbEmpty:"Aún no hay resultados. ¡Sé el primer campeón!", lbError:"No se pudo cargar la clasificación",
-  comingSoon:"Próximamente en la Plataforma", skullRealm:"Reino de Calaveras", ascentMode:"Modo Ascenso", soon:"Próximamente",
-  footerText:"Hecho con pasión por JAMAM GAMES © 2026",
-  changeLang:"Cambiar Idioma", langTitle:"Seleccionar Idioma", langDesc:"Elige tu idioma preferido", close:"Cerrar"
-},
-fr: {
-  pageTitle:"JAMAM GAMES | Plateforme de Jeux",
-  royalEdition:"Édition Royale", languages:"Langues", mobileReady:"Adapté au mobile", arcadeAction:"Arcade rapide",
-  officialGame:"Jeu Officiel", badgeVersion:"Version 2.0",
-  neonTitle:"Pouls Néon",
-  neonDesc:"Testez vos réflexes. Collectez les cristaux, évitez les crânes et défiez vos amis. Un jeu d'arcade rapide disponible en 14 langues.",
-  playNow:"Jouer Maintenant ⚡",
-  platformChampions:"Champions de la Plateforme (Top 3)", hallOfFame:"Temple de la Renommée",
-  lbLoading:"Chargement des champions...", lbEmpty:"Pas encore de résultats. Soyez le premier champion !", lbError:"Impossible de charger le classement",
-  comingSoon:"Bientôt sur la Plateforme", skullRealm:"Royaume des Crânes", ascentMode:"Mode Ascension", soon:"Bientôt",
-  footerText:"Fait avec passion par JAMAM GAMES © 2026",
-  changeLang:"Changer de Langue", langTitle:"Choisir la Langue", langDesc:"Choisissez votre langue préférée", close:"Fermer"
-},
-de: {
-  pageTitle:"JAMAM GAMES | Spieleplattform",
-  royalEdition:"Königliche Edition", languages:"Sprachen", mobileReady:"Mobiloptimiert", arcadeAction:"Schnelles Arcade",
-  officialGame:"Offizielles Spiel", badgeVersion:"Version 2.0",
-  neonTitle:"Neon-Puls",
-  neonDesc:"Teste deine Reflexe. Sammle Kristalle, meide die Schädel und fordere deine Freunde heraus. Ein schnelles Arcade-Spiel in 14 Sprachen.",
-  playNow:"Jetzt Spielen ⚡",
-  platformChampions:"Plattform-Champions (Top 3)", hallOfFame:"Ruhmeshalle",
-  lbLoading:"Champions werden geladen...", lbEmpty:"Noch keine Ergebnisse. Sei der erste Champion!", lbError:"Rangliste konnte nicht geladen werden",
-  comingSoon:"Bald auf der Plattform", skullRealm:"Schädelreich", ascentMode:"Aufstiegsmodus", soon:"Bald",
-  footerText:"Mit Leidenschaft gemacht von JAMAM GAMES © 2026",
-  changeLang:"Sprache Ändern", langTitle:"Sprache Wählen", langDesc:"Wähle deine bevorzugte Sprache", close:"Schließen"
-},
-it: {
-  pageTitle:"JAMAM GAMES | Piattaforma di Giochi",
-  royalEdition:"Edizione Reale", languages:"Lingue", mobileReady:"Ottimizzato per mobile", arcadeAction:"Arcade veloce",
-  officialGame:"Gioco Ufficiale", badgeVersion:"Versione 2.0",
-  neonTitle:"Impulso Neon",
-  neonDesc:"Metti alla prova i tuoi riflessi. Raccogli i cristalli, evita i teschi e sfida i tuoi amici. Un arcade veloce in 14 lingue.",
-  playNow:"Gioca Ora ⚡",
-  platformChampions:"Campioni della Piattaforma (Top 3)", hallOfFame:"Hall of Fame",
-  lbLoading:"Caricamento campioni...", lbEmpty:"Ancora nessun risultato. Sii il primo campione!", lbError:"Impossibile caricare la classifica",
-  comingSoon:"Prossimamente sulla Piattaforma", skullRealm:"Regno dei Teschi", ascentMode:"Modalità Ascesa", soon:"Prossimamente",
-  footerText:"Fatto con passione da JAMAM GAMES © 2026",
-  changeLang:"Cambia Lingua", langTitle:"Seleziona Lingua", langDesc:"Scegli la tua lingua preferita", close:"Chiudi"
-},
-pt: {
-  pageTitle:"JAMAM GAMES | Plataforma de Jogos",
-  royalEdition:"Edição Real", languages:"Idiomas", mobileReady:"Pronto para celular", arcadeAction:"Arcade rápido",
-  officialGame:"Jogo Oficial", badgeVersion:"Versão 2.0",
-  neonTitle:"Pulso Neon",
-  neonDesc:"Teste seus reflexos. Colete cristais, evite as caveiras e desafie seus amigos. Um arcade rápido disponível em 14 idiomas.",
-  playNow:"Jogar Agora ⚡",
-  platformChampions:"Campeões da Plataforma (Top 3)", hallOfFame:"Hall da Fama",
-  lbLoading:"Carregando campeões...", lbEmpty:"Ainda sem resultados. Seja o primeiro campeão!", lbError:"Não foi possível carregar a classificação",
-  comingSoon:"Em Breve na Plataforma", skullRealm:"Reino das Caveiras", ascentMode:"Modo Ascensão", soon:"Em Breve",
-  footerText:"Feito com paixão por JAMAM GAMES © 2026",
-  changeLang:"Mudar Idioma", langTitle:"Selecionar Idioma", langDesc:"Escolha seu idioma preferido", close:"Fechar"
-},
-ru: {
-  pageTitle:"JAMAM GAMES | Игровая Платформа",
-  royalEdition:"Королевское издание", languages:"Языки", mobileReady:"Для мобильных", arcadeAction:"Быстрая аркада",
-  officialGame:"Официальная Игра", badgeVersion:"Версия 2.0",
-  neonTitle:"Неоновый Пульс",
-  neonDesc:"Проверьте свои рефлексы. Собирайте кристаллы, избегайте черепов и бросайте вызов друзьям. Быстрая аркада на 14 языках.",
-  playNow:"Играть Сейчас ⚡",
-  platformChampions:"Чемпионы Платформы (Топ 3)", hallOfFame:"Зал Славы",
-  lbLoading:"Загрузка чемпионов...", lbEmpty:"Результатов пока нет. Стань первым чемпионом!", lbError:"Не удалось загрузить таблицу лидеров",
-  comingSoon:"Скоро на Платформе", skullRealm:"Королевство Черепов", ascentMode:"Режим Восхождения", soon:"Скоро",
-  footerText:"Сделано с любовью командой JAMAM GAMES © 2026",
-  changeLang:"Изменить Язык", langTitle:"Выбрать Язык", langDesc:"Выберите предпочитаемый язык", close:"Закрыть"
-},
-zh: {
-  pageTitle:"JAMAM GAMES | 游戏平台",
-  royalEdition:"皇家版本", languages:"语言", mobileReady:"适配手机", arcadeAction:"快节奏街机",
-  officialGame:"官方游戏", badgeVersion:"版本 2.0",
-  neonTitle:"霓虹脉冲",
-  neonDesc:"测试你的反应能力。收集水晶，避开骷髅，挑战你的朋友。支持14种语言的快节奏街机游戏。",
-  playNow:"立即游玩 ⚡",
-  platformChampions:"平台冠军（前三名）", hallOfFame:"名人堂",
-  lbLoading:"正在加载冠军...", lbEmpty:"暂无结果。成为第一位冠军！", lbError:"无法加载排行榜",
-  comingSoon:"即将登陆平台", skullRealm:"骷髅领域", ascentMode:"上升模式", soon:"敬请期待",
-  footerText:"由 JAMAM GAMES 倾情打造 © 2026",
-  changeLang:"更改语言", langTitle:"选择语言", langDesc:"选择你的首选语言", close:"关闭"
-},
-ja: {
-  pageTitle:"JAMAM GAMES | ゲームプラットフォーム",
-  royalEdition:"ロイヤル版", languages:"対応言語", mobileReady:"モバイル対応", arcadeAction:"高速アーケード",
-  officialGame:"公式ゲーム", badgeVersion:"バージョン 2.0",
-  neonTitle:"ネオンパルス",
-  neonDesc:"反射神経を試そう。クリスタルを集め、ドクロを避け、友達に挑戦しよう。14言語対応の高速アーケードゲーム。",
-  playNow:"今すぐプレイ ⚡",
-  platformChampions:"プラットフォームチャンピオン（トップ3）", hallOfFame:"殿堂",
-  lbLoading:"チャンピオンを読み込み中...", lbEmpty:"まだ結果がありません。最初のチャンピオンになろう！", lbError:"ランキングを読み込めませんでした",
-  comingSoon:"プラットフォームに近日登場", skullRealm:"スカルレルム", ascentMode:"アセントモード", soon:"近日公開",
-  footerText:"JAMAM GAMES が情熱を込めて制作 © 2026",
-  changeLang:"言語を変更", langTitle:"言語を選択", langDesc:"お好みの言語を選択してください", close:"閉じる"
-},
-ko: {
-  pageTitle:"JAMAM GAMES | 게임 플랫폼",
-  royalEdition:"로열 에디션", languages:"지원 언어", mobileReady:"모바일 최적화", arcadeAction:"빠른 아케이드",
-  officialGame:"공식 게임", badgeVersion:"버전 2.0",
-  neonTitle:"네온 펄스",
-  neonDesc:"반사 신경을 테스트하세요. 크리스탈을 모으고 해골을 피하며 친구에게 도전하세요. 14개 언어를 지원하는 빠른 아케이드 게임.",
-  playNow:"지금 플레이 ⚡",
-  platformChampions:"플랫폼 챔피언 (톱 3)", hallOfFame:"명예의 전당",
-  lbLoading:"챔피언 로딩 중...", lbEmpty:"아직 결과가 없습니다. 첫 챔피언이 되어보세요!", lbError:"리더보드를 불러올 수 없습니다",
-  comingSoon:"플랫폼에 곧 출시", skullRealm:"해골 왕국", ascentMode:"상승 모드", soon:"곧 출시",
-  footerText:"JAMAM GAMES이(가) 열정으로 제작 © 2026",
-  changeLang:"언어 변경", langTitle:"언어 선택", langDesc:"선호하는 언어를 선택하세요", close:"닫기"
-},
-tr: {
-  pageTitle:"JAMAM GAMES | Oyun Platformu",
-  royalEdition:"Kraliyet Sürümü", languages:"Diller", mobileReady:"Mobil Uyumlu", arcadeAction:"Hızlı Arcade",
-  officialGame:"Resmi Oyun", badgeVersion:"Sürüm 2.0",
-  neonTitle:"Neon Nabız",
-  neonDesc:"Reflekslerini test et. Kristalleri topla, kafataslarından kaç ve arkadaşlarına meydan oku. 14 dili destekleyen hızlı bir atari oyunu.",
-  playNow:"Şimdi Oyna ⚡",
-  platformChampions:"Platform Şampiyonları (İlk 3)", hallOfFame:"Şöhretler Salonu",
-  lbLoading:"Şampiyonlar yükleniyor...", lbEmpty:"Henüz sonuç yok. İlk şampiyon ol!", lbError:"Liderlik tablosu yüklenemedi",
-  comingSoon:"Platformda Yakında", skullRealm:"Kafatası Diyarı", ascentMode:"Yükseliş Modu", soon:"Yakında",
-  footerText:"JAMAM GAMES tarafından tutkuyla yapıldı © 2026",
-  changeLang:"Dili Değiştir", langTitle:"Dil Seç", langDesc:"Tercih ettiğin dili seç", close:"Kapat"
-},
-hi: {
-  pageTitle:"JAMAM GAMES | गेम प्लेटफ़ॉर्म",
-  royalEdition:"रॉयल संस्करण", languages:"भाषाएँ", mobileReady:"मोबाइल अनुकूल", arcadeAction:"तेज़ आर्केड",
-  officialGame:"आधिकारिक गेम", badgeVersion:"संस्करण 2.0",
-  neonTitle:"नियॉन पल्स",
-  neonDesc:"अपनी प्रतिक्रिया का परीक्षण करें। क्रिस्टल इकट्ठा करें, खोपड़ियों से बचें और दोस्तों को चुनौती दें। 14 भाषाओं का समर्थन करने वाला तेज़ आर्केड गेम।",
-  playNow:"अभी खेलें ⚡",
-  platformChampions:"प्लेटफ़ॉर्म चैंपियन (टॉप 3)", hallOfFame:"हॉल ऑफ़ फ़ेम",
-  lbLoading:"चैंपियन लोड हो रहे हैं...", lbEmpty:"अभी तक कोई परिणाम नहीं। पहले चैंपियन बनें!", lbError:"लीडरबोर्ड लोड नहीं हो सका",
-  comingSoon:"प्लेटफ़ॉर्म पर जल्द आ रहा है", skullRealm:"खोपड़ी क्षेत्र", ascentMode:"आरोहण मोड", soon:"जल्द आ रहा है",
-  footerText:"JAMAM GAMES द्वारा जुनून के साथ बनाया गया © 2026",
-  changeLang:"भाषा बदलें", langTitle:"भाषा चुनें", langDesc:"अपनी पसंदीदा भाषा चुनें", close:"बंद करें"
-},
-id: {
-  pageTitle:"JAMAM GAMES | Platform Game",
-  royalEdition:"Edisi Kerajaan", languages:"Bahasa", mobileReady:"Ramah Seluler", arcadeAction:"Arcade Cepat",
-  officialGame:"Game Resmi", badgeVersion:"Versi 2.0",
-  neonTitle:"Denyut Neon",
-  neonDesc:"Uji refleks Anda. Kumpulkan kristal, hindari tengkorak, dan tantang teman Anda. Game arcade cepat yang mendukung 14 bahasa.",
-  playNow:"Main Sekarang ⚡",
-  platformChampions:"Juara Platform (Top 3)", hallOfFame:"Hall of Fame",
-  lbLoading:"Memuat juara...", lbEmpty:"Belum ada hasil. Jadilah juara pertama!", lbError:"Tidak dapat memuat papan peringkat",
-  comingSoon:"Segera Hadir di Platform", skullRealm:"Alam Tengkorak", ascentMode:"Mode Pendakian", soon:"Segera",
-  footerText:"Dibuat dengan penuh semangat oleh JAMAM GAMES © 2026",
-  changeLang:"Ubah Bahasa", langTitle:"Pilih Bahasa", langDesc:"Pilih bahasa yang Anda sukai", close:"Tutup"
-}
-};
-
-/* ============================================================
-   STORAGE KEYS — CRITICAL FIX
-   Matches both the new royal game and the legacy game
-   ============================================================ */
-const STORE_LANG = 'jamam_games_lang';
-const GAME_STORE_PRIMARY = 'neonPulseRoyalV3';   // ← royal v3 game (current)
-const GAME_STORE_LEGACY  = 'neon_pulse_v2_save'; // ← legacy game (compatibility)
-
-const RTL_LANGS = ['ar','he','fa','ur'];
-const LANG_LIST = [
-  {code:'en', name:'English'},{code:'ar', name:'العربية'},{code:'es', name:'Español'},
-  {code:'fr', name:'Français'},{code:'de', name:'Deutsch'},{code:'it', name:'Italiano'},
-  {code:'pt', name:'Português'},{code:'ru', name:'Русский'},{code:'zh', name:'中文'},
-  {code:'ja', name:'日本語'},{code:'ko', name:'한국어'},{code:'tr', name:'Türkçe'},
-  {code:'hi', name:'हिन्दी'},{code:'id', name:'Bahasa Indonesia'}
-];
-
-/* ============================================================
-   LANGUAGE DETECTION & SYNC
-   ============================================================ */
-function detectLanguage(){
-  try {
-    const nav = navigator.languages || [navigator.language || 'en'];
-    for (const lang of nav) {
-      const code = lang.split('-')[0].toLowerCase();
-      if (translations[code]) return code;
+  // تحديث الواجهة بناءً على البيانات المحفوظة
+  document.addEventListener('DOMContentLoaded', () => {
+    if(window.JAMAM) {
+      const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
+      const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
+      document.getElementById('ui-level').textContent = xpData.level || 1;
+      document.getElementById('ui-coins').textContent = (coinData.balance || 0) + ' 🪙';
     }
-  } catch(e){}
-  return 'en';
-}
-
-function loadLanguage(){
-  // 1. Platform preference
-  try {
-    const saved = localStorage.getItem(STORE_LANG);
-    if (saved && translations[saved]) return saved;
-  } catch(e){}
-  // 2. Royal v3 game preference (current)
-  try {
-    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE_PRIMARY) || '{}');
-    if (gameSave.language && translations[gameSave.language]) return gameSave.language;
-  } catch(e){}
-  // 3. Legacy game preference
-  try {
-    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE_LEGACY) || '{}');
-    if (gameSave.language && translations[gameSave.language]) return gameSave.language;
-  } catch(e){}
-  // 4. Browser auto-detect
-  return detectLanguage();
-}
-
-function saveLanguage(code){
-  try { localStorage.setItem(STORE_LANG, code); } catch(e){}
-  // Mirror to royal v3 game
-  try {
-    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE_PRIMARY) || '{}');
-    gameSave.language = code;
-    localStorage.setItem(GAME_STORE_PRIMARY, JSON.stringify(gameSave));
-  } catch(e){}
-  // Mirror to legacy game
-  try {
-    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE_LEGACY) || '{}');
-    gameSave.language = code;
-    localStorage.setItem(GAME_STORE_LEGACY, JSON.stringify(gameSave));
-  } catch(e){}
-}
-
-function t(key){
-  const dict = translations[currentLang] || translations.en;
-  return dict[key] || translations.en[key] || key;
-}
-function formatNum(n){ return Number(n).toLocaleString('en-US'); }
-
-// Expose to the Firebase module
-window.JAMAM_t = t;
-window.JAMAM_fmtNum = formatNum;
-
-/* ============================================================
-   RENDER & APPLY
-   ============================================================ */
-const $ = id => document.getElementById(id);
-const langBtn = $('langBtn');
-const langOverlay = $('langOverlay');
-const langGrid = $('langGrid');
-const langClose = $('langClose');
-
-let currentLang = loadLanguage();
-
-function applyTranslations(){
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.textContent = t(el.getAttribute('data-i18n'));
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
   });
-  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
-    const v = t(el.getAttribute('data-i18n-aria'));
-    el.setAttribute('aria-label', v);
-    el.setAttribute('title', v);
-  });
-  document.title = t('pageTitle');
-  document.querySelectorAll('.lang-option').forEach(b => {
-    b.classList.toggle('active', b.dataset.lang === currentLang);
-  });
-  // Re-render the Firebase leaderboard so it uses the new language
-  if (typeof window.JAMAM_renderLB === 'function') {
-    window.JAMAM_renderLB();
-  }
-}
-
-function setLanguage(code){
-  if (!translations[code]) code = 'en';
-  currentLang = code;
-  document.documentElement.lang = code;
-  document.documentElement.dir = RTL_LANGS.includes(code) ? 'rtl' : 'ltr';
-  saveLanguage(code);
-  applyTranslations();
-}
-
-function renderLangGrid(){
-  langGrid.innerHTML = LANG_LIST.map(l =>
-    `<button class="lang-option${l.code === currentLang ? ' active' : ''}" data-lang="${l.code}" lang="${l.code}" dir="${RTL_LANGS.includes(l.code) ? 'rtl' : 'ltr'}">${l.name}</button>`
-  ).join('');
-  langGrid.querySelectorAll('.lang-option').forEach(btn => {
-    btn.onclick = () => {
-      setLanguage(btn.dataset.lang);
-      closeLang();
-    };
-  });
-}
-
-function openLang(){
-  renderLangGrid();
-  langOverlay.classList.remove('hidden');
-  setTimeout(() => {
-    const active = langGrid.querySelector('.lang-option.active');
-    if (active) active.focus();
-  }, 50);
-}
-
-function closeLang(){
-  langOverlay.classList.add('hidden');
-  langBtn.focus();
-}
-
-/* ============================================================
-   WIRING
-   ============================================================ */
-langBtn.onclick = openLang;
-langClose.onclick = closeLang;
-
-langOverlay.addEventListener('click', e => {
-  if (e.target === langOverlay) closeLang();
-});
-
-window.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !langOverlay.classList.contains('hidden')) closeLang();
-});
-
-/* ============================================================
-   INIT
-   ============================================================ */
-document.documentElement.lang = currentLang;
-document.documentElement.dir = RTL_LANGS.includes(currentLang) ? 'rtl' : 'ltr';
-applyTranslations();
-
-})();
-  <script src="./js/jamam-core.js"></script>
 </script>
-
 </body>
 </html>
