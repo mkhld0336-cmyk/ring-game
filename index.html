@@ -88,6 +88,7 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
   </div>
 
   <div class="games-grid">
+    <a href="games/aura-dash.html" class="game-card"><div class="icon">🏃</div><h3 id="game-10">أورا داش</h3></a>
     <a href="games/pulse-blade.html" class="game-card"><div class="icon">🌀</div><h3 id="game-1">نبض الشفرة</h3></a>
     <a href="games/orbit-drop.html" class="game-card"><div class="icon">🪐</div><h3 id="game-2">السقوط المداري</h3></a>
     <a href="games/orbit-switch.html" class="game-card"><div class="icon">💫</div><h3 id="game-3">أوربت سويتش</h3></a>
@@ -140,13 +141,12 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 <script src="./js/jamam-audio.js"></script>
 
 <script>
-  // 1. قاموس الترجمة لواجهة المنصة
   const HUB_I18N = {
-    ar: { lvl:"المستوى:", coins:"العملات:", shop:"متجر العملات", ach:"الإنجازات", title:"صائد الرموز 🌹", desc:"التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!", play:"العب الآن ⚡", g1:"نبض الشفرة", g2:"السقوط المداري", g3:"أوربت سويتش", g4:"شبكة الطاقة", g5:"نيون فلكس", g6:"بيت سلاشر", g7:"شبح الماضي", g8:"الأرضية المتلاشية", g9:"صدى الظلام" },
-    en: { lvl:"Level:", coins:"Coins:", shop:"Coin Shop", ach:"Achievements", title:"Emoji Hunter 🌹", desc:"Collect roses, hearts, and gifts... avoid the sneaky skull ☠️!", play:"Play Now ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" },
-    es: { lvl:"Nivel:", coins:"Monedas:", shop:"Tienda", ach:"Logros", title:"Cazador de Emojis 🌹", desc:"Recoge rosas, corazones y regalos... ¡evita la calavera ☠️!", play:"Jugar ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" },
-    fr: { lvl:"Niveau:", coins:"Pièces:", shop:"Boutique", ach:"Succès", title:"Chasseur d'Emojis 🌹", desc:"Collectez des roses, cœurs et cadeaux... évitez le crâne ☠️!", play:"Jouer ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" },
-    de: { lvl:"Level:", coins:"Münzen:", shop:"Shop", ach:"Erfolge", title:"Emoji Jäger 🌹", desc:"Sammle Rosen, Herzen und Geschenke... meide den Schädel ☠️!", play:"Spielen ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" }
+    ar: { lvl:"المستوى:", coins:"العملات:", shop:"متجر العملات", ach:"الإنجازات", title:"صائد الرموز 🌹", desc:"التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!", play:"العب الآن ⚡", g1:"نبض الشفرة", g2:"السقوط المداري", g3:"أوربت سويتش", g4:"شبكة الطاقة", g5:"نيون فلكس", g6:"بيت سلاشر", g7:"شبح الماضي", g8:"الأرضية المتلاشية", g9:"صدى الظلام", g10:"أورا داش" },
+    en: { lvl:"Level:", coins:"Coins:", shop:"Coin Shop", ach:"Achievements", title:"Emoji Hunter 🌹", desc:"Collect roses, hearts, and gifts... avoid the sneaky skull ☠️!", play:"Play Now ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash" },
+    es: { lvl:"Nivel:", coins:"Monedas:", shop:"Tienda", ach:"Logros", title:"Cazador de Emojis 🌹", desc:"Recoge rosas, corazones y regalos... ¡evita la calavera ☠️!", play:"Jugar ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash" },
+    fr: { lvl:"Niveau:", coins:"Pièces:", shop:"Boutique", ach:"Succès", title:"Chasseur d'Emojis 🌹", desc:"Collectez des roses, cœurs et cadeaux... évitez le crâne ☠️!", play:"Jouer ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash" },
+    de: { lvl:"Level:", coins:"Münzen:", shop:"Shop", ach:"Erfolge", title:"Emoji Jäger 🌹", desc:"Sammle Rosen, Herzen und Geschenke... meide den Schädel ☠️!", play:"Spielen ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash" }
   };
 
   let currentLang = localStorage.getItem('jamam_games_lang') || 'ar';
@@ -169,11 +169,10 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
     document.getElementById('game-7').textContent = t.g7;
     document.getElementById('game-8').textContent = t.g8;
     document.getElementById('game-9').textContent = t.g9;
+    document.getElementById('game-10').textContent = t.g10;
     
     document.documentElement.lang = currentLang;
     document.documentElement.dir = (currentLang === 'ar') ? 'rtl' : 'ltr';
-    
-    // مزامنة اللغة مع الألعاب
     localStorage.setItem('jamam_games_lang', currentLang);
   }
 
@@ -194,7 +193,6 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
       currentLang = lang;
       applyHubLanguage();
       langOverlay.classList.remove('active');
-      // تحديث أزرار المتجر والإنجازات لتطبيق اللغة الجديدة
       if(window.updateHubCoins) window.updateHubCoins();
     };
 
