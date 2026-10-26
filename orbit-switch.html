@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Orbit Switch - JAMAM</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #05050b;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      touch-action: none;
+    }
+    #game-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    #ui-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    }
+    .hud-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      color: #fff;
+    }
+    .hud-metric {
+      display: flex;
+      flex-direction: column;
+    }
+    .hud-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.55);
+      font-weight: 700;
+    }
+    .hud-value {
+      font-size: 22px;
+      font-weight: 900;
+      color: #00f0ff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+      font-variant-numeric: tabular-nums;
+    }
+    .hud-value.pink {
+      color: #ff007f;
+      text-shadow: 0 0 10px rgba(255, 0, 127, 0.6);
+    }
+  </style>
+  <!-- JAMAM Core & Progress Scripts -->
+  <script src="../js/jamam-core.js"></script>
+  <script src="../js/jamam-progress.js"></script>
+  <script src="../js/jamam-achievements.js"></script>
+</head>
+<body>
+
+  <canvas id="game-canvas"></canvas>
+
+  <div id="ui-layer">
+    <div class="hud-top">
+      <div class="hud-metric">
+        <span class="hud-label" id="lbl-score">SCORE</span>
+        <span class="hud-value" id="val-score">0</span>
+      </div>
+      <div class="hud-metric" style="align-items: flex-end;">
+        <span class="hud-label" id="lbl-shards">SHARDS</span>
+        <span class="hud-value pink" id="val-shards">0</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    /* ==========================================================================
+       1. 14-LANGUAGE LOCALIZATION
+       ========================================================================== */
+    const I18N = {
+      en: { title: "ORBIT SWITCH", start: "TAP TO ORBIT", over: "CRASHED", retry: "TAP TO RETRY", score: "SCORE", shards: "SHARDS", near: "NEAR MISS!" },
+      ar: { title: "أوربت سويتش", start: "المس للمدار", over: "تحطمت", retry: "المس للإعادة", score: "النقاط", shards: "الشظايا", near: "تفادٍ وشيك!" },
+      es: { title: "ORBIT SWITCH", start: "TOCA PARA ORBITAR", over: "ESTRELLADO", retry: "TOCA PARA REINTENTAR", score: "PUNTOS", shards: "FRAGMENTOS", near: "¡ROZANDO!" },
+      fr: { title: "ORBIT SWITCH", start: "TOUCHER POUR ORBITER", over: "ÉCRASÉ", retry: "TOUCHER POUR REJOUER", score: "SCORE", shards: "ÉCLATS", near: "FRÔLÉ !" },
+      de: { title: "ORBIT SWITCH", start: "TIPPEN ZUM ORBIT", over: "KOLLISION", retry: "TIPPEN FÜR NEUSTART", score: "PUNKTE", shards: "SPLITTER", near: "KNAPP!" },
+      it: { title: "ORBIT SWITCH", start: "TOCCA PER ORBITARE", over: "SCHIANTO", retry: "TOCCA PER RIGIOCARE", score: "PUNTI", shards: "FRAMMENTI", near: "PER UN PELO!" },
+      pt: { title: "ORBIT SWITCH", start: "TOQUE PARA ORBITAR", over: "BATEU", retry: "TOQUE PARA TENTAR", score: "PONTOS", shards: "FRAGMENTOS", near: "POR POUCO!" },
+      ru: { title: "ORBIT SWITCH", start: "НАЖМИТЕ ДЛЯ СТАРТА", over: "РАЗБИЛСЯ", retry: "НАЖМИТЕ ДЛЯ ПОВТОРА", score: "СЧЕТ", shards: "ОСКОЛКИ", near: "НА ВОЛОСКЕ!" },
+      ja: { title: "オービットスイッチ", start: "タップしてスタート", over: "大破", retry: "もう一度プレイ", score: "スコア", shards: "シャード", near: "ニアミス!" },
+      ko: { title: "오빗 스위치", start: "터치하여 시작", over: "충돌함", retry: "다시 시작", score: "점수", shards: "샤드", near: "아슬아슬!" },
+      zh: { title: "轨道切换", start: "轻触以进入轨道", over: "坠毁", retry: "轻触重试", score: "得分", shards: "碎片", near: "险些相撞!" },
+      tr: { title: "ORBIT SWITCH", start: "YÖRÜNGE İÇİN DOKUN", over: "ÇARPIŞMA", retry: "TEKRAR DOKUN", score: "SKOR", shards: "PARÇALAR", near: "KIL PAYI!" },
+      hi: { title: "ऑर्बिट स्विच", start: "शुरू करने के लिए टैप करें", over: "दुर्घटना", retry: "पुनः प्रयास करें", score: "स्कोर", shards: "शार्ड्स", near: "बाल-बाल बचे!" },
+      id: { title: "ORBIT SWITCH", start: "KETUK UNTUK ORBIT", over: "TABRAKAN", retry: "KETUK COBA LAGI", score: "SKOR", shards: "PECAHAN", near: "HAMPIR KENA!" }
+    };
+
+    const currentLang = (typeof JAMAM !== 'undefined' && JAMAM.lang) ? JAMAM.lang : (navigator.language || 'en').slice(0, 2);
+    const TXT = I18N[currentLang] || I18N.en;
+
+    document.getElementById('lbl-score').textContent = TXT.score;
+    document.getElementById('lbl-shards').textContent = TXT.shards;
+
+    /* ==========================================================================
+       2. CANVAS SETUP & HIGH-DPI SCALING
+       ========================================================================== */
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = 0, height = 0, centerX = 0, centerY = 0, dpr = 1;
+    let innerRadius = 75, outerRadius = 135;
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.scale(dpr, dpr);
+      centerX = width / 2;
+      centerY = height / 2;
+      const minDim = Math.min(width, height);
+      innerRadius = Math.max(60, minDim * 0.22);
+      outerRadius = Math.max(110, minDim * 0.38);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    /* ==========================================================================
+       3. SYNTHETIC AUDIO & HAPTIC HELPERS
+       ========================================================================== */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playTone(freq, duration, type = 'sine', decay = true) {
+      try {
+        if (!audioCtx) audioCtx = new AudioCtx();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        if (decay) gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function triggerHaptic(type = 'impactLight') {
+      try {
+        if (window.JAMAM && JAMAM.haptics && typeof JAMAM.haptics.tap === 'function') {
+          JAMAM.haptics.tap(type);
+        } else if (navigator.vibrate) {
+          navigator.vibrate(type === 'hit' ? 25 : 12);
+        }
+      } catch (e) {}
+    }
+
+    /* ==========================================================================
+       4. GAME STATE & VARIABLES
+       ========================================================================== */
+    const STATE_MENU = 0, STATE_PLAYING = 1, STATE_GAMEOVER = 2;
+    let gameState = STATE_MENU;
+    let score = 0, shards = 0, nearMisses = 0;
+    let baseSpeed = 1.8, currentSpeed = 1.8;
+    let shakeDuration = 0, shakeIntensity = 0;
+
+    function triggerShake(intensity, duration) {
+      shakeIntensity = intensity;
+      shakeDuration = duration;
+    }
+
+    /* ==========================================================================
+       5. PLAYER OBJECT
+       ========================================================================== */
+    const player = {
+      angle: 0, currentRadius: innerRadius, targetRadius: innerRadius, isOuter: false,
+      size: 9, switchSpeed: 0.18, trail: [],
+
+      reset() {
+        this.angle = 0;
+        this.currentRadius = innerRadius;
+        this.targetRadius = innerRadius;
+        this.isOuter = false;
+        this.trail = [];
+      },
+      toggle() {
+        this.isOuter = !this.isOuter;
+        this.targetRadius = this.isOuter ? outerRadius : innerRadius;
+        playTone(this.isOuter ? 540 : 420, 0.08, 'triangle');
+        triggerHaptic('impactLight');
+      },
+      update(delta) {
+        this.angle += currentSpeed * delta;
+        if (this.angle > Math.PI * 2) this.angle -= Math.PI * 2;
+        this.currentRadius += (this.targetRadius - this.currentRadius) * this.switchSpeed;
+        const px = centerX + Math.cos(this.angle) * this.currentRadius;
+        const py = centerY + Math.sin(this.angle) * this.currentRadius;
+        this.trail.push({ x: px, y: py, alpha: 1.0 });
+        if (this.trail.length > 12) this.trail.shift();
+        for (let i = 0; i < this.trail.length; i++) this.trail[i].alpha *= 0.88;
+      },
+      draw() {
+        const px = centerX + Math.cos(this.angle) * this.currentRadius;
+        const py = centerY + Math.sin(this.angle) * this.currentRadius;
+        for (let i = 0; i < this.trail.length; i++) {
+          const t = this.trail[i];
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, this.size * (0.3 + (i / this.trail.length) * 0.7), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 240, 255, ${t.alpha * 0.4})`;
+          ctx.fill();
+        }
+        ctx.save();
+        ctx.shadowColor = '#00f0ff';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(px, py, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#00f0ff';
+        ctx.stroke();
+        ctx.restore();
+      }
+    };
+
+    /* ==========================================================================
+       6. PARTICLE ENGINE
+       ========================================================================== */
+    const particles = [];
+    function spawnParticles(x, y, count, colorHex) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.5 + Math.random() * 5.0;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+          radius: 1.5 + Math.random() * 2.5, color: colorHex, alpha: 1.0,
+          decay: 0.015 + Math.random() * 0.02
+        });
+      }
+    }
+
+    function updateAndDrawParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= 0.96; p.vy *= 0.96; p.alpha -= p.decay;
+        if (p.alpha <= 0) { particles.splice(i, 1); continue; }
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       7. OBSTACLES & SHARDS SPAWNER
+       ========================================================================== */
+    const obstacles = [], shardItems = [];
+    let spawnTimer = 0, shardTimer = 0;
+
+    function resetEntities() {
+      obstacles.length = 0; shardItems.length = 0;
+      spawnTimer = 0; shardTimer = 0;
+    }
+
+    function spawnObstacle() {
+      const isOuter = Math.random() > 0.5;
+      const angle = (player.angle + Math.PI * 0.85 + Math.random() * 0.5) % (Math.PI * 2);
+      obstacles.push({ isOuter, angle, angularWidth: 0.22, color: '#ff007f', nearMissChecked: false });
+    }
+
+    function spawnShard() {
+      const isOuter = Math.random() > 0.5;
+      const angle = (player.angle + Math.PI * 0.6 + Math.random() * 0.8) % (Math.PI * 2);
+      shardItems.push({ isOuter, angle, radius: 6, collected: false });
+    }
+
+    /* ==========================================================================
+       8. COLLISION & NEAR-MISS DETECTION
+       ========================================================================== */
+    const floatingNotifs = [];
+    function addNotification(text, color) {
+      floatingNotifs.push({ text, color, x: centerX, y: centerY - outerRadius - 30, alpha: 1.0, vy: -0.6 });
+    }
+
+    function checkCollisions() {
+      const pRadius = player.currentRadius;
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obs = obstacles[i];
+        const obsRadius = obs.isOuter ? outerRadius : innerRadius;
+        let diff = Math.atan2(Math.sin(player.angle - obs.angle), Math.cos(player.angle - obs.angle));
+        let absDiff = Math.abs(diff);
+        const radDist = Math.abs(pRadius - obsRadius);
+
+        if (radDist < 16 && absDiff < obs.angularWidth / 2) {
+          triggerGameOver(); return;
+        }
+
+        if (!obs.nearMissChecked && radDist > 30 && absDiff < (obs.angularWidth / 2 + 0.08)) {
+          obs.nearMissChecked = true;
+          nearMisses++; score += 50;
+          document.getElementById('val-score').textContent = Math.floor(score);
+          addNotification(TXT.near, '#00f0ff');
+          triggerHaptic('impactLight');
+          playTone(880, 0.06, 'sine');
+        }
+
+        if (diff > Math.PI * 0.75) obstacles.splice(i, 1);
+      }
+
+      for (let i = shardItems.length - 1; i >= 0; i--) {
+        const shard = shardItems[i];
+        const sRadius = shard.isOuter ? outerRadius : innerRadius;
+        let diff = Math.abs(Math.atan2(Math.sin(player.angle - shard.angle), Math.cos(player.angle - shard.angle)));
+        const radDist = Math.abs(pRadius - sRadius);
+
+        if (radDist < 18 && diff < 0.16) {
+          shards++; score += 25;
+          document.getElementById('val-shards').textContent = shards;
+          document.getElementById('val-score').textContent = Math.floor(score);
+          const sx = centerX + Math.cos(shard.angle) * sRadius;
+          const sy = centerY + Math.sin(shard.angle) * sRadius;
+          spawnParticles(sx, sy, 12, '#ff007f');
+          playTone(660, 0.08, 'triangle');
+          triggerHaptic('hit');
+          shardItems.splice(i, 1);
+        } else if (diff > Math.PI * 0.75) {
+          shardItems.splice(i, 1);
+        }
+      }
+    }
+
+    /* ==========================================================================
+       9. GAME OVER & JAMAM INTEGRATION
+       ========================================================================== */
+    function startGame() {
+      score = 0; shards = 0; nearMisses = 0; currentSpeed = baseSpeed;
+      resetEntities(); player.reset(); gameState = STATE_PLAYING;
+      document.getElementById('val-score').textContent = '0';
+      document.getElementById('val-shards').textContent = '0';
+      if (window.JAMAM && JAMAM.game && typeof JAMAM.game.start === 'function') JAMAM.game.start('orbit-switch');
+      playTone(520, 0.15, 'sine');
+    }
+
+    function triggerGameOver() {
+      gameState = STATE_GAMEOVER;
+      triggerShake(14, 0.45);
+      triggerHaptic('impactHeavy');
+      const px = centerX + Math.cos(player.angle) * player.currentRadius;
+      const py = centerY + Math.sin(player.angle) * player.currentRadius;
+      spawnParticles(px, py, 35, '#00f0ff');
+      spawnParticles(px, py, 35, '#ff007f');
+      playTone(180, 0.35, 'sawtooth');
+      if (window.JAMAM && JAMAM.game && typeof JAMAM.game.end === 'function') {
+        JAMAM.game.end('orbit-switch', { score: Math.floor(score), shards: shards, nearMisses: nearMisses });
+      }
+    }
+
+    /* ==========================================================================
+       10. DRAWING PROCEDURAL BACKGROUND & ORBIT TRACKS
+       ========================================================================== */
+    let pulseAnim = 0;
+
+    function drawOrbits() {
+      pulseAnim += 0.03;
+      const corePulse = 18 + Math.sin(pulseAnim) * 3;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(centerX, centerY, corePulse, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 240, 255, 0.12)'; ctx.shadowColor = '#00f0ff'; ctx.shadowBlur = 20; ctx.fill();
+      ctx.beginPath(); ctx.arc(centerX, centerY, 8, 0, Math.PI * 2); ctx.fillStyle = '#00f0ff'; ctx.fill();
+      ctx.restore();
+
+      [innerRadius, outerRadius].forEach((radius) => {
+        ctx.beginPath(); ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255, 255, 255, 0.09)'; ctx.stroke();
+        ctx.setLineDash([4, 12]); ctx.strokeStyle = 'rgba(0, 240, 255, 0.22)'; ctx.stroke(); ctx.setLineDash([]);
+      });
+
+      for (let i = 0; i < obstacles.length; i++) {
+        const obs = obstacles[i];
+        const r = obs.isOuter ? outerRadius : innerRadius;
+        ctx.save(); ctx.translate(centerX, centerY); ctx.rotate(obs.angle);
+        ctx.beginPath(); ctx.arc(0, 0, r, -obs.angularWidth / 2, obs.angularWidth / 2);
+        ctx.lineWidth = 7; ctx.strokeStyle = obs.color; ctx.shadowColor = obs.color; ctx.shadowBlur = 14; ctx.stroke();
+        ctx.restore();
+      }
+
+      for (let i = 0; i < shardItems.length; i++) {
+        const sh = shardItems[i];
+        const r = sh.isOuter ? outerRadius : innerRadius;
+        const sx = centerX + Math.cos(sh.angle) * r;
+        const sy = centerY + Math.sin(sh.angle) * r;
+        ctx.save(); ctx.translate(sx, sy); ctx.rotate(pulseAnim * 2);
+        ctx.beginPath(); ctx.rect(-sh.radius, -sh.radius, sh.radius * 2, sh.radius * 2);
+        ctx.fillStyle = '#ff007f'; ctx.shadowColor = '#ff007f'; ctx.shadowBlur = 12; ctx.fill();
+        ctx.restore();
+      }
+
+      for (let i = floatingNotifs.length - 1; i >= 0; i--) {
+        const fn = floatingNotifs[i];
+        fn.y += fn.vy; fn.alpha -= 0.02;
+        if (fn.alpha <= 0) { floatingNotifs.splice(i, 1); continue; }
+        ctx.save(); ctx.globalAlpha = fn.alpha; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillStyle = fn.color; ctx.shadowColor = fn.color; ctx.shadowBlur = 8; ctx.fillText(fn.text, fn.x, fn.y);
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       11. MENUS & OVERLAY RENDERING
+       ========================================================================== */
+    function drawOverlays() {
+      if (gameState === STATE_MENU) {
+        ctx.save(); ctx.textAlign = 'center';
+        ctx.font = '900 32px sans-serif'; ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#00f0ff'; ctx.shadowBlur = 18;
+        ctx.fillText(TXT.title, centerX, centerY - outerRadius - 40);
+        ctx.font = '700 13px sans-serif'; ctx.fillStyle = `rgba(0, 240, 255, ${0.6 + Math.sin(pulseAnim * 2) * 0.4})`;
+        ctx.fillText(TXT.start, centerX, centerY + outerRadius + 60);
+        ctx.restore();
+      } else if (gameState === STATE_GAMEOVER) {
+        ctx.save(); ctx.textAlign = 'center';
+        ctx.font = '900 34px sans-serif'; ctx.fillStyle = '#ff007f'; ctx.shadowColor = '#ff007f'; ctx.shadowBlur = 20;
+        ctx.fillText(TXT.over, centerX, centerY - 25);
+        ctx.font = '800 20px sans-serif'; ctx.fillStyle = '#ffffff';
+        ctx.fillText(`${TXT.score}: ${Math.floor(score)}`, centerX, centerY + 15);
+        ctx.font = '700 13px sans-serif'; ctx.fillStyle = `rgba(255, 255, 255, ${0.6 + Math.sin(pulseAnim * 2) * 0.4})`;
+        ctx.fillText(TXT.retry, centerX, centerY + 65);
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       12. MAIN GAME LOOP
+       ========================================================================== */
+    let lastTime = performance.now();
+    function loop(now) {
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
+      ctx.save();
+      if (shakeDuration > 0) {
+        shakeDuration -= delta;
+        const offsetX = (Math.random() - 0.5) * shakeIntensity;
+        const offsetY = (Math.random() - 0.5) * shakeIntensity;
+        ctx.translate(offsetX, offsetY);
+      }
+
+      ctx.fillStyle = '#05050b';
+      ctx.fillRect(0, 0, width, height);
+
+      drawOrbits();
+
+      if (gameState === STATE_PLAYING) {
+        score += delta * 12;
+        currentSpeed = baseSpeed + Math.min(score * 0.002, 1.6);
+        document.getElementById('val-score').textContent = Math.floor(score);
+
+        spawnTimer += delta;
+        if (spawnTimer > Math.max(0.65, 1.4 - (score * 0.001))) { spawnObstacle(); spawnTimer = 0; }
+
+        shardTimer += delta;
+        if (shardTimer > 2.2) { spawnShard(); shardTimer = 0; }
+
+        player.update(delta);
+        checkCollisions();
+      }
+
+      if (gameState !== STATE_GAMEOVER) player.draw();
+      updateAndDrawParticles();
+      drawOverlays();
+
+      ctx.restore();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    /* ==========================================================================
+       13. INPUT HANDLING
+       ========================================================================== */
+    function handleTap(e) {
+      if (e) e.preventDefault();
+      if (gameState === STATE_MENU) startGame();
+      else if (gameState === STATE_PLAYING) player.toggle();
+      else if (gameState === STATE_GAMEOVER) startGame();
+    }
+
+    window.addEventListener('pointerdown', handleTap, { passive: false });
+    window.addEventListener('keydown', (e) => { if (e.code === 'Space') handleTap(e); });
+
+  })();
+  </script>
+</body>
+</html>
