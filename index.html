@@ -9,49 +9,75 @@
 <style>
 :root{--bg:#070914;--card:#10172a;--cyan:#57e8ff;--gold:#f7c969;--text:#f5f7ff}
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, -apple-system, sans-serif}
-body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;background-image:radial-gradient(ellipse at 50% -20%,rgba(87,232,255,0.1),transparent 55%)}
 header,main,footer{width:100%;max-width:1040px;padding:20px}
 header{display:flex;justify-content:space-between;align-items:center;padding-top:30px;flex-wrap:wrap;gap:10px}
-.logo{font-size:1.5rem;font-weight:900}.logo span{color:var(--cyan)}
+.logo{font-size:1.5rem;font-weight:900;letter-spacing:1px}.logo span{color:var(--cyan)}
 .stats-bar{display:flex;gap:10px}
-.stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold;font-size:0.9rem}
-.featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px;box-shadow: 0 10px 30px rgba(0,0,0,0.5)}
-.featured h2{font-size: 2rem; margin-bottom: 10px}
-.btn{background:var(--gold);color:#000;padding:12px 25px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px;transition:0.2s}
+.stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold;font-size:0.9rem;display:flex;align-items:center;gap:5px}
+.featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px;box-shadow: 0 10px 30px rgba(0,0,0,0.5);position:relative;overflow:hidden}
+.featured::before{content:'👑';position:absolute;top:-20px;right:10px;font-size:8rem;opacity:0.05;transform:rotate(20deg)}
+.featured h2{font-size: 2rem; margin-bottom: 10px; color:var(--gold)}
+.btn{background:linear-gradient(110deg,var(--gold),#e9a83d);color:#000;padding:12px 30px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px;transition:0.2s;box-shadow: 0 4px 15px rgba(247,201,105,0.3)}
 .btn:hover{transform:scale(1.05)}
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px}
-.game-card{background:var(--card);padding:20px;border-radius:15px;text-align:center;text-decoration:none;color:#fff;border:1px solid #ffffff10;transition:0.2s;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.game-card:hover{border-color:var(--cyan);background:#151c33}
-.icon{font-size:2rem;margin-bottom:10px}
-footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9rem}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px;margin-bottom:30px}
+.game-card{background:var(--card);padding:20px;border-radius:15px;text-align:center;text-decoration:none;color:#fff;border:1px solid #ffffff10;transition:0.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.game-card:hover{border-color:var(--cyan);background:#151c33;transform:translateY(-3px)}
+.game-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(87,232,255,0.1));opacity:0;transition:0.2s}
+.game-card:hover::after{opacity:1}
+.icon{font-size:2.5rem;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2))}
+.game-card h3{font-size:1rem;font-weight:bold}
+footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9rem;border-top:1px solid #ffffff05}
 </style>
 </head>
 <body>
+
 <header>
   <div class="logo" dir="ltr">JAMAM <span>GAMES</span></div>
   <div class="stats-bar">
-    <div class="stat-box">المستوى: <span id="ui-level" style="color:var(--cyan)">1</span></div>
-    <div class="stat-box">العملات: <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
+    <div class="stat-box"><span style="color:#94a3b8">المستوى:</span> <span id="ui-level" style="color:var(--cyan)">1</span></div>
+    <div class="stat-box"><span style="color:#94a3b8">العملات:</span> <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
   </div>
 </header>
 
 <main>
+  <!-- اللعبة الرسمية -->
   <div class="featured">
     <h2>نبض النيون</h2>
-    <p>اختبر سرعة ردّ فعلك. اجمع الكريستالات وتحدَّ أصدقاءك.</p>
+    <p style="color:#b4c1d8">اختبر سرعة ردّ فعلك. اجمع الكريستالات وتحدَّ أصدقاءك.</p>
     <a href="games/neon-pulse.html" class="btn">العب الآن ⚡</a>
   </div>
 
+  <!-- شبكة الألعاب -->
   <div class="games-grid">
-    <a href="games/neon-flux.html" class="game-card"><div class="icon">🧪</div>نيون فلكس</a>
-    <a href="games/beat-slasher.html" class="game-card"><div class="icon">⚔️</div>بيت سلاشر</a>
-    <a href="games/ghost-of-me.html" class="game-card"><div class="icon">👻</div>شبح الماضي</a>
-    <a href="games/vanishing-floor.html" class="game-card"><div class="icon">🧱</div>الأرضية المتلاشية</a>
-    <a href="games/echo-sonar.html" class="game-card"><div class="icon">🦇</div>صدى الظلام</a>
+    <a href="games/solar-grid.html" class="game-card">
+      <div class="icon">🔋</div>
+      <h3>شبكة الطاقة</h3>
+    </a>
+    <a href="games/neon-flux.html" class="game-card">
+      <div class="icon">🧪</div>
+      <h3>نيون فلكس</h3>
+    </a>
+    <a href="games/beat-slasher.html" class="game-card">
+      <div class="icon">⚔️</div>
+      <h3>بيت سلاشر</h3>
+    </a>
+    <a href="games/ghost-of-me.html" class="game-card">
+      <div class="icon">👻</div>
+      <h3>شبح الماضي</h3>
+    </a>
+    <a href="games/vanishing-floor.html" class="game-card">
+      <div class="icon">🧱</div>
+      <h3>الأرضية المتلاشية</h3>
+    </a>
+    <a href="games/echo-sonar.html" class="game-card">
+      <div class="icon">🦇</div>
+      <h3>صدى الظلام</h3>
+    </a>
   </div>
 
   <!-- زر التجربة السحرية -->
-  <button id="test-magic-btn" style="margin: 30px auto 0; padding: 15px 30px; background: var(--cyan); color: #000; font-weight: 900; border: none; border-radius: 12px; font-size: 16px; display: block; box-shadow: 0 4px 15px rgba(87, 232, 255, 0.4); cursor: pointer;">🪄 اضغط هنا لتجربة الإنجازات</button>
+  <button id="test-magic-btn" style="margin: 0 auto; padding: 15px 30px; background: var(--cyan); color: #000; font-weight: 900; border: none; border-radius: 12px; font-size: 16px; display: block; box-shadow: 0 4px 15px rgba(87, 232, 255, 0.4); cursor: pointer;">🪄 اضغط هنا لتجربة الإنجازات</button>
 </main>
 
 <footer>JAMAM GAMES © 2026</footer>
@@ -84,7 +110,7 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
           alert('خطأ: لم يتم تحميل ملفات النظام!');
           return;
         }
-        // محاكاة إنهاء لعبة نبض النيون بـ 600 نقطة (أكثر من 500 لفتح الإنجاز)
+        // محاكاة إنهاء لعبة نبض النيون بـ 600 نقطة
         JAMAM.game.end('neon-pulse', { score: 600 });
         
         magicBtn.textContent = '✅ تم! جاري التحديث...';
