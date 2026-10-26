@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#050811">
+<title>JAMAM GAMES | منصة الألعاب</title>
+<style>
+:root{
+  --bg-dark:#050811;--panel-bg:#0b1427;
+  --neon-cyan:#00f3ff;--neon-pink:#ff287b;--neon-gold:#ffcf38;
+  --text-main:#f3f7ff;
+  --font-main:system-ui,'Segoe UI',Tahoma,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{background-color:var(--bg-dark);color:var(--text-main);font-family:var(--font-main);min-height:100vh;overflow-x:hidden}
+body{display:flex;flex-direction:column;align-items:center}
+
+/* Background */
+.bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,243,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,243,255,.05) 1px,transparent 1px);background-size:30px 30px;z-index:-1;perspective:500px}
+.bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:80vw;height:80vw;background:radial-gradient(circle,rgba(0,243,255,.15) 0%,transparent 60%);z-index:-1}
+
+/* Header */
+header{width:100%;max-width:800px;padding:30px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:1.8rem;font-weight:900;color:#fff;text-shadow:0 0 15px var(--neon-cyan);letter-spacing:2px}
+.logo span{color:var(--neon-cyan)}
+.header-lang-btn{background:transparent;border:1px solid rgba(0,243,255,.3);color:var(--neon-cyan);width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:grid;place-items:center;transition:all .2s;flex-shrink:0}
+.header-lang-btn:hover,.header-lang-btn:active{background:rgba(0,243,255,.1);box-shadow:0 0 15px rgba(0,243,255,.2);transform:scale(1.05)}
+
+/* Main */
+main{width:100%;max-width:800px;padding:0 20px 40px;flex:1}
+.section-title{font-size:1.2rem;color:#aab7d2;margin-bottom:15px;font-weight:bold;border-inline-start:4px solid var(--neon-pink);padding-inline-start:10px;margin-top:30px;display:flex;align-items:center;gap:8px}
+
+/* Featured card */
+.featured-card{width:100%;border-radius:24px;background:linear-gradient(135deg,#0b1427,#111c3c);border:1px solid rgba(0,243,255,.3);box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 20px rgba(0,243,255,.05);padding:30px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start}
+.featured-card::before{content:'';position:absolute;top:-50%;inset-inline-end:-50%;width:200px;height:200px;background:var(--neon-cyan);filter:blur(100px);opacity:.2}
+.badge{background:rgba(0,243,255,.15);color:var(--neon-cyan);padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:bold;margin-bottom:15px;border:1px solid rgba(0,243,255,.3)}
+.featured-card h2{font-size:2.2rem;color:#fff;margin-bottom:10px;text-shadow:0 0 10px rgba(255,255,255,.3)}
+.featured-card p{color:#aab7d2;font-size:.95rem;margin-bottom:25px;line-height:1.6;max-width:400px}
+.btn-play{display:inline-block;background:linear-gradient(90deg,var(--neon-cyan),#478bff);color:#000;font-weight:900;font-size:1.1rem;padding:14px 35px;border-radius:50px;text-decoration:none;box-shadow:0 0 20px rgba(0,243,255,.4);transition:transform .2s,box-shadow .2s}
+.btn-play:active{transform:scale(.95);box-shadow:0 0 10px rgba(0,243,255,.2)}
+
+/* Games grid */
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}
+@media(max-width:500px){.games-grid{grid-template-columns:1fr}}
+.game-card{background:var(--panel-bg);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
+.game-card.disabled{opacity:.6}
+.game-card h3{color:#fff;font-size:1.2rem;margin-bottom:5px}
+.game-card span{color:var(--neon-pink);font-size:.8rem;font-weight:bold}
+.game-card .icon{font-size:2.5rem;margin-bottom:10px}
+
+/* Footer */
+footer{width:100%;max-width:800px;padding:20px;text-align:center;color:#6f83a7;font-size:.85rem;border-top:1px solid rgba(255,255,255,.05)}
+footer a{color:var(--neon-cyan);text-decoration:none}
+
+/* Stats */
+.stats-bar{display:flex;gap:10px;margin-top:20px;width:100%}
+.stat-item{flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;text-align:center}
+.stat-item span{display:block;font-size:.75rem;color:#8fa8cc;margin-bottom:4px}
+.stat-item b{font-size:1.1rem;color:var(--neon-gold);display:inline-block}
+
+/* Fade-in */
+.fade-in{animation:fadeIn .8s ease-out forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Language overlay */
+.overlay{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;text-align:center;background:linear-gradient(180deg,rgba(5,8,17,.95),rgba(7,11,24,.98));backdrop-filter:blur(14px);transition:opacity .2s}
+.overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.overlay-title{font-size:1.8rem;font-weight:900;color:var(--neon-cyan);text-shadow:0 0 20px rgba(0,243,255,.5);margin-bottom:6px}
+.overlay-desc{color:#aab7d2;font-size:.9rem;margin-bottom:22px}
+.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:380px;margin-bottom:20px}
+.lang-option{padding:12px 10px;border-radius:12px;border:1px solid rgba(0,243,255,.2);background:#0b1427;color:var(--text-main);font-size:.92rem;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;text-align:center}
+.lang-option:hover,.lang-option:active{border-color:rgba(0,243,255,.6);background:#0d1a30}
+.lang-option.active{border-color:var(--neon-cyan);background:rgba(0,243,255,.15);color:var(--neon-cyan);box-shadow:0 0 12px rgba(0,243,255,.3)}
+.overlay-close{background:linear-gradient(110deg,var(--neon-cyan),#478bff);color:#03101b;border:0;font-weight:900;font-size:.95rem;padding:12px 30px;border-radius:50px;cursor:pointer;box-shadow:0 0 20px rgba(0,243,255,.3);min-width:180px}
+
+/* Numbers should stay LTR inside RTL contexts */
+[dir="rtl"] .num{unicode-bidi:isolate;display:inline-block}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<header>
+  <div class="logo" dir="ltr">JAMAM <span>GAMES</span></div>
+  <button class="header-lang-btn" id="langBtn" data-i18n-aria="changeLang" aria-label="Change Language" title="Change Language">🌐</button>
+</header>
+
+<main class="fade-in">
+  <!-- Featured game -->
+  <div class="section-title"><span aria-hidden="true">🔥</span><span data-i18n="officialGame">اللعبة الرسمية</span></div>
+  <div class="featured-card">
+    <div class="badge" data-i18n="badgeVersion">الإصدار 2.0</div>
+    <h2 data-i18n="neonTitle">نبض النيون</h2>
+    <p data-i18n="neonDesc">اختبر سرعة ردّ فعلك. اجمع الكريستالات، تجنب الجماجم، وتحدَّ أصدقاءك. لعبة أركيد سريعة تدعم 14 لغة.</p>
+    <!-- ⚠️ IMPORTANT: adjust this path to your actual game location -->
+    <a href="games/neon-pulse.html" class="btn-play" data-i18n="playNow">العب الآن ⚡</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-item"><span data-i18n="players">اللاعبون</span><b class="num" dir="ltr">+500</b></div>
+    <div class="stat-item"><span data-i18n="topScore">أعلى نتيجة</span><b class="num" dir="ltr">12,450</b></div>
+    <div class="stat-item"><span data-i18n="rating">التقييم</span><b class="num" dir="ltr">⭐⭐⭐⭐⭐</b></div>
+  </div>
+
+  <!-- Coming soon -->
+  <div class="section-title"><span aria-hidden="true">🚀</span><span data-i18n="comingSoon">قريباً في المنصة</span></div>
+  <div class="games-grid">
+    <div class="game-card disabled">
+      <div class="icon">💀</div>
+      <h3 data-i18n="skullRealm">إقليم الجماجم</h3>
+      <span data-i18n="soon">قريباً</span>
+    </div>
+    <div class="game-card disabled">
+      <div class="icon">📦</div>
+      <h3 data-i18n="ascentMode">وضع الصعود</h3>
+      <span data-i18n="soon">قريباً</span>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span data-i18n="footerText">صُنع بشغف بواسطة JAMAM GAMES © 2026</span>
+</footer>
+
+<!-- Language picker -->
+<section id="langOverlay" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="overlay-title" data-i18n="langTitle">اختر اللغة</div>
+  <p class="overlay-desc" data-i18n="langDesc">اختر لغتك المفضلة</p>
+  <div class="lang-grid" id="langGrid"></div>
+  <button class="overlay-close" id="langClose" data-i18n="close">إغلاق</button>
+</section>
+
+<script>
+(() => {
+'use strict';
+
+/* ============================================================
+   TRANSLATIONS — 14 Languages
+   ============================================================ */
+const translations = {
+en: {
+  pageTitle:"JAMAM GAMES | Game Platform",
+  officialGame:"Official Game",
+  badgeVersion:"Version 2.0",
+  neonTitle:"Neon Pulse",
+  neonDesc:"Test your reflexes. Collect crystals, avoid the skulls, and challenge your friends. A fast arcade game supporting 14 languages.",
+  playNow:"Play Now ⚡",
+  players:"Players",
+  topScore:"Top Score",
+  rating:"Rating",
+  comingSoon:"Coming Soon to the Platform",
+  skullRealm:"Skull Realm",
+  ascentMode:"Ascent Mode",
+  soon:"Coming Soon",
+  footerText:"Made with passion by JAMAM GAMES © 2026",
+  changeLang:"Change Language",
+  langTitle:"Select Language",
+  langDesc:"Choose your preferred language",
+  close:"Close"
+},
+ar: {
+  pageTitle:"JAMAM GAMES | منصة الألعاب",
+  officialGame:"اللعبة الرسمية",
+  badgeVersion:"الإصدار 2.0",
+  neonTitle:"نبض النيون",
+  neonDesc:"اختبر سرعة ردّ فعلك. اجمع الكريستالات، تجنب الجماجم، وتحدَّ أصدقاءك. لعبة أركيد سريعة تدعم 14 لغة.",
+  playNow:"العب الآن ⚡",
+  players:"اللاعبون",
+  topScore:"أعلى نتيجة",
+  rating:"التقييم",
+  comingSoon:"قريباً في المنصة",
+  skullRealm:"إقليم الجماجم",
+  ascentMode:"وضع الصعود",
+  soon:"قريباً",
+  footerText:"صُنع بشغف بواسطة JAMAM GAMES © 2026",
+  changeLang:"تغيير اللغة",
+  langTitle:"اختر اللغة",
+  langDesc:"اختر لغتك المفضلة",
+  close:"إغلاق"
+},
+es: {
+  pageTitle:"JAMAM GAMES | Plataforma de Juegos",
+  officialGame:"Juego Oficial",
+  badgeVersion:"Versión 2.0",
+  neonTitle:"Pulso Neón",
+  neonDesc:"Pon a prueba tus reflejos. Recoge cristales, evita las calaveras y desafía a tus amigos. Un juego arcade rápido compatible con 14 idiomas.",
+  playNow:"Jugar Ahora ⚡",
+  players:"Jugadores",
+  topScore:"Mejor Puntuación",
+  rating:"Valoración",
+  comingSoon:"Próximamente en la Plataforma",
+  skullRealm:"Reino de Calaveras",
+  ascentMode:"Modo Ascenso",
+  soon:"Próximamente",
+  footerText:"Hecho con pasión por JAMAM GAMES © 2026",
+  changeLang:"Cambiar Idioma",
+  langTitle:"Seleccionar Idioma",
+  langDesc:"Elige tu idioma preferido",
+  close:"Cerrar"
+},
+fr: {
+  pageTitle:"JAMAM GAMES | Plateforme de Jeux",
+  officialGame:"Jeu Officiel",
+  badgeVersion:"Version 2.0",
+  neonTitle:"Pouls Néon",
+  neonDesc:"Testez vos réflexes. Collectez les cristaux, évitez les crânes et défiez vos amis. Un jeu d'arcade rapide disponible en 14 langues.",
+  playNow:"Jouer Maintenant ⚡",
+  players:"Joueurs",
+  topScore:"Meilleur Score",
+  rating:"Note",
+  comingSoon:"Bientôt sur la Plateforme",
+  skullRealm:"Royaume des Crânes",
+  ascentMode:"Mode Ascension",
+  soon:"Bientôt",
+  footerText:"Fait avec passion par JAMAM GAMES © 2026",
+  changeLang:"Changer de Langue",
+  langTitle:"Choisir la Langue",
+  langDesc:"Choisissez votre langue préférée",
+  close:"Fermer"
+},
+de: {
+  pageTitle:"JAMAM GAMES | Spieleplattform",
+  officialGame:"Offizielles Spiel",
+  badgeVersion:"Version 2.0",
+  neonTitle:"Neon-Puls",
+  neonDesc:"Teste deine Reflexe. Sammle Kristalle, meide die Schädel und fordere deine Freunde heraus. Ein schnelles Arcade-Spiel in 14 Sprachen.",
+  playNow:"Jetzt Spielen ⚡",
+  players:"Spieler",
+  topScore:"Bestpunktzahl",
+  rating:"Bewertung",
+  comingSoon:"Bald auf der Plattform",
+  skullRealm:"Schädelreich",
+  ascentMode:"Aufstiegsmodus",
+  soon:"Bald",
+  footerText:"Mit Leidenschaft gemacht von JAMAM GAMES © 2026",
+  changeLang:"Sprache Ändern",
+  langTitle:"Sprache Wählen",
+  langDesc:"Wähle deine bevorzugte Sprache",
+  close:"Schließen"
+},
+it: {
+  pageTitle:"JAMAM GAMES | Piattaforma di Giochi",
+  officialGame:"Gioco Ufficiale",
+  badgeVersion:"Versione 2.0",
+  neonTitle:"Impulso Neon",
+  neonDesc:"Metti alla prova i tuoi riflessi. Raccogli i cristalli, evita i teschi e sfida i tuoi amici. Un arcade veloce in 14 lingue.",
+  playNow:"Gioca Ora ⚡",
+  players:"Giocatori",
+  topScore:"Miglior Punteggio",
+  rating:"Valutazione",
+  comingSoon:"Prossimamente sulla Piattaforma",
+  skullRealm:"Regno dei Teschi",
+  ascentMode:"Modalità Ascesa",
+  soon:"Prossimamente",
+  footerText:"Fatto con passione da JAMAM GAMES © 2026",
+  changeLang:"Cambia Lingua",
+  langTitle:"Seleziona Lingua",
+  langDesc:"Scegli la tua lingua preferita",
+  close:"Chiudi"
+},
+pt: {
+  pageTitle:"JAMAM GAMES | Plataforma de Jogos",
+  officialGame:"Jogo Oficial",
+  badgeVersion:"Versão 2.0",
+  neonTitle:"Pulso Neon",
+  neonDesc:"Teste seus reflexos. Colete cristais, evite as caveiras e desafie seus amigos. Um arcade rápido disponível em 14 idiomas.",
+  playNow:"Jogar Agora ⚡",
+  players:"Jogadores",
+  topScore:"Melhor Pontuação",
+  rating:"Avaliação",
+  comingSoon:"Em Breve na Plataforma",
+  skullRealm:"Reino das Caveiras",
+  ascentMode:"Modo Ascensão",
+  soon:"Em Breve",
+  footerText:"Feito com paixão por JAMAM GAMES © 2026",
+  changeLang:"Mudar Idioma",
+  langTitle:"Selecionar Idioma",
+  langDesc:"Escolha seu idioma preferido",
+  close:"Fechar"
+},
+ru: {
+  pageTitle:"JAMAM GAMES | Игровая Платформа",
+  officialGame:"Официальная Игра",
+  badgeVersion:"Версия 2.0",
+  neonTitle:"Неоновый Пульс",
+  neonDesc:"Проверьте свои рефлексы. Собирайте кристаллы, избегайте черепов и бросайте вызов друзьям. Быстрая аркада на 14 языках.",
+  playNow:"Играть Сейчас ⚡",
+  players:"Игроки",
+  topScore:"Лучший Результат",
+  rating:"Рейтинг",
+  comingSoon:"Скоро на Платформе",
+  skullRealm:"Королевство Черепов",
+  ascentMode:"Режим Восхождения",
+  soon:"Скоро",
+  footerText:"Сделано с любовью командой JAMAM GAMES © 2026",
+  changeLang:"Изменить Язык",
+  langTitle:"Выбрать Язык",
+  langDesc:"Выберите предпочитаемый язык",
+  close:"Закрыть"
+},
+zh: {
+  pageTitle:"JAMAM GAMES | 游戏平台",
+  officialGame:"官方游戏",
+  badgeVersion:"版本 2.0",
+  neonTitle:"霓虹脉冲",
+  neonDesc:"测试你的反应能力。收集水晶，避开骷髅，挑战你的朋友。支持14种语言的快节奏街机游戏。",
+  playNow:"立即游玩 ⚡",
+  players:"玩家",
+  topScore:"最高分",
+  rating:"评分",
+  comingSoon:"即将登陆平台",
+  skullRealm:"骷髅领域",
+  ascentMode:"上升模式",
+  soon:"敬请期待",
+  footerText:"由 JAMAM GAMES 倾情打造 © 2026",
+  changeLang:"更改语言",
+  langTitle:"选择语言",
+  langDesc:"选择你的首选语言",
+  close:"关闭"
+},
+ja: {
+  pageTitle:"JAMAM GAMES | ゲームプラットフォーム",
+  officialGame:"公式ゲーム",
+  badgeVersion:"バージョン 2.0",
+  neonTitle:"ネオンパルス",
+  neonDesc:"反射神経を試そう。クリスタルを集め、ドクロを避け、友達に挑戦しよう。14言語対応の高速アーケードゲーム。",
+  playNow:"今すぐプレイ ⚡",
+  players:"プレイヤー",
+  topScore:"ハイスコア",
+  rating:"評価",
+  comingSoon:"プラットフォームに近日登場",
+  skullRealm:"スカルレルム",
+  ascentMode:"アセントモード",
+  soon:"近日公開",
+  footerText:"JAMAM GAMES が情熱を込めて制作 © 2026",
+  changeLang:"言語を変更",
+  langTitle:"言語を選択",
+  langDesc:"お好みの言語を選択してください",
+  close:"閉じる"
+},
+ko: {
+  pageTitle:"JAMAM GAMES | 게임 플랫폼",
+  officialGame:"공식 게임",
+  badgeVersion:"버전 2.0",
+  neonTitle:"네온 펄스",
+  neonDesc:"반사 신경을 테스트하세요. 크리스탈을 모으고 해골을 피하며 친구에게 도전하세요. 14개 언어를 지원하는 빠른 아케이드 게임.",
+  playNow:"지금 플레이 ⚡",
+  players:"플레이어",
+  topScore:"최고 점수",
+  rating:"평점",
+  comingSoon:"플랫폼에 곧 출시",
+  skullRealm:"해골 왕국",
+  ascentMode:"상승 모드",
+  soon:"곧 출시",
+  footerText:"JAMAM GAMES이(가) 열정으로 제작 © 2026",
+  changeLang:"언어 변경",
+  langTitle:"언어 선택",
+  langDesc:"선호하는 언어를 선택하세요",
+  close:"닫기"
+},
+tr: {
+  pageTitle:"JAMAM GAMES | Oyun Platformu",
+  officialGame:"Resmi Oyun",
+  badgeVersion:"Sürüm 2.0",
+  neonTitle:"Neon Nabız",
+  neonDesc:"Reflekslerini test et. Kristalleri topla, kafataslarından kaç ve arkadaşlarına meydan oku. 14 dili destekleyen hızlı bir atari oyunu.",
+  playNow:"Şimdi Oyna ⚡",
+  players:"Oyuncular",
+  topScore:"En Yüksek Skor",
+  rating:"Puanlama",
+  comingSoon:"Platformda Yakında",
+  skullRealm:"Kafatası Diyarı",
+  ascentMode:"Yükseliş Modu",
+  soon:"Yakında",
+  footerText:"JAMAM GAMES tarafından tutkuyla yapıldı © 2026",
+  changeLang:"Dili Değiştir",
+  langTitle:"Dil Seç",
+  langDesc:"Tercih ettiğin dili seç",
+  close:"Kapat"
+},
+hi: {
+  pageTitle:"JAMAM GAMES | गेम प्लेटफ़ॉर्म",
+  officialGame:"आधिकारिक गेम",
+  badgeVersion:"संस्करण 2.0",
+  neonTitle:"नियॉन पल्स",
+  neonDesc:"अपनी प्रतिक्रिया का परीक्षण करें। क्रिस्टल इकट्ठा करें, खोपड़ियों से बचें और दोस्तों को चुनौती दें। 14 भाषाओं का समर्थन करने वाला तेज़ आर्केड गेम।",
+  playNow:"अभी खेलें ⚡",
+  players:"खिलाड़ी",
+  topScore:"शीर्ष स्कोर",
+  rating:"रेटिंग",
+  comingSoon:"प्लेटफ़ॉर्म पर जल्द आ रहा है",
+  skullRealm:"खोपड़ी क्षेत्र",
+  ascentMode:"आरोहण मोड",
+  soon:"जल्द आ रहा है",
+  footerText:"JAMAM GAMES द्वारा जुनून के साथ बनाया गया © 2026",
+  changeLang:"भाषा बदलें",
+  langTitle:"भाषा चुनें",
+  langDesc:"अपनी पसंदीदा भाषा चुनें",
+  close:"बंद करें"
+},
+id: {
+  pageTitle:"JAMAM GAMES | Platform Game",
+  officialGame:"Game Resmi",
+  badgeVersion:"Versi 2.0",
+  neonTitle:"Denyut Neon",
+  neonDesc:"Uji refleks Anda. Kumpulkan kristal, hindari tengkorak, dan tantang teman Anda. Game arcade cepat yang mendukung 14 bahasa.",
+  playNow:"Main Sekarang ⚡",
+  players:"Pemain",
+  topScore:"Skor Tertinggi",
+  rating:"Peringkat",
+  comingSoon:"Segera Hadir di Platform",
+  skullRealm:"Alam Tengkorak",
+  ascentMode:"Mode Pendakian",
+  soon:"Segera",
+  footerText:"Dibuat dengan penuh semangat oleh JAMAM GAMES © 2026",
+  changeLang:"Ubah Bahasa",
+  langTitle:"Pilih Bahasa",
+  langDesc:"Pilih bahasa yang Anda sukai",
+  close:"Tutup"
+}
+};
+
+/* ============================================================
+   LANGUAGE CONFIG & STORAGE
+   ============================================================ */
+const RTL_LANGS = ['ar','he','fa','ur'];
+const LANG_LIST = [
+  {code:'en', name:'English'},
+  {code:'ar', name:'العربية'},
+  {code:'es', name:'Español'},
+  {code:'fr', name:'Français'},
+  {code:'de', name:'Deutsch'},
+  {code:'it', name:'Italiano'},
+  {code:'pt', name:'Português'},
+  {code:'ru', name:'Русский'},
+  {code:'zh', name:'中文'},
+  {code:'ja', name:'日本語'},
+  {code:'ko', name:'한국어'},
+  {code:'tr', name:'Türkçe'},
+  {code:'hi', name:'हिन्दी'},
+  {code:'id', name:'Bahasa Indonesia'}
+];
+
+// Storage keys — mirrors the game so language stays in sync
+const STORE_LANG = 'jamam_games_lang';
+const GAME_STORE = 'neon_pulse_v2_save';
+
+/* ============================================================
+   LANGUAGE DETECTION & HELPERS
+   ============================================================ */
+function detectLanguage(){
+  try {
+    const nav = navigator.languages || [navigator.language || 'en'];
+    for (const lang of nav) {
+      const code = lang.split('-')[0].toLowerCase();
+      if (translations[code]) return code;
+    }
+  } catch(e){}
+  return 'en';
+}
+
+function loadLanguage(){
+  // 1. Platform preference
+  try {
+    const saved = localStorage.getItem(STORE_LANG);
+    if (saved && translations[saved]) return saved;
+  } catch(e){}
+  // 2. Game preference (stays in sync)
+  try {
+    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE) || '{}');
+    if (gameSave.language && translations[gameSave.language]) return gameSave.language;
+  } catch(e){}
+  // 3. Browser auto-detect
+  return detectLanguage();
+}
+
+function saveLanguage(code){
+  try { localStorage.setItem(STORE_LANG, code); } catch(e){}
+  // Mirror into the game save so both stay consistent
+  try {
+    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE) || '{}');
+    gameSave.language = code;
+    localStorage.setItem(GAME_STORE, JSON.stringify(gameSave));
+  } catch(e){}
+}
+
+function t(key){
+  const dict = translations[currentLang] || translations.en;
+  return dict[key] || translations.en[key] || key;
+}
+
+/* ============================================================
+   RENDER & APPLY
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const langBtn = $('langBtn');
+const langOverlay = $('langOverlay');
+const langGrid = $('langGrid');
+const langClose = $('langClose');
+
+let currentLang = loadLanguage();
+
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const v = t(el.getAttribute('data-i18n-aria'));
+    el.setAttribute('aria-label', v);
+    el.setAttribute('title', v);
+  });
+  document.title = t('pageTitle');
+  // Highlight active option
+  document.querySelectorAll('.lang-option').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
+}
+
+function setLanguage(code){
+  if (!translations[code]) code = 'en';
+  currentLang = code;
+  document.documentElement.lang = code;
+  document.documentElement.dir = RTL_LANGS.includes(code) ? 'rtl' : 'ltr';
+  saveLanguage(code);
+  applyTranslations();
+}
+
+function renderLangGrid(){
+  langGrid.innerHTML = LANG_LIST.map(l =>
+    `<button class="lang-option${l.code === currentLang ? ' active' : ''}" data-lang="${l.code}" lang="${l.code}" dir="${RTL_LANGS.includes(l.code) ? 'rtl' : 'ltr'}">${l.name}</button>`
+  ).join('');
+  langGrid.querySelectorAll('.lang-option').forEach(btn => {
+    btn.onclick = () => {
+      setLanguage(btn.dataset.lang);
+      closeLang();
+    };
+  });
+}
+
+function openLang(){
+  renderLangGrid();
+  langOverlay.classList.remove('hidden');
+  // Focus first button for accessibility
+  setTimeout(() => {
+    const active = langGrid.querySelector('.lang-option.active');
+    if (active) active.focus();
+  }, 50);
+}
+
+function closeLang(){
+  langOverlay.classList.add('hidden');
+  langBtn.focus();
+}
+
+/* ============================================================
+   WIRING
+   ============================================================ */
+langBtn.onclick = openLang;
+langClose.onclick = closeLang;
+
+// Close on backdrop click
+langOverlay.addEventListener('click', e => {
+  if (e.target === langOverlay) closeLang();
+});
+
+// Close on Escape
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !langOverlay.classList.contains('hidden')) closeLang();
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.documentElement.lang = currentLang;
+document.documentElement.dir = RTL_LANGS.includes(currentLang) ? 'rtl' : 'ltr';
+applyTranslations();
+
+})();
+</script>
+
+</body>
+</html>
