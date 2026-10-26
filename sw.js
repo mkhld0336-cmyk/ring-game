@@ -1,3 +1,4 @@
+const CACHE = 'jamam-v5';
 const CACHE = 'jamam-v4';
 const ASSETS = [
   './',
