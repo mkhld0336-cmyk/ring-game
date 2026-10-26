@@ -1,0 +1,24 @@
+{
+  "name": "JAMAM GAMES",
+  "short_name": "JAMAM",
+  "description": "Global arcade games hub — 6 arcade games in 14 languages",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070817",
+  "theme_color": "#f7c969",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzA3MDgxNyIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgZm9udC1zaXplPSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2Y3Yzk2OSI+8J+RkTwvdGV4dD48L3N2Zz4=",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Neon Pulse", "url": "/games/neon-pulse.html" },
+    { "name": "Beat Slasher", "url": "/games/beat-slasher.html" }
+  ]
+}
