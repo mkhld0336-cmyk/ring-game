@@ -18,15 +18,12 @@ function addShareButton(gameId, gameName, getScore) {
   const btn = document.createElement('button');
   btn.id = 'jamam-share-fab';
   btn.textContent = '📤';
-  btn.style.cssText = `position:fixed; bottom:20px; inset-inline-start:20px; width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,#f7c969,#e9ad45); color:#171322; border:0; font-size:22px; box-shadow:0 6px 20px rgba(247,201,105,0.4); cursor:pointer; z-index:9999; display:grid; place-items:center; transition:transform .15s;`;
+  btn.style.cssText = `position:fixed; bottom:20px; inset-inline-start:20px; width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,#f7c969,#e9ad45); color:#171322; border:0; font-size:22px; box-shadow:0 6px 20px rgba(247,201,105,0.4); cursor:pointer; z-index:9999; display:grid; place-items:center;`;
   btn.onclick = async () => {
     const score = getScore();
     if (!score) return;
-    btn.textContent = '⏳';
     const playerName = localStorage.getItem('jamam_player_name') || 'Player';
     const ok = await window.JamamShare?.share(gameName, score, playerName, '?');
-    btn.textContent = ok ? '✓' : '📤';
-    setTimeout(() => btn.textContent = '📤', 2000);
   };
   document.body.appendChild(btn);
 }
