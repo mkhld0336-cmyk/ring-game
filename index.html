@@ -8,33 +8,34 @@
 <link rel="manifest" href="./manifest.json">
 <style>
 :root{--bg:#070914;--card:#10172a;--cyan:#57e8ff;--gold:#f7c969;--text:#f5f7ff}
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, -apple-system, sans-serif}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
 header,main,footer{width:100%;max-width:1040px;padding:20px}
-header{display:flex;justify-content:space-between;align-items:center;padding-top:30px}
+header{display:flex;justify-content:space-between;align-items:center;padding-top:30px;flex-wrap:wrap;gap:10px}
 .logo{font-size:1.5rem;font-weight:900}.logo span{color:var(--cyan)}
-.stats-bar{display:flex;gap:10px;margin-bottom:20px}
-.stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold}
-.featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px}
-.btn{background:var(--gold);color:#000;padding:12px 25px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px}
+.stats-bar{display:flex;gap:10px}
+.stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold;font-size:0.9rem}
+.featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px;box-shadow: 0 10px 30px rgba(0,0,0,0.5)}
+.featured h2{font-size: 2rem; margin-bottom: 10px}
+.btn{background:var(--gold);color:#000;padding:12px 25px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px;transition:0.2s}
+.btn:hover{transform:scale(1.05)}
 .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px}
-.game-card{background:var(--card);padding:20px;border-radius:15px;text-align:center;text-decoration:none;color:#fff;border:1px solid #ffffff10}
-.game-card:hover{border-color:var(--cyan)}
+.game-card{background:var(--card);padding:20px;border-radius:15px;text-align:center;text-decoration:none;color:#fff;border:1px solid #ffffff10;transition:0.2s;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.game-card:hover{border-color:var(--cyan);background:#151c33}
 .icon{font-size:2rem;margin-bottom:10px}
-footer{text-align:center;color:#666;margin-top:auto;padding:30px}
+footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9rem}
 </style>
 </head>
 <body>
 <header>
   <div class="logo" dir="ltr">JAMAM <span>GAMES</span></div>
-</header>
-
-<main>
   <div class="stats-bar">
     <div class="stat-box">المستوى: <span id="ui-level" style="color:var(--cyan)">1</span></div>
     <div class="stat-box">العملات: <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
   </div>
+</header>
 
+<main>
   <div class="featured">
     <h2>نبض النيون</h2>
     <p>اختبر سرعة ردّ فعلك. اجمع الكريستالات وتحدَّ أصدقاءك.</p>
@@ -48,24 +49,50 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px}
     <a href="games/vanishing-floor.html" class="game-card"><div class="icon">🧱</div>الأرضية المتلاشية</a>
     <a href="games/echo-sonar.html" class="game-card"><div class="icon">🦇</div>صدى الظلام</a>
   </div>
+
+  <!-- زر التجربة السحرية -->
+  <button id="test-magic-btn" style="margin: 30px auto 0; padding: 15px 30px; background: var(--cyan); color: #000; font-weight: 900; border: none; border-radius: 12px; font-size: 16px; display: block; box-shadow: 0 4px 15px rgba(87, 232, 255, 0.4); cursor: pointer;">🪄 اضغط هنا لتجربة الإنجازات</button>
 </main>
 
 <footer>JAMAM GAMES © 2026</footer>
 
-<!-- JAMAM System -->
+<!-- JAMAM System Core -->
 <script src="./js/jamam-core.js"></script>
 <script src="./js/jamam-progress.js"></script>
 <script src="./js/jamam-achievements.js"></script>
+
 <script>
-  // تحديث الواجهة بناءً على البيانات المحفوظة
   document.addEventListener('DOMContentLoaded', () => {
+    // 1. تحديث الواجهة بناءً على البيانات المحفوظة
     if(window.JAMAM) {
       const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
       const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
       document.getElementById('ui-level').textContent = xpData.level || 1;
       document.getElementById('ui-coins').textContent = (coinData.balance || 0) + ' 🪙';
     }
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+    // 2. تفعيل PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }
+
+    // 3. كود زر التجربة السحرية
+    const magicBtn = document.getElementById('test-magic-btn');
+    if (magicBtn) {
+      magicBtn.onclick = () => {
+        if (!window.JAMAM) {
+          alert('خطأ: لم يتم تحميل ملفات النظام!');
+          return;
+        }
+        // محاكاة إنهاء لعبة نبض النيون بـ 600 نقطة (أكثر من 500 لفتح الإنجاز)
+        JAMAM.game.end('neon-pulse', { score: 600 });
+        
+        magicBtn.textContent = '✅ تم! جاري التحديث...';
+        
+        // إعادة تحميل الصفحة بعد ثانية ونصف لتحديث الأرقام في الأعلى
+        setTimeout(() => location.reload(), 1500);
+      };
+    }
   });
 </script>
 </body>
