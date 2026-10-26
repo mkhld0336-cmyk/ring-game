@@ -7,27 +7,55 @@
 <title>JAMAM GAMES | منصة الألعاب</title>
 <link rel="manifest" href="./manifest.json">
 <style>
-:root{--bg:#070914;--card:#10172a;--cyan:#57e8ff;--gold:#f7c969;--text:#f5f7ff}
+:root{--bg:#070914;--card:#10172a;--cyan:#57e8ff;--gold:#f7c969;--text:#f5f7ff;--pink:#ff4f9a}
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, -apple-system, sans-serif}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;background-image:radial-gradient(ellipse at 50% -20%,rgba(87,232,255,0.1),transparent 55%)}
 header,main,footer{width:100%;max-width:1040px;padding:20px}
 header{display:flex;justify-content:space-between;align-items:center;padding-top:30px;flex-wrap:wrap;gap:10px}
 .logo{font-size:1.5rem;font-weight:900;letter-spacing:1px}.logo span{color:var(--cyan)}
-.stats-bar{display:flex;gap:10px}
+.stats-bar{display:flex;gap:10px;align-items:center}
 .stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold;font-size:0.9rem;display:flex;align-items:center;gap:5px}
+.audio-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+.audio-btn.active { background: rgba(0, 242, 254, 0.15); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
 .featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px;box-shadow: 0 10px 30px rgba(0,0,0,0.5);position:relative;overflow:hidden}
 .featured::before{content:'👑';position:absolute;top:-20px;right:10px;font-size:8rem;opacity:0.05;transform:rotate(20deg)}
 .featured h2{font-size: 2rem; margin-bottom: 10px; color:var(--gold)}
-.btn{background:linear-gradient(110deg,var(--gold),#e9a83d);color:#000;padding:12px 30px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px;transition:0.2s;box-shadow: 0 4px 15px rgba(247,201,105,0.3)}
+.btn{background:linear-gradient(110deg,var(--gold),#e9a83d);color:#000;padding:12px 30px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px;transition:0.2s;box-shadow: 0 4px 15px rgba(247,201,105,0.3);border:none;cursor:pointer}
 .btn:hover{transform:scale(1.05)}
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px;margin-bottom:30px}
+.hub-actions { display: flex; gap: 12px; justify-content: center; margin: 16px 0; flex-wrap:wrap; }
+.btn-secondary { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: background 0.2s ease; }
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:15px;margin-bottom:30px}
 .game-card{background:var(--card);padding:20px;border-radius:15px;text-align:center;text-decoration:none;color:#fff;border:1px solid #ffffff10;transition:0.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .game-card:hover{border-color:var(--cyan);background:#151c33;transform:translateY(-3px)}
-.game-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(87,232,255,0.1));opacity:0;transition:0.2s}
-.game-card:hover::after{opacity:1}
 .icon{font-size:2.5rem;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2))}
-.game-card h3{font-size:1rem;font-weight:bold}
+.game-card h3{font-size:0.95rem;font-weight:bold}
 footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9rem;border-top:1px solid #ffffff05}
+
+/* Modals */
+.jamam-modal-overlay { position: fixed; inset: 0; background: rgba(8, 7, 17, 0.85); backdrop-filter: blur(10px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.jamam-modal-overlay.active { opacity: 1; pointer-events: auto; }
+.jamam-modal { background: rgba(25, 22, 45, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; width: 90%; max-width: 420px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; }
+.jamam-modal-overlay.active .jamam-modal { transform: scale(1); }
+.modal-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.modal-header h3 { font-size: 1.25rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(135deg, var(--cyan) 0%, #4facfe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.close-btn { background: rgba(255, 255, 255, 0.08); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.modal-body { padding: 20px 24px; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+/* Shop Items */
+.shop-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 16px; text-align: center; }
+.shop-item .item-icon { font-size: 2rem; margin-bottom: 8px; }
+.shop-item .item-title { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.shop-item .item-cost { font-size: 0.8rem; color: var(--gold); margin-bottom: 12px; }
+.btn-buy { background: linear-gradient(135deg, var(--cyan) 0%, #4facfe 100%); color: #080711; border: none; padding: 8px 16px; font-weight: 700; border-radius: 20px; cursor: pointer; width: 100%; }
+.btn-buy:disabled { background: rgba(255, 255, 255, 0.1); color: #888; cursor: not-allowed; }
+
+/* Achievements */
+.badge-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.badge-card.unlocked { background: rgba(0, 242, 254, 0.05); border-color: rgba(0, 242, 254, 0.3); box-shadow: 0 0 15px rgba(0, 242, 254, 0.1); }
+.badge-icon { font-size: 2.2rem; margin-bottom: 8px; filter: grayscale(100%); opacity: 0.4; }
+.badge-card.unlocked .badge-icon { filter: grayscale(0%); opacity: 1; }
+.badge-title { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.badge-desc { font-size: 0.75rem; color: #a0a5c0; line-height: 1.3; }
 </style>
 </head>
 <body>
@@ -35,90 +63,178 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 <header>
   <div class="logo" dir="ltr">JAMAM <span>GAMES</span></div>
   <div class="stats-bar">
+    <button id="btn-audio-toggle" class="audio-btn" title="Toggle Music">🎵 <span id="txt-audio-status">OFF</span></button>
     <div class="stat-box"><span style="color:#94a3b8">المستوى:</span> <span id="ui-level" style="color:var(--cyan)">1</span></div>
     <div class="stat-box"><span style="color:#94a3b8">العملات:</span> <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
   </div>
 </header>
 
 <main>
-  <!-- اللعبة الرسمية -->
+  <div class="hub-actions">
+    <button id="btn-open-shop" class="btn-secondary">🛒 متجر العملات</button>
+    <button id="btn-open-achievements" class="btn-secondary">🏆 الإنجازات</button>
+  </div>
+
   <div class="featured">
     <h2>نبض النيون</h2>
     <p style="color:#b4c1d8">اختبر سرعة ردّ فعلك. اجمع الكريستالات وتحدَّ أصدقاءك.</p>
     <a href="games/neon-pulse.html" class="btn">العب الآن ⚡</a>
   </div>
 
-  <!-- شبكة الألعاب -->
   <div class="games-grid">
+    <a href="games/pulse-blade.html" class="game-card">
+      <div class="icon">🌀</div>
+      <h3>نبض الشفرة</h3>
+    </a>
+    <a href="games/orbit-drop.html" class="game-card">
+      <div class="icon">🪐</div>
+      <h3>السقوط المداري</h3>
+    </a>
     <a href="games/solar-grid.html" class="game-card">
       <div class="icon">🔋</div>
       <h3>شبكة الطاقة</h3>
+    </a>
+    <a href="games/hexa-glide.html" class="game-card">
+      <div class="icon">🔺</div>
+      <h3>الانزلاق السداسي</h3>
+    </a>
+    <a href="games/color-shift.html" class="game-card">
+      <div class="icon">🎨</div>
+      <h3>تغيير الألوان</h3>
     </a>
     <a href="games/neon-flux.html" class="game-card">
       <div class="icon">🧪</div>
       <h3>نيون فلكس</h3>
     </a>
-    <a href="games/beat-slasher.html" class="game-card">
-      <div class="icon">⚔️</div>
-      <h3>بيت سلاشر</h3>
-    </a>
-    <a href="games/ghost-of-me.html" class="game-card">
-      <div class="icon">👻</div>
-      <h3>شبح الماضي</h3>
-    </a>
-    <a href="games/vanishing-floor.html" class="game-card">
-      <div class="icon">🧱</div>
-      <h3>الأرضية المتلاشية</h3>
-    </a>
-    <a href="games/echo-sonar.html" class="game-card">
-      <div class="icon">🦇</div>
-      <h3>صدى الظلام</h3>
-    </a>
   </div>
-
-  <!-- زر التجربة السحرية -->
-  <button id="test-magic-btn" style="margin: 0 auto; padding: 15px 30px; background: var(--cyan); color: #000; font-weight: 900; border: none; border-radius: 12px; font-size: 16px; display: block; box-shadow: 0 4px 15px rgba(87, 232, 255, 0.4); cursor: pointer;">🪄 اضغط هنا لتجربة الإنجازات</button>
 </main>
+
+<!-- Shop Modal -->
+<div id="shop-modal-overlay" class="jamam-modal-overlay">
+  <div class="jamam-modal">
+    <div class="modal-header">
+      <h3>JAMAM Coin Shop</h3>
+      <button class="close-btn" id="btn-close-shop">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="shop-item" data-item="neon_theme" data-cost="500">
+        <div class="item-icon">🌈</div>
+        <div class="item-title">Cyber Neon Theme</div>
+        <div class="item-cost">🪙 500 Coins</div>
+        <button class="btn-buy">Buy</button>
+      </div>
+      <div class="shop-item" data-item="gold_avatar" data-cost="1000">
+        <div class="item-icon">👑</div>
+        <div class="item-title">Golden Crown</div>
+        <div class="item-cost">🪙 1000 Coins</div>
+        <button class="btn-buy">Buy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Achievements Modal -->
+<div id="jamam-modal-overlay" class="jamam-modal-overlay">
+  <div class="jamam-modal">
+    <div class="modal-header">
+      <h3>Achievement Gallery</h3>
+      <button class="close-btn" id="btn-close-modal">✕</button>
+    </div>
+    <div class="modal-body" id="achievement-grid-container"></div>
+  </div>
+</div>
 
 <footer>JAMAM GAMES © 2026</footer>
 
-<!-- JAMAM System Core -->
+<!-- JAMAM System Core & Audio -->
 <script src="./js/jamam-core.js"></script>
 <script src="./js/jamam-progress.js"></script>
 <script src="./js/jamam-achievements.js"></script>
+<script src="./js/jamam-audio.js"></script>
 
 <script>
+  // Achievements Definition
+  const ALL_ACHIEVEMENTS = [
+    { id: 'blade_master', title: 'Blade Master', desc: 'Achieve a 10x combo in Pulse Blade.', icon: '⚡' },
+    { id: 'orbit_survivor', title: 'Deep Space', desc: 'Survive 30 seconds in Orbit Drop.', icon: '🪐' },
+    { id: 'pulse_master', title: 'Neon Lightning', desc: 'Score 500+ in Neon Pulse.', icon: '🌩️' },
+    { id: 'hexa_runner', title: 'Cylinder Climber', desc: 'Climb 100 meters in Hexa Glide.', icon: '🔺' },
+    { id: 'color_shift_pro', title: 'Chroma King', desc: 'Clear 15 gates in Color Shift.', icon: '🎨' }
+  ];
+
   document.addEventListener('DOMContentLoaded', () => {
-    // 1. تحديث الواجهة بناءً على البيانات المحفوظة
-    if(window.JAMAM) {
-      const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
-      const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
-      document.getElementById('ui-level').textContent = xpData.level || 1;
-      document.getElementById('ui-coins').textContent = (coinData.balance || 0) + ' 🪙';
+    // 1. Update UI
+    function updateHubCoins() {
+      if(window.JAMAM) {
+        const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
+        const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
+        document.getElementById('ui-level').textContent = xpData.level || 1;
+        document.getElementById('ui-coins').textContent = (coinData.balance || 0) + ' 🪙';
+      }
+    }
+    updateHubCoins();
+    window.updateHubCoins = updateHubCoins;
+
+    // 2. PWA
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+    // 3. Audio Toggle
+    const audioBtn = document.getElementById('btn-audio-toggle');
+    const statusTxt = document.getElementById('txt-audio-status');
+    if (audioBtn && window.JAMAM.ambientAudio) {
+      audioBtn.addEventListener('click', () => {
+        const isPlaying = window.JAMAM.ambientAudio.toggle();
+        audioBtn.classList.toggle('active', isPlaying);
+        statusTxt.innerText = isPlaying ? 'ON' : 'OFF';
+      });
     }
 
-    // 2. تفعيل PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(()=>{});
-    }
+    // 4. Achievements Modal
+    const achOverlay = document.getElementById('jamam-modal-overlay');
+    document.getElementById('btn-open-achievements').onclick = () => {
+      const unlockedList = JAMAM.store.get(JAMAM.KEYS.achievements, []);
+      document.getElementById('achievement-grid-container').innerHTML = ALL_ACHIEVEMENTS.map(ach => {
+        const isUnlocked = unlockedList.includes(ach.id);
+        return `<div class="badge-card ${isUnlocked ? 'unlocked' : ''}">
+          <div class="badge-icon">${ach.icon}</div>
+          <div class="badge-title">${ach.title}</div>
+          <div class="badge-desc">${ach.desc}</div>
+        </div>`;
+      }).join('');
+      achOverlay.classList.add('active');
+    };
+    document.getElementById('btn-close-modal').onclick = () => achOverlay.classList.remove('active');
 
-    // 3. كود زر التجربة السحرية
-    const magicBtn = document.getElementById('test-magic-btn');
-    if (magicBtn) {
-      magicBtn.onclick = () => {
-        if (!window.JAMAM) {
-          alert('خطأ: لم يتم تحميل ملفات النظام!');
-          return;
+    // 5. Shop Modal
+    const shopOverlay = document.getElementById('shop-modal-overlay');
+    document.getElementById('btn-open-shop').onclick = () => shopOverlay.classList.add('active');
+    document.getElementById('btn-close-shop').onclick = () => shopOverlay.classList.remove('active');
+
+    // 6. Buy Items Logic
+    document.querySelectorAll('.shop-item').forEach(card => {
+      const itemId = card.dataset.item;
+      const cost = parseInt(card.dataset.cost);
+      const buyBtn = card.querySelector('.btn-buy');
+      
+      // Check if already owned (using localStorage directly for simplicity here)
+      let inventory = JSON.parse(localStorage.getItem('jamam_inventory') || '[]');
+      if (inventory.includes(itemId)) { buyBtn.innerText = 'Owned'; buyBtn.disabled = true; }
+
+      buyBtn.addEventListener('click', () => {
+        let coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
+        if (coinData.balance >= cost && !inventory.includes(itemId)) {
+          coinData.balance -= cost;
+          inventory.push(itemId);
+          JAMAM.store.set(JAMAM.KEYS.coins, coinData);
+          localStorage.setItem('jamam_inventory', JSON.stringify(inventory));
+          buyBtn.innerText = 'Owned'; buyBtn.disabled = true;
+          updateHubCoins();
+          alert('Purchase Successful!');
+        } else {
+          alert('Not Enough Coins! Keep playing to earn more.');
         }
-        // محاكاة إنهاء لعبة نبض النيون بـ 600 نقطة
-        JAMAM.game.end('neon-pulse', { score: 600 });
-        
-        magicBtn.textContent = '✅ تم! جاري التحديث...';
-        
-        // إعادة تحميل الصفحة بعد ثانية ونصف لتحديث الأرقام في الأعلى
-        setTimeout(() => location.reload(), 1500);
-      };
-    }
+      });
+    });
   });
 </script>
 </body>
