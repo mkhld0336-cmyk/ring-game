@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aura Dash</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; user-select: none; }
+        body { overflow: hidden; background: #050505; font-family: system-ui, sans-serif; }
+        canvas { display: block; width: 100vw; height: 100vh; }
+        #ui { position: absolute; top: 20px; width: 100%; text-align: center; color: white; pointer-events: none; }
+        #score-display { font-size: 30px; font-weight: 900; text-shadow: 0 0 10px cyan; }
+        #start-screen, #game-over { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(5,5,5,0.85); backdrop-filter: blur(5px); z-index: 10; color: white; text-align: center; }
+        .hidden { display: none !important; }
+        h1 { font-size: 40px; color: cyan; text-shadow: 0 0 20px cyan; margin-bottom: 20px; }
+        p { font-size: 16px; color: #aaa; margin-bottom: 30px; }
+        button { background: cyan; color: black; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,255,0.4); }
+    </style>
+    <script src="../js/jamam-core.js"></script>
+    <script src="../js/jamam-progress.js"></script>
+    <script src="../js/jamam-achievements.js"></script>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui">
+        <div id="score-display">0</div>
+    </div>
+
+    <div id="start-screen">
+        <h1 id="txt-title">Aura Dash</h1>
+        <p id="txt-desc">Drag left/right to move.<br>Collect blue gems. Dodge red danger.</p>
+        <button id="btn-start" onclick="startGame()">Play</button>
+    </div>
+
+    <div id="game-over" class="hidden">
+        <h1 id="txt-go" style="color:#ff287b; text-shadow: 0 0 20px #ff287b;">Game Over</h1>
+        <p style="font-size:24px; color:white; margin-bottom:20px;">Score: <span id="final-score">0</span></p>
+        <button onclick="startGame()">Retry</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const I18N = {
+            en: { title: "Aura Dash", desc: "Drag left/right to move.<br>Collect blue gems. Dodge red danger.", play: "Play", over: "Game Over" },
+            ar: { title: "أورا داش", desc: "اسحب يميناً ويساراً للحركة.<br>اجمع الجواهر الزرقاء. تجنب الخطر الأحمر.", play: "ابدأ", over: "انتهت اللعبة" }
+        };
+        const T = I18N[(window.JAMAM && JAMAM.lang && I18N[JAMAM.lang()]) ? JAMAM.lang() : 'en'];
+        document.getElementById('txt-title').innerHTML = T.title;
+        document.getElementById('txt-desc').innerHTML = T.desc;
+        document.getElementById('btn-start').innerText = T.play;
+        document.getElementById('txt-go').innerText = T.over;
+
+        let w, h;
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let player = { x: w/2, y: h - 80, radius: 15 };
+        let obstacles = [], coins = [], crowd = [];
+        let score = 0, isPlaying = false, animationId;
+        let speed = 4;
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+            score = 0; speed = 4;
+            obstacles = []; coins = []; crowd = [];
+            player.x = w/2;
+            isPlaying = true;
+            document.getElementById('score-display').innerText = "0";
+            if(window.JAMAM && JAMAM.game) JAMAM.game.start('aura-dash');
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            isPlaying = false;
+            cancelAnimationFrame(animationId);
+            document.getElementById('game-over').classList.remove('hidden');
+            document.getElementById('final-score').innerText = Math.floor(score);
+            if(window.JAMAM && JAMAM.game) JAMAM.game.end('aura-dash', { score: Math.floor(score) });
+        }
+
+        // Touch / Drag controls
+        let isDragging = false;
+        canvas.addEventListener('pointerdown', (e) => { isDragging = true; movePlayer(e.clientX); });
+        canvas.addEventListener('pointermove', (e) => { if(isDragging) movePlayer(e.clientX); });
+        canvas.addEventListener('pointerup', () => { isDragging = false; });
+
+        function movePlayer(x) {
+            if(isPlaying) player.x = Math.max(20, Math.min(w - 20, x));
+        }
+
+        function spawnItem() {
+            const isBad = Math.random() < 0.4; // 40% chance to be a red obstacle
+            const item = {
+                x: 20 + Math.random() * (w - 40),
+                y: -30,
+                radius: isBad ? 15 : 10,
+                type: isBad ? 'obstacle' : 'coin'
+            };
+            if(isBad) obstacles.push(item); else coins.push(item);
+        }
+
+        // The Crowd Psychology Feature
+        function updateCrowd() {
+            // As score increases, spawn more fans in the background
+            if(score > 50 && Math.random() < 0.05 + (score * 0.0001)) {
+                crowd.push({
+                    x: Math.random() * w,
+                    y: h - 100 + Math.random() * 80,
+                    emoji: ['👏', '🔥', '👥', '💖'][Math.floor(Math.random() * 4)],
+                    size: Math.min(40, 10 + (score * 0.02)),
+                    alpha: Math.min(1, 0.3 + (score * 0.001))
+                });
+            }
+            // Keep crowd size manageable
+            if(crowd.length > 50) crowd.shift();
+        }
+
+        function gameLoop() {
+            if(!isPlaying) return;
+            animationId = requestAnimationFrame(gameLoop);
+            
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw Crowd (Background)
+            crowd.forEach(c => {
+                ctx.globalAlpha = c.alpha;
+                ctx.font = `${c.size}px sans-serif`;
+                ctx.fillText(c.emoji, c.x, c.y);
+                ctx.globalAlpha = 1;
+            });
+            updateCrowd();
+
+            // Draw Player (Neon Aura)
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#00ffff';
+            ctx.fillStyle = '#00ffff';
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Spawn logic
+            if(Math.random() < 0.03 + (speed * 0.002)) spawnItem();
+
+            // Move Obstacles
+            for(let i = obstacles.length - 1; i >= 0; i--) {
+                let ob = obstacles[i];
+                ob.y += speed;
+                
+                ctx.shadowBlur = 15; ctx.shadowColor = '#ff0000'; ctx.fillStyle = '#ff0000';
+                ctx.beginPath(); ctx.arc(ob.x, ob.y, ob.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Collision
+                if(Math.hypot(player.x - ob.x, player.y - ob.y) < player.radius + ob.radius) {
+                    gameOver(); return;
+                }
+                if(ob.y > h + 30) obstacles.splice(i, 1);
+            }
+
+            // Move Coins
+            for(let i = coins.length - 1; i >= 0; i--) {
+                let c = coins[i];
+                c.y += speed;
+                
+                ctx.shadowBlur = 10; ctx.shadowColor = '#00f3ff'; ctx.fillStyle = '#00f3ff';
+                ctx.beginPath(); ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Collection
+                if(Math.hypot(player.x - c.x, player.y - c.y) < player.radius + c.radius + 10) {
+                    score += 10;
+                    speed += 0.05;
+                    document.getElementById('score-display').innerText = Math.floor(score);
+                    coins.splice(i, 1);
+                } else if(c.y > h + 30) {
+                    coins.splice(i, 1);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
