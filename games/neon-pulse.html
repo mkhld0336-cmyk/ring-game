@@ -2,138 +2,142 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#050811">
-<title>JAMAM GAMES | منصة الألعاب</title>
+<title>نبض النيون | Neon Pulse 2.0</title>
 <style>
-:root{
-  --bg-dark:#050811;--panel-bg:#0b1427;
-  --neon-cyan:#00f3ff;--neon-pink:#ff287b;--neon-gold:#ffcf38;
-  --text-main:#f3f7ff;
-  --font-main:system-ui,'Segoe UI',Tahoma,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-tap-highlight-color:transparent}
-html,body{background-color:var(--bg-dark);color:var(--text-main);font-family:var(--font-main);min-height:100vh;overflow-x:hidden}
-body{display:flex;flex-direction:column;align-items:center}
-
-/* Background */
-.bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,243,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,243,255,.05) 1px,transparent 1px);background-size:30px 30px;z-index:-1;perspective:500px}
-.bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:80vw;height:80vw;background:radial-gradient(circle,rgba(0,243,255,.15) 0%,transparent 60%);z-index:-1}
-
-/* Header */
-header{width:100%;max-width:800px;padding:30px 20px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:1.8rem;font-weight:900;color:#fff;text-shadow:0 0 15px var(--neon-cyan);letter-spacing:2px}
-.logo span{color:var(--neon-cyan)}
-.header-lang-btn{background:transparent;border:1px solid rgba(0,243,255,.3);color:var(--neon-cyan);width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:grid;place-items:center;transition:all .2s;flex-shrink:0}
-.header-lang-btn:hover,.header-lang-btn:active{background:rgba(0,243,255,.1);box-shadow:0 0 15px rgba(0,243,255,.2);transform:scale(1.05)}
-
-/* Main */
-main{width:100%;max-width:800px;padding:0 20px 40px;flex:1}
-.section-title{font-size:1.2rem;color:#aab7d2;margin-bottom:15px;font-weight:bold;border-inline-start:4px solid var(--neon-pink);padding-inline-start:10px;margin-top:30px;display:flex;align-items:center;gap:8px}
-
-/* Featured card */
-.featured-card{width:100%;border-radius:24px;background:linear-gradient(135deg,#0b1427,#111c3c);border:1px solid rgba(0,243,255,.3);box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 20px rgba(0,243,255,.05);padding:30px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start}
-.featured-card::before{content:'';position:absolute;top:-50%;inset-inline-end:-50%;width:200px;height:200px;background:var(--neon-cyan);filter:blur(100px);opacity:.2}
-.badge{background:rgba(0,243,255,.15);color:var(--neon-cyan);padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:bold;margin-bottom:15px;border:1px solid rgba(0,243,255,.3)}
-.featured-card h2{font-size:2.2rem;color:#fff;margin-bottom:10px;text-shadow:0 0 10px rgba(255,255,255,.3)}
-.featured-card p{color:#aab7d2;font-size:.95rem;margin-bottom:25px;line-height:1.6;max-width:400px}
-.btn-play{display:inline-block;background:linear-gradient(90deg,var(--neon-cyan),#478bff);color:#000;font-weight:900;font-size:1.1rem;padding:14px 35px;border-radius:50px;text-decoration:none;box-shadow:0 0 20px rgba(0,243,255,.4);transition:transform .2s,box-shadow .2s}
-.btn-play:active{transform:scale(.95);box-shadow:0 0 10px rgba(0,243,255,.2)}
-
-/* Games grid */
-.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}
-@media(max-width:500px){.games-grid{grid-template-columns:1fr}}
-.game-card{background:var(--panel-bg);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
-.game-card.disabled{opacity:.6}
-.game-card h3{color:#fff;font-size:1.2rem;margin-bottom:5px}
-.game-card span{color:var(--neon-pink);font-size:.8rem;font-weight:bold}
-.game-card .icon{font-size:2.5rem;margin-bottom:10px}
-
-/* Footer */
-footer{width:100%;max-width:800px;padding:20px;text-align:center;color:#6f83a7;font-size:.85rem;border-top:1px solid rgba(255,255,255,.05)}
-footer a{color:var(--neon-cyan);text-decoration:none}
-
-/* Stats */
-.stats-bar{display:flex;gap:10px;margin-top:20px;width:100%}
-.stat-item{flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;text-align:center}
-.stat-item span{display:block;font-size:.75rem;color:#8fa8cc;margin-bottom:4px}
-.stat-item b{font-size:1.1rem;color:var(--neon-gold);display:inline-block}
-
-/* Fade-in */
-.fade-in{animation:fadeIn .8s ease-out forwards}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-
-/* Language overlay */
-.overlay{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;text-align:center;background:linear-gradient(180deg,rgba(5,8,17,.95),rgba(7,11,24,.98));backdrop-filter:blur(14px);transition:opacity .2s}
+:root{--bg:#050811;--cyan:#00f3ff;--pink:#ff287b;--gold:#ffcf38;--violet:#9a67ff;--text:#f3f7ff;--muted:#9aabc4}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,"Segoe UI",Tahoma,sans-serif;touch-action:manipulation}
+body{display:flex;align-items:center;justify-content:center}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+#game{position:relative;width:100%;height:100dvh;max-width:520px;max-height:1000px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#101b3a 0%,#070c1a 48%,#03050b 100%);isolation:isolate}
+canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+#hud{position:absolute;top:max(12px,env(safe-area-inset-top));left:12px;right:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;z-index:3;pointer-events:none}
+.hud-side{display:flex;gap:6px;align-items:center}
+.stat{min-width:62px;padding:7px 9px;border:1px solid #00f3ff40;border-radius:13px;background:#081021c9;backdrop-filter:blur(10px);box-shadow:0 0 18px #00f3ff0c;text-align:center}
+.label{font-size:10px;color:var(--muted)}.value{font-size:17px;font-weight:900;color:var(--cyan);line-height:1.35;text-shadow:0 0 12px #00f3ff66}.value.gold{color:var(--gold)}
+.iconbtn{pointer-events:auto;border:1px solid #00f3ff55;background:#081021df;color:var(--cyan);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;font-size:15px;box-shadow:0 0 16px #00f3ff15;flex-shrink:0}
+#levelbar-wrap{position:absolute;z-index:3;top:80px;left:16px;right:16px;pointer-events:none}
+#leveltext{font-size:11px;color:#b9c8e5;display:flex;justify-content:space-between;margin-bottom:5px}
+#levelbar{height:5px;border-radius:8px;background:#18243b;overflow:hidden;border:1px solid #273754}
+#levelprogress{height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan));box-shadow:0 0 12px var(--cyan);transition:width .2s}
+#combo{position:absolute;z-index:4;top:118px;left:50%;transform:translateX(-50%) scale(.9);opacity:0;color:var(--gold);font-weight:1000;font-size:18px;text-shadow:0 0 18px #ffcf38;white-space:nowrap;transition:opacity .15s}
+#toast{position:absolute;z-index:8;top:150px;left:50%;transform:translateX(-50%);background:#111b31eF;border:1px solid #00f3ff55;color:#eafaff;border-radius:14px;padding:9px 14px;font-size:13px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
+#toast.show{opacity:1}
+.overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 20px;background:linear-gradient(180deg,#050811d9,#070b18f5);backdrop-filter:blur(12px);transition:opacity .2s;overflow-y:auto}
 .overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.overlay-title{font-size:1.8rem;font-weight:900;color:var(--neon-cyan);text-shadow:0 0 20px rgba(0,243,255,.5);margin-bottom:6px}
-.overlay-desc{color:#aab7d2;font-size:.9rem;margin-bottom:22px}
-.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:380px;margin-bottom:20px}
-.lang-option{padding:12px 10px;border-radius:12px;border:1px solid rgba(0,243,255,.2);background:#0b1427;color:var(--text-main);font-size:.92rem;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;text-align:center}
-.lang-option:hover,.lang-option:active{border-color:rgba(0,243,255,.6);background:#0d1a30}
-.lang-option.active{border-color:var(--neon-cyan);background:rgba(0,243,255,.15);color:var(--neon-cyan);box-shadow:0 0 12px rgba(0,243,255,.3)}
-.overlay-close{background:linear-gradient(110deg,var(--neon-cyan),#478bff);color:#03101b;border:0;font-weight:900;font-size:.95rem;padding:12px 30px;border-radius:50px;cursor:pointer;box-shadow:0 0 20px rgba(0,243,255,.3);min-width:180px}
-
-/* Numbers should stay LTR inside RTL contexts */
-[dir="rtl"] .num{unicode-bidi:isolate;display:inline-block}
+.logo{font-size:clamp(32px,8.5vw,46px);font-weight:1000;letter-spacing:-1px;margin:0 0 5px;color:var(--cyan);text-shadow:0 0 9px #00f3ff,0 0 35px #00f3ff66}
+.kicker{font-size:11px;color:#aab7d2;letter-spacing:4px;margin-bottom:16px}
+.description{max-width:340px;font-size:13.5px;line-height:1.85;color:#b4c1d7;margin:6px 0 18px}
+.dangertext{color:var(--pink);font-weight:800}
+.btn{width:min(290px,100%);border:0;border-radius:50px;padding:13px 20px;font-size:14.5px;font-weight:900;margin:5px 0;min-height:47px}
+.primary{background:linear-gradient(110deg,var(--cyan),#478bff);color:#03101b;box-shadow:0 0 24px #00dfff44}
+.secondary{background:#ffffff0a;border:1px solid #b9c8e533;color:#f3f7ff}
+.minirow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:9px 0 14px}
+.pill{border:1px solid #9a67ff55;background:#9a67ff12;color:#d6c8ff;padding:7px 11px;border-radius:20px;font-size:11px}
+.panel{width:min(340px,100%);border:1px solid #8aa4d22b;background:#0b1427d9;border-radius:18px;padding:14px 16px;margin:8px 0 14px;text-align:start}
+.panel h3{font-size:14px;margin:0 0 10px;color:var(--cyan)}
+.mission{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;color:#d5deed;margin:10px 0}
+.mission small{display:block;color:#8193af;margin-top:3px;font-size:10px}
+.track{height:4px;border-radius:8px;background:#1c2941;margin-top:6px;overflow:hidden}
+.track span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan))}
+.missiondone{color:var(--gold)}
+.stats{width:min(320px,100%);background:#0b1427cc;border:1px solid #8aa4d22b;border-radius:18px;padding:15px 20px;margin:8px 0 15px}
+.statrow{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#b9c8dd}.statrow b{color:#fff}
+#touchhint{position:absolute;bottom:max(18px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;z-index:2;font-size:11px;color:#6f83a7;pointer-events:none}
+#flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;background:#ff287b;mix-blend-mode:screen}
+.lang-link{margin-top:10px;border:0;background:transparent;color:#8fa8cc;font-size:12px;padding:8px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border-radius:10px;transition:color .15s}
+.lang-link:hover,.lang-link:active{color:var(--cyan)}
+.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:min(360px,100%);margin:10px 0 16px}
+.lang-btn{padding:11px 10px;border-radius:12px;border:1px solid #00f3ff33;background:#0b1427d9;color:#f3f7ff;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center}
+.lang-btn:hover,.lang-btn:active{border-color:#00f3ff;background:#0b1a30}
+.lang-btn.active{border-color:#00f3ff;background:#00f3ff22;color:#00f3ff;box-shadow:0 0 12px #00f3ff33}
+@media(max-width:380px){
+  .iconbtn{width:32px;height:32px;font-size:13px}
+  .hud-side{gap:4px}
+  .stat{min-width:54px;padding:6px 7px}
+  .label{font-size:9px}
+  .value{font-size:15px}
+}
+@media(min-width:520px){#game{border-left:1px solid #1d2942;border-right:1px solid #1d2942}}
 </style>
 </head>
 <body>
-
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
-
-<header>
-  <div class="logo" dir="ltr">JAMAM <span>GAMES</span></div>
-  <button class="header-lang-btn" id="langBtn" data-i18n-aria="changeLang" aria-label="Change Language" title="Change Language">🌐</button>
-</header>
-
-<main class="fade-in">
-  <!-- Featured game -->
-  <div class="section-title"><span aria-hidden="true">🔥</span><span data-i18n="officialGame">اللعبة الرسمية</span></div>
-  <div class="featured-card">
-    <div class="badge" data-i18n="badgeVersion">الإصدار 2.0</div>
-    <h2 data-i18n="neonTitle">نبض النيون</h2>
-    <p data-i18n="neonDesc">اختبر سرعة ردّ فعلك. اجمع الكريستالات، تجنب الجماجم، وتحدَّ أصدقاءك. لعبة أركيد سريعة تدعم 14 لغة.</p>
-    <!-- ⚠️ IMPORTANT: adjust this path to your actual game location -->
-    <a href="games/neon-pulse.html" class="btn-play" data-i18n="playNow">العب الآن ⚡</a>
-  </div>
-
-  <!-- Stats -->
-  <div class="stats-bar">
-    <div class="stat-item"><span data-i18n="players">اللاعبون</span><b class="num" dir="ltr">+500</b></div>
-    <div class="stat-item"><span data-i18n="topScore">أعلى نتيجة</span><b class="num" dir="ltr">12,450</b></div>
-    <div class="stat-item"><span data-i18n="rating">التقييم</span><b class="num" dir="ltr">⭐⭐⭐⭐⭐</b></div>
-  </div>
-
-  <!-- Coming soon -->
-  <div class="section-title"><span aria-hidden="true">🚀</span><span data-i18n="comingSoon">قريباً في المنصة</span></div>
-  <div class="games-grid">
-    <div class="game-card disabled">
-      <div class="icon">💀</div>
-      <h3 data-i18n="skullRealm">إقليم الجماجم</h3>
-      <span data-i18n="soon">قريباً</span>
+<div id="game">
+  <canvas id="canvas" aria-label="Neon Pulse Arena"></canvas>
+  <div id="hud">
+    <div class="hud-side">
+      <div class="stat"><div class="label" data-i18n="hudScore">النقاط</div><div class="value" id="score">0</div></div>
+      <div class="stat"><div class="label" data-i18n="hudBest">أفضل نتيجة</div><div class="value gold" id="best">0</div></div>
     </div>
-    <div class="game-card disabled">
-      <div class="icon">📦</div>
-      <h3 data-i18n="ascentMode">وضع الصعود</h3>
-      <span data-i18n="soon">قريباً</span>
+    <div class="hud-side">
+      <button class="iconbtn lang-open-btn" id="langBtn" aria-label="Language" data-i18n-aria="langToggle">🌐</button>
+      <button class="iconbtn" id="soundBtn" aria-label="Sound" data-i18n-aria="soundToggle">♫</button>
+      <button class="iconbtn" id="musicBtn" aria-label="Music" data-i18n-aria="musicToggle">♪</button>
+      <button class="iconbtn" id="pauseBtn" aria-label="Pause" data-i18n-aria="pauseToggle">Ⅱ</button>
     </div>
   </div>
-</main>
+  <div id="levelbar-wrap"><div id="leveltext"><span id="levelLabel">Level 1</span><span id="goalLabel">0 / 1000</span></div><div id="levelbar"><div id="levelprogress"></div></div></div>
+  <div id="combo"></div>
+  <div id="toast"></div><div id="flash"></div>
+  <div id="touchhint" data-i18n="touchHint">Touch crystals ✦ Avoid the red skull</div>
 
-<footer>
-  <span data-i18n="footerText">صُنع بشغف بواسطة JAMAM GAMES © 2026</span>
-</footer>
+  <section id="start" class="overlay">
+    <h1 class="logo" data-i18n="title">Neon Pulse</h1>
+    <div class="kicker">NEON PULSE · 2.0</div>
+    <p class="description" data-i18n-html="startDesc1">Test your reflexes in the neon arena.<br>Collect blue crystals, grab the golden core, and rise through the levels.</p>
+    <div class="minirow">
+      <span class="pill" data-i18n="pillPoints">✦ Points & Multipliers</span>
+      <span class="pill" data-i18n="pillChallenges">⚡ Escalating Challenges</span>
+      <span class="pill" data-i18n="pillAchievements">🏆 Achievements</span>
+    </div>
+    <p class="description"><span class="dangertext" data-i18n="warning">Warning: touching the red skull ends the round!</span><br><span data-i18n="startHint">Touch items directly with your finger. Sound and music are optional.</span></p>
+    <button class="btn primary" id="startBtn" data-i18n="startBtn">Start Pulse ⚡</button>
+    <button class="btn secondary" id="missionsBtn" data-i18n="missionsBtn">Missions & Achievements 🏆</button>
+    <button class="lang-link lang-open-btn">🌐 <span data-i18n="changeLanguage">Change Language</span></button>
+  </section>
 
-<!-- Language picker -->
-<section id="langOverlay" class="overlay hidden" role="dialog" aria-modal="true">
-  <div class="overlay-title" data-i18n="langTitle">اختر اللغة</div>
-  <p class="overlay-desc" data-i18n="langDesc">اختر لغتك المفضلة</p>
-  <div class="lang-grid" id="langGrid"></div>
-  <button class="overlay-close" id="langClose" data-i18n="close">إغلاق</button>
-</section>
+  <section id="pause" class="overlay hidden">
+    <h1 class="logo" style="font-size:34px" data-i18n="pauseTitle">Pulse Break</h1>
+    <p class="description" data-i18n="pauseDesc">The arena is paused. Take a breath and return to the challenge.</p>
+    <button class="btn primary" id="resumeBtn" data-i18n="resume">Resume ▶</button>
+    <button class="btn secondary" id="pauseMissionsBtn" data-i18n="missionsBtn">Missions & Achievements 🏆</button>
+    <button class="btn secondary" id="homeBtn" data-i18n="home">Main Menu</button>
+    <button class="lang-link lang-open-btn">🌐 <span data-i18n="changeLanguage">Change Language</span></button>
+  </section>
 
+  <section id="over" class="overlay hidden">
+    <h1 class="logo" style="font-size:34px;color:var(--pink);text-shadow:0 0 18px #ff287b" data-i18n="overTitle">Pulse Explosion!</h1>
+    <p class="description" data-i18n="overDesc">Round over, but the high score awaits.</p>
+    <div class="stats">
+      <div class="statrow"><span data-i18n="finalLevel">Level reached</span><b id="finalLevel">1</b></div>
+      <div class="statrow"><span data-i18n="finalScore">Round score</span><b id="finalScore">0</b></div>
+      <div class="statrow"><span data-i18n="finalBest">Best score</span><b id="finalBest">0</b></div>
+      <div class="statrow"><span data-i18n="finalCrystals">Crystals collected</span><b id="finalCrystals">0</b></div>
+      <div class="statrow"><span data-i18n="finalGold">Golden cores</span><b id="finalGold">0</b></div>
+    </div>
+    <button class="btn primary" id="retryBtn" data-i18n="retry">New Round ⚡</button>
+    <button class="btn secondary" id="overMissionsBtn" data-i18n="viewAchievements">View Achievements 🏆</button>
+    <button class="btn secondary" id="shareBtn" data-i18n="share">Share Score ↗</button>
+    <button class="lang-link lang-open-btn">🌐 <span data-i18n="changeLanguage">Change Language</span></button>
+  </section>
+
+  <section id="missions" class="overlay hidden">
+    <h1 class="logo" style="font-size:30px" data-i18n="missionsTitle">Hall of Achievements</h1>
+    <p class="description" style="margin-bottom:6px" data-i18n="missionsDesc">Your achievements and best score are saved on this device.</p>
+    <div class="panel" id="missionList"></div>
+    <button class="btn primary" id="missionsBack" data-i18n="back">Back</button>
+    <button class="lang-link lang-open-btn">🌐 <span data-i18n="changeLanguage">Change Language</span></button>
+  </section>
+
+  <section id="language" class="overlay hidden">
+    <h1 class="logo" style="font-size:30px" data-i18n="langTitle">Select Language</h1>
+    <p class="description" style="margin-bottom:6px" data-i18n="langDesc">Choose your preferred language</p>
+    <div class="lang-grid" id="langGrid"></div>
+    <button class="btn primary" id="langBack" data-i18n="back">Back</button>
+  </section>
+</div>
 <script>
 (() => {
 'use strict';
@@ -143,289 +147,373 @@ footer a{color:var(--neon-cyan);text-decoration:none}
    ============================================================ */
 const translations = {
 en: {
-  pageTitle:"JAMAM GAMES | Game Platform",
-  officialGame:"Official Game",
-  badgeVersion:"Version 2.0",
-  neonTitle:"Neon Pulse",
-  neonDesc:"Test your reflexes. Collect crystals, avoid the skulls, and challenge your friends. A fast arcade game supporting 14 languages.",
-  playNow:"Play Now ⚡",
-  players:"Players",
-  topScore:"Top Score",
-  rating:"Rating",
-  comingSoon:"Coming Soon to the Platform",
-  skullRealm:"Skull Realm",
-  ascentMode:"Ascent Mode",
-  soon:"Coming Soon",
-  footerText:"Made with passion by JAMAM GAMES © 2026",
-  changeLang:"Change Language",
-  langTitle:"Select Language",
-  langDesc:"Choose your preferred language",
-  close:"Close"
+  title:"Neon Pulse", startDesc1:"Test your reflexes in the neon arena.<br>Collect blue crystals, grab the golden core, and rise through the levels.",
+  pillPoints:"✦ Points & Multipliers", pillChallenges:"⚡ Escalating Challenges", pillAchievements:"🏆 Achievements",
+  warning:"Warning: touching the red skull ends the round!", startHint:"Touch items directly with your finger. Sound and music are optional.",
+  startBtn:"Start Pulse ⚡", missionsBtn:"Missions & Achievements 🏆",
+  pauseTitle:"Pulse Break", pauseDesc:"The arena is paused. Take a breath and return to the challenge.", resume:"Resume ▶", home:"Main Menu",
+  overTitle:"Pulse Explosion!", overDesc:"Round over, but the high score awaits.",
+  finalLevel:"Level reached", finalScore:"Round score", finalBest:"Best score", finalCrystals:"Crystals collected", finalGold:"Golden cores",
+  retry:"New Round ⚡", viewAchievements:"View Achievements 🏆", share:"Share Score ↗",
+  missionsTitle:"Hall of Achievements", missionsDesc:"Your achievements and best score are saved on this device.", back:"Back",
+  hudScore:"Score", hudBest:"Best", levelLabel:"Level {n}", comboPrefix:"⚡ Combo ×{n}",
+  touchHint:"Touch crystals ✦ Avoid the red skull",
+  mission1Name:"First Spark", mission1Desc:"Score 500 points in one round",
+  mission2Name:"Crystal Hunter", mission2Desc:"Collect 10 crystals in one round",
+  mission3Name:"Golden Shine", mission3Desc:"Collect 3 golden cores in one round",
+  mission4Name:"Lightning Chain", mission4Desc:"Achieve a combo of 8 items",
+  mission5Name:"Level Conqueror", mission5Desc:"Reach Level 5",
+  mission6Name:"Neon Legend", mission6Desc:"Collect 5000 points total across rounds",
+  missionCompleted:"Completed",
+  toastStart:"Go! Catch the crystals ✦", toastMusicOn:"Music enabled", toastMusicOff:"Music disabled",
+  toastLevelUp:"🚀 Reached Level {n}", toastAchievement:"🏆 New achievement: {name}",
+  toastDodge:"Dangerous dodge! + Courage ⚡", toastCopied:"Score copied to share",
+  shareText:"⚡ I scored {score} points in Neon Pulse! Reached Level {level}. Can you beat my score?",
+  changeLanguage:"Change Language", langTitle:"Select Language", langDesc:"Choose your preferred language",
+  soundToggle:"Toggle Sound", musicToggle:"Toggle Music", pauseToggle:"Pause", langToggle:"Language"
 },
 ar: {
-  pageTitle:"JAMAM GAMES | منصة الألعاب",
-  officialGame:"اللعبة الرسمية",
-  badgeVersion:"الإصدار 2.0",
-  neonTitle:"نبض النيون",
-  neonDesc:"اختبر سرعة ردّ فعلك. اجمع الكريستالات، تجنب الجماجم، وتحدَّ أصدقاءك. لعبة أركيد سريعة تدعم 14 لغة.",
-  playNow:"العب الآن ⚡",
-  players:"اللاعبون",
-  topScore:"أعلى نتيجة",
-  rating:"التقييم",
-  comingSoon:"قريباً في المنصة",
-  skullRealm:"إقليم الجماجم",
-  ascentMode:"وضع الصعود",
-  soon:"قريباً",
-  footerText:"صُنع بشغف بواسطة JAMAM GAMES © 2026",
-  changeLang:"تغيير اللغة",
-  langTitle:"اختر اللغة",
-  langDesc:"اختر لغتك المفضلة",
-  close:"إغلاق"
+  title:"نبض النيون", startDesc1:"اختبر سرعة ردّ فعلك في ساحة النيون.<br>اجمع الكريستالات الزرقاء، واقتنص النواة الذهبية، وارتقِ بالمستويات.",
+  pillPoints:"✦ نقاط ومضاعفات", pillChallenges:"⚡ تحديات متصاعدة", pillAchievements:"🏆 إنجازات",
+  warning:"تحذير: لمس الجمجمة الحمراء ينهي الجولة!", startHint:"المس العناصر مباشرة بإصبعك. الصوت والموسيقى اختياريان.",
+  startBtn:"ابدأ النبض ⚡", missionsBtn:"المهام والإنجازات 🏆",
+  pauseTitle:"استراحة النبض", pauseDesc:"تم إيقاف الساحة مؤقتًا. خذ نفسًا ثم عُد للتحدي.", resume:"استئناف ▶", home:"القائمة الرئيسية",
+  overTitle:"انفجار النبض!", overDesc:"انتهت الجولة، لكن الرقم القياسي ينتظرك.",
+  finalLevel:"المستوى الذي وصلت إليه", finalScore:"نتيجة الجولة", finalBest:"أفضل نتيجة", finalCrystals:"الكريستالات الملتقطة", finalGold:"النوى الذهبية",
+  retry:"جولة جديدة ⚡", viewAchievements:"عرض الإنجازات 🏆", share:"مشاركة النتيجة ↗",
+  missionsTitle:"قاعة الإنجازات", missionsDesc:"تُحفظ إنجازاتك وأفضل نتيجة على هذا الجهاز.", back:"عودة",
+  hudScore:"النقاط", hudBest:"أفضل نتيجة", levelLabel:"المستوى {n}", comboPrefix:"⚡ سلسلة ×{n}",
+  touchHint:"المس الكريستالات ✦ تجنّب الجمجمة الحمراء",
+  mission1Name:"شرارة البداية", mission1Desc:"اجمع 500 نقطة في جولة واحدة",
+  mission2Name:"صائد الكريستال", mission2Desc:"التقط 10 كريستالات في جولة واحدة",
+  mission3Name:"لمعان الذهب", mission3Desc:"التقط 3 نوى ذهبية في جولة واحدة",
+  mission4Name:"سلسلة البرق", mission4Desc:"حقّق سلسلة من 8 عناصر",
+  mission5Name:"قاهر المستويات", mission5Desc:"بلوغ المستوى الخامس",
+  mission6Name:"أسطورة النيون", mission6Desc:"اجمع 5000 نقطة إجمالًا عبر الجولات",
+  missionCompleted:"مكتمل",
+  toastStart:"ابدأ! التقط الكريستالات ✦", toastMusicOn:"الموسيقى مفعّلة", toastMusicOff:"الموسيقى متوقفة",
+  toastLevelUp:"🚀 وصلت إلى المستوى {n}", toastAchievement:"🏆 إنجاز جديد: {name}",
+  toastDodge:"مراوغة خطيرة! + شجاعة ⚡", toastCopied:"تم نسخ النتيجة للمشاركة",
+  shareText:"⚡ حققت {score} نقطة في لعبة «نبض النيون»! وصلت إلى المستوى {level}. هل تستطيع تحطيم رقمي؟",
+  changeLanguage:"تغيير اللغة", langTitle:"اختر اللغة", langDesc:"اختر لغتك المفضلة",
+  soundToggle:"تبديل الصوت", musicToggle:"تبديل الموسيقى", pauseToggle:"إيقاف مؤقت", langToggle:"اللغة"
 },
 es: {
-  pageTitle:"JAMAM GAMES | Plataforma de Juegos",
-  officialGame:"Juego Oficial",
-  badgeVersion:"Versión 2.0",
-  neonTitle:"Pulso Neón",
-  neonDesc:"Pon a prueba tus reflejos. Recoge cristales, evita las calaveras y desafía a tus amigos. Un juego arcade rápido compatible con 14 idiomas.",
-  playNow:"Jugar Ahora ⚡",
-  players:"Jugadores",
-  topScore:"Mejor Puntuación",
-  rating:"Valoración",
-  comingSoon:"Próximamente en la Plataforma",
-  skullRealm:"Reino de Calaveras",
-  ascentMode:"Modo Ascenso",
-  soon:"Próximamente",
-  footerText:"Hecho con pasión por JAMAM GAMES © 2026",
-  changeLang:"Cambiar Idioma",
-  langTitle:"Seleccionar Idioma",
-  langDesc:"Elige tu idioma preferido",
-  close:"Cerrar"
+  title:"Pulso Neón", startDesc1:"Pon a prueba tus reflejos en la arena de neón.<br>Recoge cristales azules, atrapa el núcleo dorado y sube de nivel.",
+  pillPoints:"✦ Puntos y Multiplicadores", pillChallenges:"⚡ Desafíos Crecientes", pillAchievements:"🏆 Logros",
+  warning:"¡Advertencia: tocar la calavera roja termina la ronda!", startHint:"Toca los objetos directamente con el dedo. El sonido y la música son opcionales.",
+  startBtn:"Comenzar Pulso ⚡", missionsBtn:"Misiones y Logros 🏆",
+  pauseTitle:"Pausa del Pulso", pauseDesc:"La arena está en pausa. Respira y vuelve al desafío.", resume:"Reanudar ▶", home:"Menú Principal",
+  overTitle:"¡Explosión de Pulso!", overDesc:"La ronda terminó, pero el récord te espera.",
+  finalLevel:"Nivel alcanzado", finalScore:"Puntuación de la ronda", finalBest:"Mejor puntuación", finalCrystals:"Cristales recogidos", finalGold:"Núcleos dorados",
+  retry:"Nueva Ronda ⚡", viewAchievements:"Ver Logros 🏆", share:"Compartir Puntuación ↗",
+  missionsTitle:"Salón de Logros", missionsDesc:"Tus logros y mejor puntuación se guardan en este dispositivo.", back:"Volver",
+  hudScore:"Puntos", hudBest:"Mejor", levelLabel:"Nivel {n}", comboPrefix:"⚡ Combo ×{n}",
+  touchHint:"Toca los cristales ✦ Evita la calavera roja",
+  mission1Name:"Primera Chispa", mission1Desc:"Consigue 500 puntos en una ronda",
+  mission2Name:"Cazador de Cristales", mission2Desc:"Recoge 10 cristales en una ronda",
+  mission3Name:"Brillo Dorado", mission3Desc:"Recoge 3 núcleos dorados en una ronda",
+  mission4Name:"Cadena de Rayos", mission4Desc:"Logra un combo de 8 objetos",
+  mission5Name:"Conquistador de Niveles", mission5Desc:"Alcanza el Nivel 5",
+  mission6Name:"Leyenda del Neón", mission6Desc:"Acumula 5000 puntos en total entre rondas",
+  missionCompleted:"Completado",
+  toastStart:"¡Vamos! Atrapa los cristales ✦", toastMusicOn:"Música activada", toastMusicOff:"Música desactivada",
+  toastLevelUp:"🚀 Nivel {n} alcanzado", toastAchievement:"🏆 Nuevo logro: {name}",
+  toastDodge:"¡Esquiva peligrosa! + Coraje ⚡", toastCopied:"Puntuación copiada para compartir",
+  shareText:"⚡ ¡Conseguí {score} puntos en Neon Pulse! Llegué al Nivel {level}. ¿Puedes superar mi puntuación?",
+  changeLanguage:"Cambiar Idioma", langTitle:"Seleccionar Idioma", langDesc:"Elige tu idioma preferido",
+  soundToggle:"Alternar Sonido", musicToggle:"Alternar Música", pauseToggle:"Pausa", langToggle:"Idioma"
 },
 fr: {
-  pageTitle:"JAMAM GAMES | Plateforme de Jeux",
-  officialGame:"Jeu Officiel",
-  badgeVersion:"Version 2.0",
-  neonTitle:"Pouls Néon",
-  neonDesc:"Testez vos réflexes. Collectez les cristaux, évitez les crânes et défiez vos amis. Un jeu d'arcade rapide disponible en 14 langues.",
-  playNow:"Jouer Maintenant ⚡",
-  players:"Joueurs",
-  topScore:"Meilleur Score",
-  rating:"Note",
-  comingSoon:"Bientôt sur la Plateforme",
-  skullRealm:"Royaume des Crânes",
-  ascentMode:"Mode Ascension",
-  soon:"Bientôt",
-  footerText:"Fait avec passion par JAMAM GAMES © 2026",
-  changeLang:"Changer de Langue",
-  langTitle:"Choisir la Langue",
-  langDesc:"Choisissez votre langue préférée",
-  close:"Fermer"
+  title:"Pouls Néon", startDesc1:"Testez vos réflexes dans l'arène néon.<br>Collectez les cristaux bleus, attrapez le noyau doré et montez de niveau.",
+  pillPoints:"✦ Points et Multiplicateurs", pillChallenges:"⚡ Défis Croissants", pillAchievements:"🏆 Succès",
+  warning:"Attention : toucher le crâne rouge met fin à la manche !", startHint:"Touchez les objets directement avec votre doigt. Le son et la musique sont facultatifs.",
+  startBtn:"Démarrer le Pouls ⚡", missionsBtn:"Missions et Succès 🏆",
+  pauseTitle:"Pause du Pouls", pauseDesc:"L'arène est en pause. Respirez et revenez au défi.", resume:"Reprendre ▶", home:"Menu Principal",
+  overTitle:"Explosion de Pouls !", overDesc:"La manche est terminée, mais le record vous attend.",
+  finalLevel:"Niveau atteint", finalScore:"Score de la manche", finalBest:"Meilleur score", finalCrystals:"Cristaux collectés", finalGold:"Noyaux dorés",
+  retry:"Nouvelle Manche ⚡", viewAchievements:"Voir les Succès 🏆", share:"Partager le Score ↗",
+  missionsTitle:"Hall des Succès", missionsDesc:"Vos succès et meilleur score sont enregistrés sur cet appareil.", back:"Retour",
+  hudScore:"Score", hudBest:"Meilleur", levelLabel:"Niveau {n}", comboPrefix:"⚡ Combo ×{n}",
+  touchHint:"Touchez les cristaux ✦ Évitez le crâne rouge",
+  mission1Name:"Première Étincelle", mission1Desc:"Marquez 500 points en une manche",
+  mission2Name:"Chasseur de Cristaux", mission2Desc:"Collectez 10 cristaux en une manche",
+  mission3Name:"Éclat Doré", mission3Desc:"Collectez 3 noyaux dorés en une manche",
+  mission4Name:"Chaîne d'Éclairs", mission4Desc:"Réalisez un combo de 8 objets",
+  mission5Name:"Conquérant des Niveaux", mission5Desc:"Atteignez le Niveau 5",
+  mission6Name:"Légende du Néon", mission6Desc:"Collectez 5000 points au total entre les manches",
+  missionCompleted:"Terminé",
+  toastStart:"C'est parti ! Attrapez les cristaux ✦", toastMusicOn:"Musique activée", toastMusicOff:"Musique désactivée",
+  toastLevelUp:"🚀 Niveau {n} atteint", toastAchievement:"🏆 Nouveau succès : {name}",
+  toastDodge:"Esquive dangereuse ! + Courage ⚡", toastCopied:"Score copié pour le partage",
+  shareText:"⚡ J'ai marqué {score} points dans Neon Pulse ! J'ai atteint le Niveau {level}. Peux-tu battre mon score ?",
+  changeLanguage:"Changer de Langue", langTitle:"Choisir la Langue", langDesc:"Choisissez votre langue préférée",
+  soundToggle:"Basculer le Son", musicToggle:"Basculer la Musique", pauseToggle:"Pause", langToggle:"Langue"
 },
 de: {
-  pageTitle:"JAMAM GAMES | Spieleplattform",
-  officialGame:"Offizielles Spiel",
-  badgeVersion:"Version 2.0",
-  neonTitle:"Neon-Puls",
-  neonDesc:"Teste deine Reflexe. Sammle Kristalle, meide die Schädel und fordere deine Freunde heraus. Ein schnelles Arcade-Spiel in 14 Sprachen.",
-  playNow:"Jetzt Spielen ⚡",
-  players:"Spieler",
-  topScore:"Bestpunktzahl",
-  rating:"Bewertung",
-  comingSoon:"Bald auf der Plattform",
-  skullRealm:"Schädelreich",
-  ascentMode:"Aufstiegsmodus",
-  soon:"Bald",
-  footerText:"Mit Leidenschaft gemacht von JAMAM GAMES © 2026",
-  changeLang:"Sprache Ändern",
-  langTitle:"Sprache Wählen",
-  langDesc:"Wähle deine bevorzugte Sprache",
-  close:"Schließen"
+  title:"Neon-Puls", startDesc1:"Teste deine Reflexe in der Neon-Arena.<br>Sammle blaue Kristalle, schnapp dir den goldenen Kern und steige in die nächsten Level auf.",
+  pillPoints:"✦ Punkte & Multiplikatoren", pillChallenges:"⚡ Steigende Herausforderungen", pillAchievements:"🏆 Errungenschaften",
+  warning:"Warnung: Das Berühren des roten Schädels beendet die Runde!", startHint:"Berühre die Objekte direkt mit deinem Finger. Ton und Musik sind optional.",
+  startBtn:"Puls starten ⚡", missionsBtn:"Missionen & Errungenschaften 🏆",
+  pauseTitle:"Puls-Pause", pauseDesc:"Die Arena ist pausiert. Atme durch und kehre zur Herausforderung zurück.", resume:"Fortsetzen ▶", home:"Hauptmenü",
+  overTitle:"Puls-Explosion!", overDesc:"Runde vorbei, aber der Highscore wartet.",
+  finalLevel:"Erreichtes Level", finalScore:"Rundenpunktzahl", finalBest:"Bestpunktzahl", finalCrystals:"Gesammelte Kristalle", finalGold:"Goldene Kerne",
+  retry:"Neue Runde ⚡", viewAchievements:"Errungenschaften ansehen 🏆", share:"Punktzahl teilen ↗",
+  missionsTitle:"Halle der Errungenschaften", missionsDesc:"Deine Errungenschaften und Bestpunktzahl werden auf diesem Gerät gespeichert.", back:"Zurück",
+  hudScore:"Punkte", hudBest:"Bestwert", levelLabel:"Level {n}", comboPrefix:"⚡ Kombo ×{n}",
+  touchHint:"Berühre Kristalle ✦ Meide den roten Schädel",
+  mission1Name:"Erster Funke", mission1Desc:"Erziele 500 Punkte in einer Runde",
+  mission2Name:"Kristalljäger", mission2Desc:"Sammle 10 Kristalle in einer Runde",
+  mission3Name:"Goldener Glanz", mission3Desc:"Sammle 3 goldene Kerne in einer Runde",
+  mission4Name:"Blitzkette", mission4Desc:"Erreiche eine Kombo von 8 Objekten",
+  mission5Name:"Level-Bezwinger", mission5Desc:"Erreiche Level 5",
+  mission6Name:"Neon-Legende", mission6Desc:"Sammle insgesamt 5000 Punkte über alle Runden",
+  missionCompleted:"Abgeschlossen",
+  toastStart:"Los! Fange die Kristalle ✦", toastMusicOn:"Musik aktiviert", toastMusicOff:"Musik deaktiviert",
+  toastLevelUp:"🚀 Level {n} erreicht", toastAchievement:"🏆 Neue Errungenschaft: {name}",
+  toastDodge:"Gefährlicher Ausweicher! + Mut ⚡", toastCopied:"Punktzahl zum Teilen kopiert",
+  shareText:"⚡ Ich habe {score} Punkte in Neon Pulse erreicht! Level {level} erreicht. Kannst du meinen Highscore schlagen?",
+  changeLanguage:"Sprache Ändern", langTitle:"Sprache Wählen", langDesc:"Wähle deine bevorzugte Sprache",
+  soundToggle:"Ton umschalten", musicToggle:"Musik umschalten", pauseToggle:"Pause", langToggle:"Sprache"
 },
 it: {
-  pageTitle:"JAMAM GAMES | Piattaforma di Giochi",
-  officialGame:"Gioco Ufficiale",
-  badgeVersion:"Versione 2.0",
-  neonTitle:"Impulso Neon",
-  neonDesc:"Metti alla prova i tuoi riflessi. Raccogli i cristalli, evita i teschi e sfida i tuoi amici. Un arcade veloce in 14 lingue.",
-  playNow:"Gioca Ora ⚡",
-  players:"Giocatori",
-  topScore:"Miglior Punteggio",
-  rating:"Valutazione",
-  comingSoon:"Prossimamente sulla Piattaforma",
-  skullRealm:"Regno dei Teschi",
-  ascentMode:"Modalità Ascesa",
-  soon:"Prossimamente",
-  footerText:"Fatto con passione da JAMAM GAMES © 2026",
-  changeLang:"Cambia Lingua",
-  langTitle:"Seleziona Lingua",
-  langDesc:"Scegli la tua lingua preferita",
-  close:"Chiudi"
+  title:"Impulso Neon", startDesc1:"Metti alla prova i tuoi riflessi nell'arena neon.<br>Raccogli i cristalli blu, afferra il nucleo dorato e sali di livello.",
+  pillPoints:"✦ Punti e Moltiplicatori", pillChallenges:"⚡ Sfide Crescenti", pillAchievements:"🏆 Obiettivi",
+  warning:"Attenzione: toccare il teschio rosso termina il round!", startHint:"Tocca gli oggetti direttamente con il dito. Suoni e musica sono opzionali.",
+  startBtn:"Avvia Impulso ⚡", missionsBtn:"Missioni e Obiettivi 🏆",
+  pauseTitle:"Pausa dell'Impulso", pauseDesc:"L'arena è in pausa. Fai un respiro e torna alla sfida.", resume:"Riprendi ▶", home:"Menu Principale",
+  overTitle:"Esplosione dell'Impulso!", overDesc:"Round finito, ma il record ti aspetta.",
+  finalLevel:"Livello raggiunto", finalScore:"Punteggio del round", finalBest:"Miglior punteggio", finalCrystals:"Cristalli raccolti", finalGold:"Nuclei dorati",
+  retry:"Nuovo Round ⚡", viewAchievements:"Vedi Obiettivi 🏆", share:"Condividi Punteggio ↗",
+  missionsTitle:"Sala degli Obiettivi", missionsDesc:"I tuoi obiettivi e il miglior punteggio sono salvati su questo dispositivo.", back:"Indietro",
+  hudScore:"Punti", hudBest:"Migliore", levelLabel:"Livello {n}", comboPrefix:"⚡ Combo ×{n}",
+  touchHint:"Tocca i cristalli ✦ Evita il teschio rosso",
+  mission1Name:"Prima Scintilla", mission1Desc:"Segna 500 punti in un round",
+  mission2Name:"Cacciatore di Cristalli", mission2Desc:"Raccogli 10 cristalli in un round",
+  mission3Name:"Bagliore Dorato", mission3Desc:"Raccogli 3 nuclei dorati in un round",
+  mission4Name:"Catena di Fulmini", mission4Desc:"Raggiungi una combo di 8 oggetti",
+  mission5Name:"Conquistatore di Livelli", mission5Desc:"Raggiungi il Livello 5",
+  mission6Name:"Leggenda del Neon", mission6Desc:"Raccogli 5000 punti in totale tra i round",
+  missionCompleted:"Completato",
+  toastStart:"Via! Afferra i cristalli ✦", toastMusicOn:"Musica attivata", toastMusicOff:"Musica disattivata",
+  toastLevelUp:"🚀 Livello {n} raggiunto", toastAchievement:"🏆 Nuovo obiettivo: {name}",
+  toastDodge:"Schivata pericolosa! + Coraggio ⚡", toastCopied:"Punteggio copiato per la condivisione",
+  shareText:"⚡ Ho fatto {score} punti in Neon Pulse! Ho raggiunto il Livello {level}. Riesci a battere il mio record?",
+  changeLanguage:"Cambia Lingua", langTitle:"Seleziona Lingua", langDesc:"Scegli la tua lingua preferita",
+  soundToggle:"Attiva/disattiva suono", musicToggle:"Attiva/disattiva musica", pauseToggle:"Pausa", langToggle:"Lingua"
 },
 pt: {
-  pageTitle:"JAMAM GAMES | Plataforma de Jogos",
-  officialGame:"Jogo Oficial",
-  badgeVersion:"Versão 2.0",
-  neonTitle:"Pulso Neon",
-  neonDesc:"Teste seus reflexos. Colete cristais, evite as caveiras e desafie seus amigos. Um arcade rápido disponível em 14 idiomas.",
-  playNow:"Jogar Agora ⚡",
-  players:"Jogadores",
-  topScore:"Melhor Pontuação",
-  rating:"Avaliação",
-  comingSoon:"Em Breve na Plataforma",
-  skullRealm:"Reino das Caveiras",
-  ascentMode:"Modo Ascensão",
-  soon:"Em Breve",
-  footerText:"Feito com paixão por JAMAM GAMES © 2026",
-  changeLang:"Mudar Idioma",
-  langTitle:"Selecionar Idioma",
-  langDesc:"Escolha seu idioma preferido",
-  close:"Fechar"
+  title:"Pulso Neon", startDesc1:"Teste seus reflexos na arena neon.<br>Colete cristais azuis, pegue o núcleo dourado e suba de nível.",
+  pillPoints:"✦ Pontos e Multiplicadores", pillChallenges:"⚡ Desafios Crescentes", pillAchievements:"🏆 Conquistas",
+  warning:"Aviso: tocar na caveira vermelha encerra a rodada!", startHint:"Toque nos itens diretamente com o dedo. Som e música são opcionais.",
+  startBtn:"Iniciar Pulso ⚡", missionsBtn:"Missões e Conquistas 🏆",
+  pauseTitle:"Pausa do Pulso", pauseDesc:"A arena está pausada. Respire e volte ao desafio.", resume:"Retomar ▶", home:"Menu Principal",
+  overTitle:"Explosão de Pulso!", overDesc:"A rodada acabou, mas o recorde espera por você.",
+  finalLevel:"Nível alcançado", finalScore:"Pontuação da rodada", finalBest:"Melhor pontuação", finalCrystals:"Cristais coletados", finalGold:"Núcleos dourados",
+  retry:"Nova Rodada ⚡", viewAchievements:"Ver Conquistas 🏆", share:"Compartilhar Pontuação ↗",
+  missionsTitle:"Salão de Conquistas", missionsDesc:"Suas conquistas e melhor pontuação são salvas neste dispositivo.", back:"Voltar",
+  hudScore:"Pontos", hudBest:"Melhor", levelLabel:"Nível {n}", comboPrefix:"⚡ Combo ×{n}",
+  touchHint:"Toque nos cristais ✦ Evite a caveira vermelha",
+  mission1Name:"Primeira Faísca", mission1Desc:"Marque 500 pontos em uma rodada",
+  mission2Name:"Caçador de Cristais", mission2Desc:"Colete 10 cristais em uma rodada",
+  mission3Name:"Brilho Dourado", mission3Desc:"Colete 3 núcleos dourados em uma rodada",
+  mission4Name:"Corrente de Raios", mission4Desc:"Alcance um combo de 8 itens",
+  mission5Name:"Conquistador de Níveis", mission5Desc:"Alcance o Nível 5",
+  mission6Name:"Lenda do Neon", mission6Desc:"Colete 5000 pontos no total entre rodadas",
+  missionCompleted:"Concluído",
+  toastStart:"Vai! Pegue os cristais ✦", toastMusicOn:"Música ativada", toastMusicOff:"Música desativada",
+  toastLevelUp:"🚀 Nível {n} alcançado", toastAchievement:"🏆 Nova conquista: {name}",
+  toastDodge:"Esquiva perigosa! + Coragem ⚡", toastCopied:"Pontuação copiada para compartilhar",
+  shareText:"⚡ Fiz {score} pontos no Neon Pulse! Alcancei o Nível {level}. Você consegue superar meu recorde?",
+  changeLanguage:"Mudar Idioma", langTitle:"Selecionar Idioma", langDesc:"Escolha seu idioma preferido",
+  soundToggle:"Alternar Som", musicToggle:"Alternar Música", pauseToggle:"Pausa", langToggle:"Idioma"
 },
 ru: {
-  pageTitle:"JAMAM GAMES | Игровая Платформа",
-  officialGame:"Официальная Игра",
-  badgeVersion:"Версия 2.0",
-  neonTitle:"Неоновый Пульс",
-  neonDesc:"Проверьте свои рефлексы. Собирайте кристаллы, избегайте черепов и бросайте вызов друзьям. Быстрая аркада на 14 языках.",
-  playNow:"Играть Сейчас ⚡",
-  players:"Игроки",
-  topScore:"Лучший Результат",
-  rating:"Рейтинг",
-  comingSoon:"Скоро на Платформе",
-  skullRealm:"Королевство Черепов",
-  ascentMode:"Режим Восхождения",
-  soon:"Скоро",
-  footerText:"Сделано с любовью командой JAMAM GAMES © 2026",
-  changeLang:"Изменить Язык",
-  langTitle:"Выбрать Язык",
-  langDesc:"Выберите предпочитаемый язык",
-  close:"Закрыть"
+  title:"Неоновый Пульс", startDesc1:"Проверьте свою реакцию на неоновой арене.<br>Собирайте синие кристаллы, хватайте золотое ядро и поднимайтесь по уровням.",
+  pillPoints:"✦ Очки и множители", pillChallenges:"⚡ Растущие испытания", pillAchievements:"🏆 Достижения",
+  warning:"Внимание: касание красного черепа завершает раунд!", startHint:"Касайтесь предметов пальцем напрямую. Звук и музыка опциональны.",
+  startBtn:"Начать Пульс ⚡", missionsBtn:"Миссии и Достижения 🏆",
+  pauseTitle:"Пауза Пульса", pauseDesc:"Арена на паузе. Сделайте вдох и вернитесь к испытанию.", resume:"Продолжить ▶", home:"Главное меню",
+  overTitle:"Взрыв Пульса!", overDesc:"Раунд окончен, но рекорд ждёт вас.",
+  finalLevel:"Достигнутый уровень", finalScore:"Очки раунда", finalBest:"Лучший результат", finalCrystals:"Собрано кристаллов", finalGold:"Золотые ядра",
+  retry:"Новый Раунд ⚡", viewAchievements:"Посмотреть Достижения 🏆", share:"Поделиться Результатом ↗",
+  missionsTitle:"Зал Достижений", missionsDesc:"Ваши достижения и лучший результат сохраняются на этом устройстве.", back:"Назад",
+  hudScore:"Очки", hudBest:"Рекорд", levelLabel:"Уровень {n}", comboPrefix:"⚡ Комбо ×{n}",
+  touchHint:"Касайтесь кристаллов ✦ Избегайте красного черепа",
+  mission1Name:"Первая Искра", mission1Desc:"Наберите 500 очков за раунд",
+  mission2Name:"Охотник за Кристаллами", mission2Desc:"Соберите 10 кристаллов за раунд",
+  mission3Name:"Золотое Сияние", mission3Desc:"Соберите 3 золотых ядра за раунд",
+  mission4Name:"Цепь Молний", mission4Desc:"Достигните комбо из 8 предметов",
+  mission5Name:"Покоритель Уровней", mission5Desc:"Достигните Уровня 5",
+  mission6Name:"Легенда Неона", mission6Desc:"Наберите 5000 очков за все раунды",
+  missionCompleted:"Выполнено",
+  toastStart:"Вперёд! Ловите кристаллы ✦", toastMusicOn:"Музыка включена", toastMusicOff:"Музыка выключена",
+  toastLevelUp:"🚀 Достигнут Уровень {n}", toastAchievement:"🏆 Новое достижение: {name}",
+  toastDodge:"Опасный уклон! + Смелость ⚡", toastCopied:"Результат скопирован для отправки",
+  shareText:"⚡ Я набрал {score} очков в Neon Pulse! Достиг Уровня {level}. Сможешь побить мой рекорд?",
+  changeLanguage:"Изменить Язык", langTitle:"Выбрать Язык", langDesc:"Выберите предпочитаемый язык",
+  soundToggle:"Переключить звук", musicToggle:"Переключить музыку", pauseToggle:"Пауза", langToggle:"Язык"
 },
 zh: {
-  pageTitle:"JAMAM GAMES | 游戏平台",
-  officialGame:"官方游戏",
-  badgeVersion:"版本 2.0",
-  neonTitle:"霓虹脉冲",
-  neonDesc:"测试你的反应能力。收集水晶，避开骷髅，挑战你的朋友。支持14种语言的快节奏街机游戏。",
-  playNow:"立即游玩 ⚡",
-  players:"玩家",
-  topScore:"最高分",
-  rating:"评分",
-  comingSoon:"即将登陆平台",
-  skullRealm:"骷髅领域",
-  ascentMode:"上升模式",
-  soon:"敬请期待",
-  footerText:"由 JAMAM GAMES 倾情打造 © 2026",
-  changeLang:"更改语言",
-  langTitle:"选择语言",
-  langDesc:"选择你的首选语言",
-  close:"关闭"
+  title:"霓虹脉冲", startDesc1:"在霓虹竞技场中测试你的反应能力。<br>收集蓝色水晶，抢夺金色核心，不断提升等级。",
+  pillPoints:"✦ 积分与倍数", pillChallenges:"⚡ 逐步升级的挑战", pillAchievements:"🏆 成就",
+  warning:"警告：触摸红色骷髅将结束本局！", startHint:"直接用手指触摸物品。音效和音乐为可选。",
+  startBtn:"开始脉冲 ⚡", missionsBtn:"任务与成就 🏆",
+  pauseTitle:"脉冲暂停", pauseDesc:"竞技场已暂停。深呼吸，然后回到挑战。", resume:"继续 ▶", home:"主菜单",
+  overTitle:"脉冲爆发！", overDesc:"本局结束，但最高分在等你。",
+  finalLevel:"达到等级", finalScore:"本局得分", finalBest:"最高分", finalCrystals:"收集的水晶", finalGold:"金色核心",
+  retry:"新一局 ⚡", viewAchievements:"查看成就 🏆", share:"分享得分 ↗",
+  missionsTitle:"成就殿堂", missionsDesc:"你的成就和最高分保存在本设备上。", back:"返回",
+  hudScore:"得分", hudBest:"最高", levelLabel:"等级 {n}", comboPrefix:"⚡ 连击 ×{n}",
+  touchHint:"触摸水晶 ✦ 避开红色骷髅",
+  mission1Name:"第一火花", mission1Desc:"单局获得 500 分",
+  mission2Name:"水晶猎人", mission2Desc:"单局收集 10 个水晶",
+  mission3Name:"金色光芒", mission3Desc:"单局收集 3 个金色核心",
+  mission4Name:"闪电链", mission4Desc:"达成 8 连击",
+  mission5Name:"关卡征服者", mission5Desc:"达到等级 5",
+  mission6Name:"霓虹传奇", mission6Desc:"在所有回合中累计获得 5000 分",
+  missionCompleted:"已完成",
+  toastStart:"开始！抓住水晶 ✦", toastMusicOn:"音乐已开启", toastMusicOff:"音乐已关闭",
+  toastLevelUp:"🚀 达到等级 {n}", toastAchievement:"🏆 新成就：{name}",
+  toastDodge:"危险闪避！+ 勇气 ⚡", toastCopied:"得分已复制以供分享",
+  shareText:"⚡ 我在 Neon Pulse 中获得了 {score} 分！达到了等级 {level}。你能打破我的记录吗？",
+  changeLanguage:"更改语言", langTitle:"选择语言", langDesc:"选择你的首选语言",
+  soundToggle:"切换声音", musicToggle:"切换音乐", pauseToggle:"暂停", langToggle:"语言"
 },
 ja: {
-  pageTitle:"JAMAM GAMES | ゲームプラットフォーム",
-  officialGame:"公式ゲーム",
-  badgeVersion:"バージョン 2.0",
-  neonTitle:"ネオンパルス",
-  neonDesc:"反射神経を試そう。クリスタルを集め、ドクロを避け、友達に挑戦しよう。14言語対応の高速アーケードゲーム。",
-  playNow:"今すぐプレイ ⚡",
-  players:"プレイヤー",
-  topScore:"ハイスコア",
-  rating:"評価",
-  comingSoon:"プラットフォームに近日登場",
-  skullRealm:"スカルレルム",
-  ascentMode:"アセントモード",
-  soon:"近日公開",
-  footerText:"JAMAM GAMES が情熱を込めて制作 © 2026",
-  changeLang:"言語を変更",
-  langTitle:"言語を選択",
-  langDesc:"お好みの言語を選択してください",
-  close:"閉じる"
+  title:"ネオンパルス", startDesc1:"ネオンアリーナで反射神経を試そう。<br>青いクリスタルを集め、金色のコアを掴み、レベルを上げよう。",
+  pillPoints:"✦ スコアと倍率", pillChallenges:"⚡ エスカレートする挑戦", pillAchievements:"🏆 実績",
+  warning:"警告：赤いドクロに触れるとラウンド終了！", startHint:"アイテムを指で直接タッチしてください。サウンドと音楽は任意です。",
+  startBtn:"パルス開始 ⚡", missionsBtn:"ミッションと実績 🏆",
+  pauseTitle:"パルス休憩", pauseDesc:"アリーナは一時停止中です。深呼吸して挑戦に戻りましょう。", resume:"再開 ▶", home:"メインメニュー",
+  overTitle:"パルス爆発！", overDesc:"ラウンドは終了しましたが、ハイスコアが待っています。",
+  finalLevel:"到達レベル", finalScore:"ラウンドスコア", finalBest:"ベストスコア", finalCrystals:"集めたクリスタル", finalGold:"金色のコア",
+  retry:"新しいラウンド ⚡", viewAchievements:"実績を見る 🏆", share:"スコアを共有 ↗",
+  missionsTitle:"実績の殿堂", missionsDesc:"あなたの実績とベストスコアはこのデバイスに保存されます。", back:"戻る",
+  hudScore:"スコア", hudBest:"ベスト", levelLabel:"レベル {n}", comboPrefix:"⚡ コンボ ×{n}",
+  touchHint:"クリスタルをタッチ ✦ 赤いドクロを避けよう",
+  mission1Name:"最初の火花", mission1Desc:"1ラウンドで500ポイント獲得",
+  mission2Name:"クリスタルハンター", mission2Desc:"1ラウンドで10個のクリスタルを集める",
+  mission3Name:"金色の輝き", mission3Desc:"1ラウンドで3個の金色のコアを集める",
+  mission4Name:"稲妻チェーン", mission4Desc:"8コンボを達成",
+  mission5Name:"レベルの征服者", mission5Desc:"レベル5に到達",
+  mission6Name:"ネオンの伝説", mission6Desc:"全ラウンドで合計5000ポイント獲得",
+  missionCompleted:"達成済み",
+  toastStart:"スタート！クリスタルをキャッチ ✦", toastMusicOn:"音楽オン", toastMusicOff:"音楽オフ",
+  toastLevelUp:"🚀 レベル {n} に到達", toastAchievement:"🏆 新しい実績：{name}",
+  toastDodge:"危険な回避！+ 勇気 ⚡", toastCopied:"共有用にスコアをコピーしました",
+  shareText:"⚡ Neon Pulse で {score} ポイント獲得！レベル {level} に到達。私の記録を破れる？",
+  changeLanguage:"言語を変更", langTitle:"言語を選択", langDesc:"お好みの言語を選択してください",
+  soundToggle:"サウンド切替", musicToggle:"音楽切替", pauseToggle:"一時停止", langToggle:"言語"
 },
 ko: {
-  pageTitle:"JAMAM GAMES | 게임 플랫폼",
-  officialGame:"공식 게임",
-  badgeVersion:"버전 2.0",
-  neonTitle:"네온 펄스",
-  neonDesc:"반사 신경을 테스트하세요. 크리스탈을 모으고 해골을 피하며 친구에게 도전하세요. 14개 언어를 지원하는 빠른 아케이드 게임.",
-  playNow:"지금 플레이 ⚡",
-  players:"플레이어",
-  topScore:"최고 점수",
-  rating:"평점",
-  comingSoon:"플랫폼에 곧 출시",
-  skullRealm:"해골 왕국",
-  ascentMode:"상승 모드",
-  soon:"곧 출시",
-  footerText:"JAMAM GAMES이(가) 열정으로 제작 © 2026",
-  changeLang:"언어 변경",
-  langTitle:"언어 선택",
-  langDesc:"선호하는 언어를 선택하세요",
-  close:"닫기"
+  title:"네온 펄스", startDesc1:"네온 아레나에서 반사 신경을 테스트하세요.<br>파란 크리스탈을 모으고, 황금 코어를 잡고, 레벨을 올리세요.",
+  pillPoints:"✦ 점수와 배수", pillChallenges:"⚡ 점점 어려워지는 도전", pillAchievements:"🏆 업적",
+  warning:"경고: 빨간 해골을 터치하면 라운드가 종료됩니다!", startHint:"손가락으로 아이템을 직접 터치하세요. 사운드와 음악은 선택 사항입니다.",
+  startBtn:"펄스 시작 ⚡", missionsBtn:"미션 및 업적 🏆",
+  pauseTitle:"펄스 휴식", pauseDesc:"아레나가 일시 정지되었습니다. 숨을 고르고 도전으로 돌아오세요.", resume:"계속 ▶", home:"메인 메뉴",
+  overTitle:"펄스 폭발!", overDesc:"라운드는 끝났지만 최고 점수가 기다립니다.",
+  finalLevel:"도달한 레벨", finalScore:"라운드 점수", finalBest:"최고 점수", finalCrystals:"수집한 크리스탈", finalGold:"황금 코어",
+  retry:"새 라운드 ⚡", viewAchievements:"업적 보기 🏆", share:"점수 공유 ↗",
+  missionsTitle:"업적의 전당", missionsDesc:"업적과 최고 점수는 이 기기에 저장됩니다.", back:"뒤로",
+  hudScore:"점수", hudBest:"최고", levelLabel:"레벨 {n}", comboPrefix:"⚡ 콤보 ×{n}",
+  touchHint:"크리스탈을 터치 ✦ 빨간 해골을 피하세요",
+  mission1Name:"첫 번째 불꽃", mission1Desc:"한 라운드에서 500점 획득",
+  mission2Name:"크리스탈 사냥꾼", mission2Desc:"한 라운드에서 크리스탈 10개 수집",
+  mission3Name:"황금 빛", mission3Desc:"한 라운드에서 황금 코어 3개 수집",
+  mission4Name:"번개 사슬", mission4Desc:"8 콤보 달성",
+  mission5Name:"레벨 정복자", mission5Desc:"레벨 5 도달",
+  mission6Name:"네온 전설", mission6Desc:"모든 라운드에서 총 5000점 획득",
+  missionCompleted:"완료",
+  toastStart:"시작! 크리스탈을 잡으세요 ✦", toastMusicOn:"음악 켜짐", toastMusicOff:"음악 꺼짐",
+  toastLevelUp:"🚀 레벨 {n} 도달", toastAchievement:"🏆 새 업적: {name}",
+  toastDodge:"위험한 회피! + 용기 ⚡", toastCopied:"공유를 위해 점수가 복사되었습니다",
+  shareText:"⚡ Neon Pulse에서 {score}점을 획득했습니다! 레벨 {level}에 도달했습니다. 제 기록을 깰 수 있나요?",
+  changeLanguage:"언어 변경", langTitle:"언어 선택", langDesc:"선호하는 언어를 선택하세요",
+  soundToggle:"사운드 전환", musicToggle:"음악 전환", pauseToggle:"일시 정지", langToggle:"언어"
 },
 tr: {
-  pageTitle:"JAMAM GAMES | Oyun Platformu",
-  officialGame:"Resmi Oyun",
-  badgeVersion:"Sürüm 2.0",
-  neonTitle:"Neon Nabız",
-  neonDesc:"Reflekslerini test et. Kristalleri topla, kafataslarından kaç ve arkadaşlarına meydan oku. 14 dili destekleyen hızlı bir atari oyunu.",
-  playNow:"Şimdi Oyna ⚡",
-  players:"Oyuncular",
-  topScore:"En Yüksek Skor",
-  rating:"Puanlama",
-  comingSoon:"Platformda Yakında",
-  skullRealm:"Kafatası Diyarı",
-  ascentMode:"Yükseliş Modu",
-  soon:"Yakında",
-  footerText:"JAMAM GAMES tarafından tutkuyla yapıldı © 2026",
-  changeLang:"Dili Değiştir",
-  langTitle:"Dil Seç",
-  langDesc:"Tercih ettiğin dili seç",
-  close:"Kapat"
+  title:"Neon Nabız", startDesc1:"Neon arenasında reflekslerini test et.<br>Mavi kristalleri topla, altın çekirdeği kap ve seviyeleri yükselt.",
+  pillPoints:"✦ Puanlar ve Çarpanlar", pillChallenges:"⚡ Artan Zorluklar", pillAchievements:"🏆 Başarımlar",
+  warning:"Uyarı: kırmızı kafatasına dokunmak turu bitirir!", startHint:"Öğelere doğrudan parmağınla dokun. Ses ve müzik isteğe bağlıdır.",
+  startBtn:"Nabzı Başlat ⚡", missionsBtn:"Görevler ve Başarımlar 🏆",
+  pauseTitle:"Nabız Molası", pauseDesc:"Arena duraklatıldı. Bir nefes al ve meydan okumaya geri dön.", resume:"Devam Et ▶", home:"Ana Menü",
+  overTitle:"Nabız Patlaması!", overDesc:"Tur bitti ama yüksek skor seni bekliyor.",
+  finalLevel:"Ulaşılan seviye", finalScore:"Tur puanı", finalBest:"En iyi puan", finalCrystals:"Toplanan kristaller", finalGold:"Altın çekirdekler",
+  retry:"Yeni Tur ⚡", viewAchievements:"Başarımları Görüntüle 🏆", share:"Puanı Paylaş ↗",
+  missionsTitle:"Başarımlar Salonu", missionsDesc:"Başarımların ve en iyi puanın bu cihazda kaydedilir.", back:"Geri",
+  hudScore:"Puan", hudBest:"En İyi", levelLabel:"Seviye {n}", comboPrefix:"⚡ Kombo ×{n}",
+  touchHint:"Kristallere dokun ✦ Kırmızı kafatasından kaçın",
+  mission1Name:"İlk Kıvılcım", mission1Desc:"Bir turda 500 puan kazan",
+  mission2Name:"Kristal Avcısı", mission2Desc:"Bir turda 10 kristal topla",
+  mission3Name:"Altın Parıltı", mission3Desc:"Bir turda 3 altın çekirdek topla",
+  mission4Name:"Şimşek Zinciri", mission4Desc:"8'lik bir kombo yap",
+  mission5Name:"Seviye Fatihi", mission5Desc:"Seviye 5'e ulaş",
+  mission6Name:"Neon Efsanesi", mission6Desc:"Tüm turlarda toplam 5000 puan topla",
+  missionCompleted:"Tamamlandı",
+  toastStart:"Başla! Kristalleri yakala ✦", toastMusicOn:"Müzik açık", toastMusicOff:"Müzik kapalı",
+  toastLevelUp:"🚀 Seviye {n} ulaşıldı", toastAchievement:"🏆 Yeni başarım: {name}",
+  toastDodge:"Tehlikeli kaçış! + Cesaret ⚡", toastCopied:"Puan paylaşım için kopyalandı",
+  shareText:"⚡ Neon Pulse'ta {score} puan yaptım! Seviye {level} ulaştım. Rekorumu kırabilir misin?",
+  changeLanguage:"Dili Değiştir", langTitle:"Dil Seç", langDesc:"Tercih ettiğin dili seç",
+  soundToggle:"Sesi Aç/Kapat", musicToggle:"Müziği Aç/Kapat", pauseToggle:"Duraklat", langToggle:"Dil"
 },
 hi: {
-  pageTitle:"JAMAM GAMES | गेम प्लेटफ़ॉर्म",
-  officialGame:"आधिकारिक गेम",
-  badgeVersion:"संस्करण 2.0",
-  neonTitle:"नियॉन पल्स",
-  neonDesc:"अपनी प्रतिक्रिया का परीक्षण करें। क्रिस्टल इकट्ठा करें, खोपड़ियों से बचें और दोस्तों को चुनौती दें। 14 भाषाओं का समर्थन करने वाला तेज़ आर्केड गेम।",
-  playNow:"अभी खेलें ⚡",
-  players:"खिलाड़ी",
-  topScore:"शीर्ष स्कोर",
-  rating:"रेटिंग",
-  comingSoon:"प्लेटफ़ॉर्म पर जल्द आ रहा है",
-  skullRealm:"खोपड़ी क्षेत्र",
-  ascentMode:"आरोहण मोड",
-  soon:"जल्द आ रहा है",
-  footerText:"JAMAM GAMES द्वारा जुनून के साथ बनाया गया © 2026",
-  changeLang:"भाषा बदलें",
-  langTitle:"भाषा चुनें",
-  langDesc:"अपनी पसंदीदा भाषा चुनें",
-  close:"बंद करें"
+  title:"नियॉन पल्स", startDesc1:"नियॉन अखाड़े में अपनी प्रतिक्रिया का परीक्षण करें।<br>नीले क्रिस्टल इकट्ठा करें, सुनहरा कोर पकड़ें और स्तरों पर चढ़ें।",
+  pillPoints:"✦ अंक और गुणक", pillChallenges:"⚡ बढ़ती चुनौतियाँ", pillAchievements:"🏆 उपलब्धियाँ",
+  warning:"चेतावनी: लाल खोपड़ी को छूने से राउंड समाप्त हो जाता है!", startHint:"वस्तुओं को सीधे अपनी उंगली से छुएं। ध्वनि और संगीत वैकल्पिक हैं।",
+  startBtn:"पल्स शुरू करें ⚡", missionsBtn:"मिशन और उपलब्धियाँ 🏆",
+  pauseTitle:"पल्स विराम", pauseDesc:"अखाड़ा रुका हुआ है। एक सांस लें और चुनौती पर वापस आएं।", resume:"फिर से शुरू करें ▶", home:"मुख्य मेनू",
+  overTitle:"पल्स विस्फोट!", overDesc:"राउंड खत्म, लेकिन उच्च स्कोर आपका इंतजार कर रहा है।",
+  finalLevel:"पहुंचा गया स्तर", finalScore:"राउंड स्कोर", finalBest:"सर्वश्रेष्ठ स्कोर", finalCrystals:"एकत्रित क्रिस्टल", finalGold:"सुनहरे कोर",
+  retry:"नया राउंड ⚡", viewAchievements:"उपलब्धियाँ देखें 🏆", share:"स्कोर साझा करें ↗",
+  missionsTitle:"उपलब्धि हॉल", missionsDesc:"आपकी उपलब्धियाँ और सर्वश्रेष्ठ स्कोर इस डिवाइस पर सहेजे जाते हैं।", back:"वापस",
+  hudScore:"स्कोर", hudBest:"सर्वश्रेष्ठ", levelLabel:"स्तर {n}", comboPrefix:"⚡ कॉम्बो ×{n}",
+  touchHint:"क्रिस्टल को छुएं ✦ लाल खोपड़ी से बचें",
+  mission1Name:"पहली चिंगारी", mission1Desc:"एक राउंड में 500 अंक प्राप्त करें",
+  mission2Name:"क्रिस्टल शिकारी", mission2Desc:"एक राउंड में 10 क्रिस्टल इकट्ठा करें",
+  mission3Name:"सुनहरी चमक", mission3Desc:"एक राउंड में 3 सुनहरे कोर इकट्ठा करें",
+  mission4Name:"बिजली की श्रृंखला", mission4Desc:"8 आइटम का कॉम्बो प्राप्त करें",
+  mission5Name:"स्तर विजेता", mission5Desc:"स्तर 5 तक पहुंचें",
+  mission6Name:"नियॉन किंवदंती", mission6Desc:"सभी राउंड में कुल 5000 अंक इकट्ठा करें",
+  missionCompleted:"पूर्ण",
+  toastStart:"चलो! क्रिस्टल पकड़ें ✦", toastMusicOn:"संगीत चालू", toastMusicOff:"संगीत बंद",
+  toastLevelUp:"🚀 स्तर {n} पर पहुंचे", toastAchievement:"🏆 नई उपलब्धि: {name}",
+  toastDodge:"खतरनाक चकमा! + साहस ⚡", toastCopied:"साझा करने के लिए स्कोर कॉपी किया गया",
+  shareText:"⚡ मैंने Neon Pulse में {score} अंक प्राप्त किए! स्तर {level} तक पहुंचा। क्या आप मेरा रिकॉर्ड तोड़ सकते हैं?",
+  changeLanguage:"भाषा बदलें", langTitle:"भाषा चुनें", langDesc:"अपनी पसंदीदा भाषा चुनें",
+  soundToggle:"ध्वनि टॉगल करें", musicToggle:"संगीत टॉगल करें", pauseToggle:"रोकें", langToggle:"भाषा"
 },
 id: {
-  pageTitle:"JAMAM GAMES | Platform Game",
-  officialGame:"Game Resmi",
-  badgeVersion:"Versi 2.0",
-  neonTitle:"Denyut Neon",
-  neonDesc:"Uji refleks Anda. Kumpulkan kristal, hindari tengkorak, dan tantang teman Anda. Game arcade cepat yang mendukung 14 bahasa.",
-  playNow:"Main Sekarang ⚡",
-  players:"Pemain",
-  topScore:"Skor Tertinggi",
-  rating:"Peringkat",
-  comingSoon:"Segera Hadir di Platform",
-  skullRealm:"Alam Tengkorak",
-  ascentMode:"Mode Pendakian",
-  soon:"Segera",
-  footerText:"Dibuat dengan penuh semangat oleh JAMAM GAMES © 2026",
-  changeLang:"Ubah Bahasa",
-  langTitle:"Pilih Bahasa",
-  langDesc:"Pilih bahasa yang Anda sukai",
-  close:"Tutup"
+  title:"Denyut Neon", startDesc1:"Uji refleks Anda di arena neon.<br>Kumpulkan kristal biru, raih inti emas, dan naiklah ke level berikutnya.",
+  pillPoints:"✦ Poin & Pengganda", pillChallenges:"⚡ Tantangan Meningkat", pillAchievements:"🏆 Pencapaian",
+  warning:"Peringatan: menyentuh tengkorak merah mengakhiri ronde!", startHint:"Sentuh item langsung dengan jari Anda. Suara dan musik bersifat opsional.",
+  startBtn:"Mulai Denyut ⚡", missionsBtn:"Misi & Pencapaian 🏆",
+  pauseTitle:"Jeda Denyut", pauseDesc:"Arena dijeda. Tarik napas dan kembali ke tantangan.", resume:"Lanjutkan ▶", home:"Menu Utama",
+  overTitle:"Ledakan Denyut!", overDesc:"Ronde berakhir, tapi skor tertinggi menanti.",
+  finalLevel:"Level tercapai", finalScore:"Skor ronde", finalBest:"Skor terbaik", finalCrystals:"Kristal terkumpul", finalGold:"Inti emas",
+  retry:"Ronde Baru ⚡", viewAchievements:"Lihat Pencapaian 🏆", share:"Bagikan Skor ↗",
+  missionsTitle:"Aula Pencapaian", missionsDesc:"Pencapaian dan skor terbaik Anda disimpan di perangkat ini.", back:"Kembali",
+  hudScore:"Skor", hudBest:"Terbaik", levelLabel:"Level {n}", comboPrefix:"⚡ Kombo ×{n}",
+  touchHint:"Sentuh kristal ✦ Hindari tengkorak merah",
+  mission1Name:"Percikan Pertama", mission1Desc:"Raih 500 poin dalam satu ronde",
+  mission2Name:"Pemburu Kristal", mission2Desc:"Kumpulkan 10 kristal dalam satu ronde",
+  mission3Name:"Kilau Emas", mission3Desc:"Kumpulkan 3 inti emas dalam satu ronde",
+  mission4Name:"Rantai Petir", mission4Desc:"Raih kombo 8 item",
+  mission5Name:"Penakluk Level", mission5Desc:"Capai Level 5",
+  mission6Name:"Legenda Neon", mission6Desc:"Kumpulkan 5000 poin total di semua ronde",
+  missionCompleted:"Selesai",
+  toastStart:"Ayo! Tangkap kristal ✦", toastMusicOn:"Musik diaktifkan", toastMusicOff:"Musik dimatikan",
+  toastLevelUp:"🚀 Level {n} tercapai", toastAchievement:"🏆 Pencapaian baru: {name}",
+  toastDodge:"Dodge berbahaya! + Keberanian ⚡", toastCopied:"Skor disalin untuk dibagikan",
+  shareText:"⚡ Saya mencetak {score} poin di Neon Pulse! Mencapai Level {level}. Bisakah kamu mengalahkan rekorku?",
+  changeLanguage:"Ubah Bahasa", langTitle:"Pilih Bahasa", langDesc:"Pilih bahasa yang Anda sukai",
+  soundToggle:"Alihkan Suara", musicToggle:"Alihkan Musik", pauseToggle:"Jeda", langToggle:"Bahasa"
 }
 };
 
 /* ============================================================
-   LANGUAGE CONFIG & STORAGE
+   LANGUAGE UTILITIES
    ============================================================ */
 const RTL_LANGS = ['ar','he','fa','ur'];
 const LANG_LIST = [
@@ -445,13 +533,6 @@ const LANG_LIST = [
   {code:'id', name:'Bahasa Indonesia'}
 ];
 
-// Storage keys — mirrors the game so language stays in sync
-const STORE_LANG = 'jamam_games_lang';
-const GAME_STORE = 'neon_pulse_v2_save';
-
-/* ============================================================
-   LANGUAGE DETECTION & HELPERS
-   ============================================================ */
 function detectLanguage(){
   try {
     const nav = navigator.languages || [navigator.language || 'en'];
@@ -463,114 +544,481 @@ function detectLanguage(){
   return 'en';
 }
 
-function loadLanguage(){
-  // 1. Platform preference
-  try {
-    const saved = localStorage.getItem(STORE_LANG);
-    if (saved && translations[saved]) return saved;
-  } catch(e){}
-  // 2. Game preference (stays in sync)
-  try {
-    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE) || '{}');
-    if (gameSave.language && translations[gameSave.language]) return gameSave.language;
-  } catch(e){}
-  // 3. Browser auto-detect
-  return detectLanguage();
+function formatNum(n){
+  return n.toLocaleString('en-US'); // Western digits universally readable
 }
 
-function saveLanguage(code){
-  try { localStorage.setItem(STORE_LANG, code); } catch(e){}
-  // Mirror into the game save so both stay consistent
-  try {
-    const gameSave = JSON.parse(localStorage.getItem(GAME_STORE) || '{}');
-    gameSave.language = code;
-    localStorage.setItem(GAME_STORE, JSON.stringify(gameSave));
-  } catch(e){}
-}
-
-function t(key){
+function t(key, params){
   const dict = translations[currentLang] || translations.en;
-  return dict[key] || translations.en[key] || key;
+  let str = dict[key] || translations.en[key] || key;
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      str = str.split('{' + k + '}').join(v);
+    }
+  }
+  return str;
 }
 
 /* ============================================================
-   RENDER & APPLY
+   GAME CONSTANTS & STATE
    ============================================================ */
 const $ = id => document.getElementById(id);
-const langBtn = $('langBtn');
-const langOverlay = $('langOverlay');
-const langGrid = $('langGrid');
-const langClose = $('langClose');
+const canvas = $('canvas'), ctx = canvas.getContext('2d');
+const W = 450, H = 800;
+let dpr = 1;
+function resize(){dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+resize(); window.addEventListener('resize',resize);
 
-let currentLang = loadLanguage();
+const C={cyan:'#00f3ff',pink:'#ff287b',gold:'#ffcf38',violet:'#9a67ff',white:'#f4fbff'};
+const STORE='neon_pulse_v2_save';
+
+const saved=(()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{}')}catch(e){return {}}})();
+
+// Initialize language BEFORE any save() call
+let currentLang = (saved.language && translations[saved.language]) ? saved.language : detectLanguage();
+
+let best = Math.max(0, Number(saved.best)||0);
+let lifetime = Number(saved.lifetime)||0;
+let achievements = Array.isArray(saved.achievements) ? saved.achievements : [];
+let soundOn = saved.soundOn !== false;
+let musicOn = saved.musicOn === true;
+
+let state='start', score=0, level=1, combo=0, crystals=0, golds=0, nearMisses=0,
+    spawn=0, last=0, shake=0, flash=0, time=0;
+let items=[], particles=[], stars=[], rings=[], laneLast=-1, toastTimer=0, musicTimer=0;
+let audio=null, musicStep=0, bestCombo=0, unlockedThisRun=[];
+let returnState='start', langReturnState='start';
+
+const lanes=[W*.16,W*.39,W*.61,W*.84];
+
+const missions=[
+  {id:'score500', nameKey:'mission1Name', descKey:'mission1Desc', progress:g=>Math.min(100,g.score/5), test:g=>g.score>=500},
+  {id:'crystal10', nameKey:'mission2Name', descKey:'mission2Desc', progress:g=>Math.min(100,g.crystals*10), test:g=>g.crystals>=10},
+  {id:'gold3', nameKey:'mission3Name', descKey:'mission3Desc', progress:g=>Math.min(100,g.golds/3*100), test:g=>g.golds>=3},
+  {id:'combo8', nameKey:'mission4Name', descKey:'mission4Desc', progress:g=>Math.min(100,g.bestCombo/8*100), test:g=>g.bestCombo>=8},
+  {id:'level5', nameKey:'mission5Name', descKey:'mission5Desc', progress:g=>Math.min(100,g.level/5*100), test:g=>g.level>=5},
+  {id:'lifetime5000', nameKey:'mission6Name', descKey:'mission6Desc', progress:g=>Math.min(100,lifetime/5000*100), test:g=>lifetime>=5000}
+];
+
+/* ============================================================
+   SAVE / LOAD
+   ============================================================ */
+function save(){
+  try {
+    localStorage.setItem(STORE, JSON.stringify({
+      best, lifetime, achievements, soundOn, musicOn, language: currentLang
+    }));
+  } catch(e){}
+}
+
+/* ============================================================
+   AUDIO
+   ============================================================ */
+function audioInit(){if(!audio){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audio=new AC()}if(audio&&audio.state==='suspended')audio.resume();}
+function tone(freq,duration,type='sine',volume=.08,when=0,endFreq=null){
+  if(!audio||!soundOn)return;
+  try{
+    const o=audio.createOscillator(),g=audio.createGain(),tt=audio.currentTime+when;
+    o.type=type;o.frequency.setValueAtTime(freq,tt);
+    if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(1,endFreq),tt+duration);
+    g.gain.setValueAtTime(.0001,tt);
+    g.gain.exponentialRampToValueAtTime(volume,tt+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,tt+duration);
+    o.connect(g);g.connect(audio.destination);o.start(tt);o.stop(tt+duration+.03);
+  }catch(e){}
+}
+function sfx(type){
+  if(!soundOn)return; audioInit();
+  if(type==='hit'){tone(420+Math.min(combo,12)*30,.09,'sine',.08,0,900)}
+  if(type==='gold'){tone(660,.2,'triangle',.12);tone(990,.24,'triangle',.09,.08);tone(1320,.3,'sine',.07,.16)}
+  if(type==='danger'){tone(180,.4,'sawtooth',.16,0,38);tone(90,.5,'triangle',.08,.04,30)}
+  if(type==='near'){tone(260,.12,'square',.05,0,520)}
+  if(type==='level'){tone(520,.15,'triangle',.07);tone(780,.2,'triangle',.07,.12);tone(1040,.25,'sine',.08,.24)}
+  if(type==='unlock'){tone(740,.15,'sine',.07);tone(1110,.22,'triangle',.09,.1)}
+}
+function stopMusic(){musicTimer=0}
+function musicTick(){
+  if(!audio||!musicOn||state!=='playing')return;
+  const notes=[220,277.18,329.63,440,329.63,277.18,246.94,329.63];
+  const f=notes[musicStep%notes.length];musicStep++;
+  tone(f,.28,'triangle',.022,0,f*1.01);
+  tone(f/2,.34,'sine',.018,0,f/2);
+}
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+function toast(msg){
+  $('toast').textContent=msg;
+  $('toast').classList.add('show');
+  toastTimer=2;
+}
+function show(id){
+  ['start','pause','over','missions','language'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
+}
 
 function applyTranslations(){
-  document.querySelectorAll('[data-i18n]').forEach(el => {
+  // Text content
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
     el.textContent = t(el.getAttribute('data-i18n'));
   });
-  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+  // HTML content (allows <br>, <span>, etc.)
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    el.innerHTML = t(el.getAttribute('data-i18n-html'));
+  });
+  // Aria labels
+  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
     const v = t(el.getAttribute('data-i18n-aria'));
     el.setAttribute('aria-label', v);
     el.setAttribute('title', v);
   });
-  document.title = t('pageTitle');
-  // Highlight active option
-  document.querySelectorAll('.lang-option').forEach(b => {
+  // Highlight active language in picker
+  document.querySelectorAll('.lang-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.lang === currentLang);
   });
 }
 
 function setLanguage(code){
-  if (!translations[code]) code = 'en';
+  if(!translations[code]) code = 'en';
   currentLang = code;
   document.documentElement.lang = code;
   document.documentElement.dir = RTL_LANGS.includes(code) ? 'rtl' : 'ltr';
-  saveLanguage(code);
+  save();
   applyTranslations();
+  updateUI();
+  if(!$('missions').classList.contains('hidden')) renderMissions();
 }
 
 function renderLangGrid(){
-  langGrid.innerHTML = LANG_LIST.map(l =>
-    `<button class="lang-option${l.code === currentLang ? ' active' : ''}" data-lang="${l.code}" lang="${l.code}" dir="${RTL_LANGS.includes(l.code) ? 'rtl' : 'ltr'}">${l.name}</button>`
+  const grid = $('langGrid');
+  grid.innerHTML = LANG_LIST.map(l =>
+    `<button class="lang-btn${l.code===currentLang?' active':''}" data-lang="${l.code}" lang="${l.code}" dir="${RTL_LANGS.includes(l.code)?'rtl':'ltr'}">${l.name}</button>`
   ).join('');
-  langGrid.querySelectorAll('.lang-option').forEach(btn => {
-    btn.onclick = () => {
+  grid.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.onclick = ()=>{
       setLanguage(btn.dataset.lang);
-      closeLang();
+      show(langReturnState);
     };
   });
 }
 
-function openLang(){
+function openLanguagePicker(){
+  if(state==='playing'){ pauseGame(); langReturnState='pause'; }
+  else if(state==='paused') langReturnState='pause';
+  else if(state==='over') langReturnState='over';
+  else langReturnState='start';
   renderLangGrid();
-  langOverlay.classList.remove('hidden');
-  // Focus first button for accessibility
-  setTimeout(() => {
-    const active = langGrid.querySelector('.lang-option.active');
-    if (active) active.focus();
-  }, 50);
-}
-
-function closeLang(){
-  langOverlay.classList.add('hidden');
-  langBtn.focus();
+  show('language');
 }
 
 /* ============================================================
-   WIRING
+   GAME LOGIC
    ============================================================ */
-langBtn.onclick = openLang;
-langClose.onclick = closeLang;
+function startGame(){
+  audioInit();
+  score=0;level=1;combo=0;crystals=0;golds=0;nearMisses=0;bestCombo=0;unlockedThisRun=[];
+  items=[];particles=[];rings=[];spawn=0;shake=0;flash=0;time=0;musicStep=0;
+  state='playing';show('');updateUI();
+  toast(t('toastStart'));
+  last=performance.now();
+}
+function pauseGame(){
+  if(state==='playing'){state='paused';stopMusic();show('pause')}
+  else if(state==='paused'){state='playing';show('');last=performance.now();audioInit()}
+}
+function goHome(){state='start';stopMusic();show('start')}
 
-// Close on backdrop click
-langOverlay.addEventListener('click', e => {
-  if (e.target === langOverlay) closeLang();
+function toggleSound(){
+  soundOn=!soundOn;
+  $('soundBtn').style.opacity=soundOn?'1':'.45';
+  save();
+  if(soundOn){audioInit();sfx('hit')}
+}
+function toggleMusic(){
+  musicOn=!musicOn;
+  $('musicBtn').style.opacity=musicOn?'1':'.45';
+  save();
+  if(musicOn)audioInit();else stopMusic();
+  toast(musicOn?t('toastMusicOn'):t('toastMusicOff'));
+}
+
+function renderMissions(){
+  const g={score,crystals,golds,bestCombo,level};
+  $('missionList').innerHTML = missions.map(m=>{
+    const done = achievements.includes(m.id) || m.test(g);
+    const progress = m.progress(g);
+    const status = done ? t('missionCompleted') : Math.floor(progress)+'%';
+    return `<div class="mission ${done?'missiondone':''}"><div><b>${done?'✓ ':''}${t(m.nameKey)}</b><small>${t(m.descKey)}</small><div class="track"><span style="width:${progress}%"></span></div></div><b>${status}</b></div>`;
+  }).join('');
+}
+
+function unlockCheck(){
+  const g={score,crystals,golds,bestCombo,level};
+  for(const m of missions){
+    if(!achievements.includes(m.id) && m.test(g)){
+      achievements.push(m.id);
+      unlockedThisRun.push(m.nameKey);
+      save();
+      toast(t('toastAchievement',{name:t(m.nameKey)}));
+      sfx('unlock');
+    }
+  }
+}
+
+class Particle{
+  constructor(x,y,color,power=1){
+    this.x=x;this.y=y;
+    const a=Math.random()*Math.PI*2,v=(50+Math.random()*260)*power;
+    this.vx=Math.cos(a)*v;this.vy=Math.sin(a)*v;
+    this.life=this.max=.35+Math.random()*.65;
+    this.r=1.5+Math.random()*4;this.color=color;
+  }
+  update(dt){this.x+=this.vx*dt;this.y+=this.vy*dt;this.vx*=Math.pow(.04,dt);this.vy*=Math.pow(.04,dt);this.life-=dt}
+  draw(){
+    ctx.globalAlpha=Math.max(0,this.life/this.max);
+    ctx.fillStyle=this.color;ctx.shadowBlur=12;ctx.shadowColor=this.color;
+    ctx.beginPath();ctx.arc(this.x,this.y,this.r*Math.max(.2,this.life/this.max),0,Math.PI*2);
+    ctx.fill();ctx.globalAlpha=1;ctx.shadowBlur=0;
+  }
+}
+function burst(x,y,color,count=24,power=1){
+  for(let i=0;i<count;i++)particles.push(new Particle(x,y,color,power));
+  rings.push({x,y,r:3,life:.38,color});
+}
+
+class Item{
+  constructor(type,speed,x){
+    this.type=type;
+    this.r = type==='gold'?25 : type==='danger'?23 : 20;
+    this.x=x;this.y=H+40;this.vy=-speed;
+    this.a=Math.random()*6;this.va=(Math.random()-.5)*2;
+    this.active=true;this.pulse=Math.random()*6;
+  }
+  update(dt){
+    this.y+=this.vy*dt;this.a+=this.va*dt;this.pulse+=dt*5;
+    if(this.y<-60){this.active=false;if(this.type!=='danger')combo=0}
+  }
+  hit(x,y){return Math.hypot(x-this.x,y-this.y)<this.r*1.65}
+  draw(){
+    ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.a);
+    const glow = this.type==='gold'?C.gold : this.type==='danger'?C.pink : C.cyan;
+    ctx.shadowBlur=18+Math.sin(this.pulse)*5;ctx.shadowColor=glow;
+    ctx.lineWidth=2.5;ctx.strokeStyle=glow;
+    if(this.type==='crystal'){
+      ctx.fillStyle='#00f3ff25';
+      ctx.beginPath();ctx.moveTo(0,-this.r);ctx.lineTo(this.r*.75,0);ctx.lineTo(0,this.r);ctx.lineTo(-this.r*.75,0);ctx.closePath();
+      ctx.fill();ctx.stroke();
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,0,3,0,7);ctx.fill();
+    } else if(this.type==='gold'){
+      ctx.fillStyle='#ffcf3833';
+      ctx.beginPath();
+      for(let i=0;i<10;i++){let a=i*Math.PI/5-Math.PI/2,r=i%2?this.r*.48:this.r;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}
+      ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.fillStyle=C.gold;ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill();
+    } else {
+      ctx.fillStyle='#ff287b35';
+      ctx.beginPath();ctx.arc(0,0,this.r*.78,0,7);ctx.fill();ctx.stroke();
+      ctx.rotate(-this.a);
+      ctx.strokeStyle='#fff';ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(-7,-6);ctx.lineTo(-2,-1);ctx.lineTo(-7,4);
+      ctx.moveTo(7,-6);ctx.lineTo(2,-1);ctx.lineTo(7,4);ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+for(let i=0;i<90;i++){
+  stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.3,a:Math.random()*.6+.1,s:10+Math.random()*25});
+}
+
+function background(dt){
+  const grad=ctx.createRadialGradient(W/2,H*.4,20,W/2,H*.4,H*.85);
+  grad.addColorStop(0,'#111a37');grad.addColorStop(1,'#03050b');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  for(const s of stars){
+    if(state==='playing')s.y+=s.s*dt*(1+level*.04);
+    if(s.y>H)s.y=0;
+    ctx.globalAlpha=s.a*(.65+.35*Math.sin(time*2+s.x));
+    ctx.fillStyle='#c4eaff';ctx.fillRect(s.x,s.y,s.r,s.r);
+  }
+  ctx.globalAlpha=1;
+  ctx.save();ctx.strokeStyle='#00f3ff0d';ctx.lineWidth=1;
+  for(const x of lanes){ctx.beginPath();ctx.moveTo(x,110);ctx.lineTo(x,H-35);ctx.stroke()}
+  ctx.restore();
+  ctx.save();ctx.strokeStyle='#00f3ff12';
+  for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(W/2,H+65,70+i*38,24+i*10,0,Math.PI,Math.PI*2);ctx.stroke()}
+  ctx.restore();
+}
+
+function updateUI(){
+  $('score').textContent=formatNum(score);
+  $('best').textContent=formatNum(best);
+  $('levelLabel').textContent=t('levelLabel',{n:level});
+  const progress=(score%1000)/10;
+  $('levelprogress').style.width=progress+'%';
+  $('goalLabel').textContent=(score%1000)+' / 1000';
+  $('combo').textContent=t('comboPrefix',{n:combo});
+  $('combo').style.opacity=combo>=2?'1':'0';
+  $('combo').style.transform=`translateX(-50%) scale(${combo>=2?1:0.9})`;
+  $('soundBtn').style.opacity=soundOn?'1':'.45';
+  $('musicBtn').style.opacity=musicOn?'1':'.45';
+}
+
+function collect(item){
+  item.active=false;
+  if(item.type==='danger'){
+    state='over';stopMusic();
+    shake=.5;flash=.28;
+    burst(item.x,item.y,C.pink,55,1.4);
+    sfx('danger');
+    finish();
+    return;
+  }
+  combo++;
+  bestCombo=Math.max(bestCombo,combo);
+  const isGold = item.type==='gold';
+  if(isGold)golds++; else crystals++;
+  const reaction = Math.max(0, Math.floor((1-item.y/H)*90));
+  const mult = Math.min(5, 1 + Math.max(0,combo-1)*.12);
+  const pts = Math.floor((100+reaction+level*10) * mult * (isGold?2.5:1));
+  score += pts;
+  lifetime += pts;
+  burst(item.x,item.y,isGold?C.gold:C.cyan,isGold?40:23,isGold?1.25:1);
+  sfx(isGold?'gold':'hit');
+  const near = items.some(o=>o.active&&o.type==='danger'&&Math.hypot(o.x-item.x,o.y-item.y)<72);
+  if(near){nearMisses++;shake=.13;sfx('near');toast(t('toastDodge'))}
+  const newLevel = 1 + Math.floor(score/1000);
+  if(newLevel>level){
+    level=newLevel;
+    toast(t('toastLevelUp',{n:level}));
+    sfx('level');
+    for(let i=0;i<60;i++)particles.push(new Particle(W/2,H*.4,C.violet,1.4));
+  }
+  if(score>best)best=score;
+  unlockCheck();save();updateUI();
+}
+
+function finish(){
+  $('finalLevel').textContent=level;
+  $('finalScore').textContent=formatNum(score);
+  $('finalBest').textContent=formatNum(best);
+  $('finalCrystals').textContent=crystals;
+  $('finalGold').textContent=golds;
+  save();
+  show('over');
+}
+
+function spawnItem(){
+  const dangerChance = level<2 ? 0 : Math.min(.30, .07+(level-2)*.025);
+  const r = Math.random();
+  let type = r<dangerChance ? 'danger' : r<dangerChance+.15 ? 'gold' : 'crystal';
+  let li; do{li=Math.floor(Math.random()*lanes.length)}while(li===laneLast);
+  laneLast=li;
+  const speed = 150+level*17;
+  items.push(new Item(type, speed, lanes[li]));
+}
+
+function handlePointer(e){
+  if(state!=='playing')return;
+  const rect=canvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/rect.width*W;
+  const y=(e.clientY-rect.top)/rect.height*H;
+  for(let i=items.length-1;i>=0;i--){
+    const it=items[i];
+    if(it.active && it.hit(x,y)){collect(it);return}
+  }
+  rings.push({x,y,r:2,life:.22,color:'#d5e8ff'});
+}
+
+/* ============================================================
+   EVENT WIRING
+   ============================================================ */
+canvas.addEventListener('pointerdown', e=>{e.preventDefault();handlePointer(e)}, {passive:false});
+
+$('startBtn').onclick = startGame;
+$('retryBtn').onclick = startGame;
+$('resumeBtn').onclick = pauseGame;
+$('pauseBtn').onclick = ()=>{if(state==='playing'||state==='paused')pauseGame()};
+$('homeBtn').onclick = goHome;
+$('soundBtn').onclick = toggleSound;
+$('musicBtn').onclick = toggleMusic;
+
+$('missionsBtn').onclick = ()=>{returnState='start';renderMissions();show('missions')};
+$('pauseMissionsBtn').onclick = ()=>{returnState='pause';renderMissions();show('missions')};
+$('overMissionsBtn').onclick = ()=>{returnState='over';renderMissions();show('missions')};
+$('missionsBack').onclick = ()=>show(returnState);
+
+// Language buttons (HUD + overlays)
+document.querySelectorAll('.lang-open-btn').forEach(btn=>{
+  btn.onclick = openLanguagePicker;
+});
+$('langBack').onclick = ()=>show(langReturnState);
+
+$('shareBtn').onclick = async ()=>{
+  const text = t('shareText', {score: formatNum(score), level: level});
+  try {
+    if(navigator.share) await navigator.share({title: t('title'), text});
+    else if(navigator.clipboard){ await navigator.clipboard.writeText(text); toast(t('toastCopied')); }
+    else toast(text);
+  } catch(e){}
+};
+
+window.addEventListener('keydown', e=>{
+  if(e.key==='Escape'||e.key===' '){
+    if(state==='playing'||state==='paused')pauseGame();
+  }
 });
 
-// Close on Escape
-window.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !langOverlay.classList.contains('hidden')) closeLang();
-});
+/* ============================================================
+   MAIN LOOP
+   ============================================================ */
+function frame(ts){
+  let dt = Math.min(.045, Math.max(0,(ts-last)/1000||0));
+  last = ts;
+  time += dt;
+
+  if(state==='playing'){
+    spawn += dt;
+    const interval = Math.max(.38, 1.05-level*.045);
+    if(spawn>=interval){spawn=0;spawnItem()}
+    for(const it of items) it.update(dt);
+    items = items.filter(i=>i.active);
+    if(musicOn){musicTimer+=dt;if(musicTimer>.31){musicTimer=0;musicTick()}}
+  } else if(state!=='paused'){
+    for(const s of stars) s.y += s.s*dt*.35;
+  }
+
+  background(dt);
+
+  ctx.save();ctx.globalAlpha=.055;ctx.strokeStyle=C.violet;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-20,260+Math.sin(time)*25);
+  for(let x=0;x<=W+20;x+=15) ctx.lineTo(x,260+Math.sin(x*.018+time*1.2)*45+Math.cos(x*.009-time)*24);
+  ctx.stroke();ctx.restore();
+
+  for(const it of items) it.draw();
+
+  for(let i=particles.length-1;i>=0;i--){
+    particles[i].update(dt);particles[i].draw();
+    if(particles[i].life<=0) particles.splice(i,1);
+  }
+  for(let i=rings.length-1;i>=0;i--){
+    const r=rings[i];
+    r.r+=180*dt;r.life-=dt;
+    ctx.save();
+    ctx.globalAlpha=Math.max(0,r.life/.4);
+    ctx.strokeStyle=r.color;ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+    if(r.life<=0) rings.splice(i,1);
+  }
+
+  if(shake>0) shake-=dt;
+  if(flash>0){flash-=dt;$('flash').style.opacity=Math.max(0,flash/.28)*.45}
+  if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').classList.remove('show')}
+  if(state==='playing'&&musicOn&&!audio) audioInit();
+
+  requestAnimationFrame(frame);
+}
 
 /* ============================================================
    INIT
@@ -578,9 +1026,13 @@ window.addEventListener('keydown', e => {
 document.documentElement.lang = currentLang;
 document.documentElement.dir = RTL_LANGS.includes(currentLang) ? 'rtl' : 'ltr';
 applyTranslations();
+$('soundBtn').style.opacity = soundOn?'1':'.45';
+$('musicBtn').style.opacity = musicOn?'1':'.45';
+$('best').textContent = formatNum(best);
+updateUI();
+requestAnimationFrame(frame);
 
 })();
 </script>
-
 </body>
 </html>
