@@ -15,8 +15,8 @@ header{display:flex;justify-content:space-between;align-items:center;padding-top
 .logo{font-size:1.5rem;font-weight:900;letter-spacing:1px}.logo span{color:var(--cyan)}
 .stats-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold;font-size:0.9rem;display:flex;align-items:center;gap:5px}
-.audio-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
-.audio-btn.active { background: rgba(0, 242, 254, 0.15); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
+.top-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+.top-btn.active { background: rgba(0, 242, 254, 0.15); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
 .featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px;box-shadow: 0 10px 30px rgba(0,0,0,0.5);position:relative;overflow:hidden}
 .featured::before{content:'👑';position:absolute;top:-20px;right:10px;font-size:8rem;opacity:0.05;transform:rotate(20deg)}
 .featured h2{font-size: 2rem; margin-bottom: 10px; color:var(--gold)}
@@ -41,6 +41,11 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 .close-btn { background: rgba(255, 255, 255, 0.08); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .modal-body { padding: 20px 24px; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 
+/* Language Options */
+.lang-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
+.lang-btn:hover { background: rgba(0, 242, 254, 0.1); border-color: var(--cyan); }
+.lang-btn.active { background: rgba(0, 242, 254, 0.2); border-color: var(--cyan); color: var(--cyan); }
+
 /* Shop Items */
 .shop-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 16px; text-align: center; }
 .shop-item .item-icon { font-size: 2rem; margin-bottom: 8px; }
@@ -63,36 +68,45 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 <header>
   <div class="logo" dir="ltr">JAMAM <span>GAMES</span></div>
   <div class="stats-bar">
-    <button id="btn-audio-toggle" class="audio-btn" title="Toggle Music">🎵 <span id="txt-audio-status">OFF</span></button>
-    <div class="stat-box"><span style="color:#94a3b8">المستوى:</span> <span id="ui-level" style="color:var(--cyan)">1</span></div>
-    <div class="stat-box"><span style="color:#94a3b8">العملات:</span> <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
+    <button id="btn-lang-toggle" class="top-btn" title="Change Language">🌐</button>
+    <button id="btn-audio-toggle" class="top-btn" title="Toggle Music">🎵 <span id="txt-audio-status">OFF</span></button>
+    <div class="stat-box"><span id="lbl-level">المستوى:</span> <span id="ui-level" style="color:var(--cyan)">1</span></div>
+    <div class="stat-box"><span id="lbl-coins">العملات:</span> <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
   </div>
 </header>
 
 <main>
   <div class="hub-actions">
-    <button id="btn-open-shop" class="btn-secondary">🛒 متجر العملات</button>
-    <button id="btn-open-achievements" class="btn-secondary">🏆 الإنجازات</button>
+    <button id="btn-open-shop" class="btn-secondary">🛒 <span id="lbl-shop">متجر العملات</span></button>
+    <button id="btn-open-achievements" class="btn-secondary">🏆 <span id="lbl-ach">الإنجازات</span></button>
   </div>
 
   <div class="featured">
-  <h2>صائد الرموز 🌹</h2>
-  <p style="color:#b4c1d8">التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!</p>
-  <a href="games/neon-pulse.html" class="btn">العب الآن ⚡</a>
-</div>
+    <h2 id="lbl-title">صائد الرموز 🌹</h2>
+    <p id="lbl-desc" style="color:#b4c1d8">التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!</p>
+    <a href="games/neon-pulse.html" class="btn" id="lbl-play">العب الآن ⚡</a>
+  </div>
 
   <div class="games-grid">
-    <a href="games/pulse-blade.html" class="game-card"><div class="icon">🌀</div><h3>نبض الشفرة</h3></a>
-    <a href="games/orbit-drop.html" class="game-card"><div class="icon">🪐</div><h3>السقوط المداري</h3></a>
-    <a href="games/orbit-switch.html" class="game-card"><div class="icon">💫</div><h3>أوربت سويتش</h3></a>
-    <a href="games/solar-grid.html" class="game-card"><div class="icon">🔋</div><h3>شبكة الطاقة</h3></a>
-    <a href="games/neon-flux.html" class="game-card"><div class="icon">🧪</div><h3>نيون فلكس</h3></a>
-    <a href="games/beat-slasher.html" class="game-card"><div class="icon">⚔️</div><h3>بيت سلاشر</h3></a>
-    <a href="games/ghost-of-me.html" class="game-card"><div class="icon">👻</div><h3>شبح الماضي</h3></a>
-    <a href="games/vanishing-floor.html" class="game-card"><div class="icon">🧱</div><h3>الأرضية المتلاشية</h3></a>
-    <a href="games/echo-sonar.html" class="game-card"><div class="icon">🦇</div><h3>صدى الظلام</h3></a>
+    <a href="games/pulse-blade.html" class="game-card"><div class="icon">🌀</div><h3 id="game-1">نبض الشفرة</h3></a>
+    <a href="games/orbit-drop.html" class="game-card"><div class="icon">🪐</div><h3 id="game-2">السقوط المداري</h3></a>
+    <a href="games/orbit-switch.html" class="game-card"><div class="icon">💫</div><h3 id="game-3">أوربت سويتش</h3></a>
+    <a href="games/solar-grid.html" class="game-card"><div class="icon">🔋</div><h3 id="game-4">شبكة الطاقة</h3></a>
+    <a href="games/neon-flux.html" class="game-card"><div class="icon">🧪</div><h3 id="game-5">نيون فلكس</h3></a>
+    <a href="games/beat-slasher.html" class="game-card"><div class="icon">⚔️</div><h3 id="game-6">بيت سلاشر</h3></a>
+    <a href="games/ghost-of-me.html" class="game-card"><div class="icon">👻</div><h3 id="game-7">شبح الماضي</h3></a>
+    <a href="games/vanishing-floor.html" class="game-card"><div class="icon">🧱</div><h3 id="game-8">الأرضية المتلاشية</h3></a>
+    <a href="games/echo-sonar.html" class="game-card"><div class="icon">🦇</div><h3 id="game-9">صدى الظلام</h3></a>
   </div>
 </main>
+
+<!-- Language Modal -->
+<div id="lang-modal-overlay" class="jamam-modal-overlay">
+  <div class="jamam-modal">
+    <div class="modal-header"><h3>Language / اللغة</h3><button class="close-btn" id="btn-close-lang">✕</button></div>
+    <div class="modal-body" id="lang-grid"></div>
+  </div>
+</div>
 
 <!-- Shop Modal -->
 <div id="shop-modal-overlay" class="jamam-modal-overlay">
@@ -100,10 +114,10 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
     <div class="modal-header"><h3>JAMAM Coin Shop</h3><button class="close-btn" id="btn-close-shop">✕</button></div>
     <div class="modal-body">
       <div class="shop-item" data-item="neon_theme" data-cost="500">
-        <div class="item-icon">🌈</div><div class="item-title">Cyber Neon Theme</div><div class="item-cost">🪙 500 Coins</div><button class="btn-buy">Buy</button>
+        <div class="item-icon">🌈</div><div class="item-title">Cyber Neon Theme</div><div class="item-cost">🪙 500</div><button class="btn-buy">Buy</button>
       </div>
       <div class="shop-item" data-item="gold_avatar" data-cost="1000">
-        <div class="item-icon">👑</div><div class="item-title">Golden Crown</div><div class="item-cost">🪙 1000 Coins</div><button class="btn-buy">Buy</button>
+        <div class="item-icon">👑</div><div class="item-title">Golden Crown</div><div class="item-cost">🪙 1000</div><button class="btn-buy">Buy</button>
       </div>
     </div>
   </div>
@@ -126,15 +140,65 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 <script src="./js/jamam-audio.js"></script>
 
 <script>
-  const ALL_ACHIEVEMENTS = [
-    { id: 'blade_master', title: 'Blade Master', desc: 'Achieve a 10x combo in Pulse Blade.', icon: '⚡' },
-    { id: 'orbit_survivor', title: 'Deep Space', desc: 'Survive 30 seconds in Orbit Drop.', icon: '🪐' },
-    { id: 'pulse_master', title: 'Neon Lightning', desc: 'Score 500+ in Neon Pulse.', icon: '🌩️' },
-    { id: 'hexa_runner', title: 'Cylinder Climber', desc: 'Climb 100 meters in Hexa Glide.', icon: '🔺' },
-    { id: 'color_shift_pro', title: 'Chroma King', desc: 'Clear 15 gates in Color Shift.', icon: '🎨' }
-  ];
+  // 1. قاموس الترجمة لواجهة المنصة
+  const HUB_I18N = {
+    ar: { lvl:"المستوى:", coins:"العملات:", shop:"متجر العملات", ach:"الإنجازات", title:"صائد الرموز 🌹", desc:"التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!", play:"العب الآن ⚡", g1:"نبض الشفرة", g2:"السقوط المداري", g3:"أوربت سويتش", g4:"شبكة الطاقة", g5:"نيون فلكس", g6:"بيت سلاشر", g7:"شبح الماضي", g8:"الأرضية المتلاشية", g9:"صدى الظلام" },
+    en: { lvl:"Level:", coins:"Coins:", shop:"Coin Shop", ach:"Achievements", title:"Emoji Hunter 🌹", desc:"Collect roses, hearts, and gifts... avoid the sneaky skull ☠️!", play:"Play Now ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" },
+    es: { lvl:"Nivel:", coins:"Monedas:", shop:"Tienda", ach:"Logros", title:"Cazador de Emojis 🌹", desc:"Recoge rosas, corazones y regalos... ¡evita la calavera ☠️!", play:"Jugar ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" },
+    fr: { lvl:"Niveau:", coins:"Pièces:", shop:"Boutique", ach:"Succès", title:"Chasseur d'Emojis 🌹", desc:"Collectez des roses, cœurs et cadeaux... évitez le crâne ☠️!", play:"Jouer ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" },
+    de: { lvl:"Level:", coins:"Münzen:", shop:"Shop", ach:"Erfolge", title:"Emoji Jäger 🌹", desc:"Sammle Rosen, Herzen und Geschenke... meide den Schädel ☠️!", play:"Spielen ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g4:"Solar Grid", g5:"Neon Flux", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar" }
+  };
+
+  let currentLang = localStorage.getItem('jamam_games_lang') || 'ar';
+
+  function applyHubLanguage() {
+    const t = HUB_I18N[currentLang] || HUB_I18N.en;
+    document.getElementById('lbl-level').textContent = t.lvl;
+    document.getElementById('lbl-coins').textContent = t.coins;
+    document.getElementById('lbl-shop').textContent = t.shop;
+    document.getElementById('lbl-ach').textContent = t.ach;
+    document.getElementById('lbl-title').textContent = t.title;
+    document.getElementById('lbl-desc').textContent = t.desc;
+    document.getElementById('lbl-play').textContent = t.play;
+    document.getElementById('game-1').textContent = t.g1;
+    document.getElementById('game-2').textContent = t.g2;
+    document.getElementById('game-3').textContent = t.g3;
+    document.getElementById('game-4').textContent = t.g4;
+    document.getElementById('game-5').textContent = t.g5;
+    document.getElementById('game-6').textContent = t.g6;
+    document.getElementById('game-7').textContent = t.g7;
+    document.getElementById('game-8').textContent = t.g8;
+    document.getElementById('game-9').textContent = t.g9;
+    
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = (currentLang === 'ar') ? 'rtl' : 'ltr';
+    
+    // مزامنة اللغة مع الألعاب
+    localStorage.setItem('jamam_games_lang', currentLang);
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
+    applyHubLanguage();
+
+    // إعدادات اللغة
+    const langOverlay = document.getElementById('lang-modal-overlay');
+    document.getElementById('btn-lang-toggle').onclick = () => {
+      const grid = document.getElementById('lang-grid');
+      const langs = [{c:'ar', n:'العربية'}, {c:'en', n:'English'}, {c:'es', n:'Español'}, {c:'fr', n:'Français'}, {c:'de', n:'Deutsch'}];
+      grid.innerHTML = langs.map(l => `<button class="lang-btn ${l.c===currentLang?'active':''}" onclick="setLang('${l.c}')">${l.n}</button>`).join('');
+      langOverlay.classList.add('active');
+    };
+    document.getElementById('btn-close-lang').onclick = () => langOverlay.classList.remove('active');
+
+    window.setLang = (lang) => {
+      currentLang = lang;
+      applyHubLanguage();
+      langOverlay.classList.remove('active');
+      // تحديث أزرار المتجر والإنجازات لتطبيق اللغة الجديدة
+      if(window.updateHubCoins) window.updateHubCoins();
+    };
+
+    // الأكواد السابقة (العملات، الصوت، الإنجازات، المتجر)
     function updateHubCoins() {
       if(window.JAMAM) {
         const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
@@ -172,6 +236,11 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 
     const achOverlay = document.getElementById('jamam-modal-overlay');
     document.getElementById('btn-open-achievements').onclick = () => {
+      const ALL_ACHIEVEMENTS = [
+        { id: 'blade_master', title: 'Blade Master', desc: 'Achieve a 10x combo in Pulse Blade.', icon: '⚡' },
+        { id: 'orbit_survivor', title: 'Deep Space', desc: 'Survive 30 seconds in Orbit Drop.', icon: '🪐' },
+        { id: 'pulse_master', title: 'Neon Lightning', desc: 'Score 500+ in Emoji Hunter.', icon: '🌩️' }
+      ];
       const unlockedList = JAMAM.store.get(JAMAM.KEYS.achievements, []);
       document.getElementById('achievement-grid-container').innerHTML = ALL_ACHIEVEMENTS.map(ach => {
         const isUnlocked = unlockedList.includes(ach.id);
@@ -193,23 +262,17 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
       const itemId = card.dataset.item;
       const cost = parseInt(card.dataset.cost);
       const buyBtn = card.querySelector('.btn-buy');
-      
       let inventory = JSON.parse(localStorage.getItem('jamam_inventory') || '[]');
       if (inventory.includes(itemId)) { buyBtn.innerText = 'Owned'; buyBtn.disabled = true; }
-
       buyBtn.addEventListener('click', () => {
         let coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
         if (coinData.balance >= cost && !inventory.includes(itemId)) {
-          coinData.balance -= cost;
-          inventory.push(itemId);
+          coinData.balance -= cost; inventory.push(itemId);
           JAMAM.store.set(JAMAM.KEYS.coins, coinData);
           localStorage.setItem('jamam_inventory', JSON.stringify(inventory));
           buyBtn.innerText = 'Owned'; buyBtn.disabled = true;
-          updateHubCoins();
-          alert('Purchase Successful!');
-        } else {
-          alert('Not Enough Coins! Keep playing to earn more.');
-        }
+          updateHubCoins(); alert('Purchase Successful!');
+        } else { alert('Not Enough Coins!'); }
       });
     });
   });
