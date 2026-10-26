@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Pulse Blade - JAMAM Games</title>
+  <script src="../js/jamam-core.js"></script>
+  <script src="../js/jamam-progress.js"></script>
+  <script src="../js/jamam-achievements.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background-color: #080711; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #fff; }
+    #game-container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+    canvas { width: 100%; height: 100%; display: block; }
+    .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(8, 7, 17, 0.85); backdrop-filter: blur(8px); transition: opacity 0.3s ease; padding: 24px; text-align: center; }
+    .hidden { opacity: 0; pointer-events: none; }
+    h1 { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    p.desc { font-size: 0.95rem; color: #a0a5c0; margin-bottom: 24px; max-width: 320px; line-height: 1.4; }
+    .btn { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #080711; border: none; padding: 16px 40px; font-size: 1.1rem; font-weight: 700; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); transform: translateY(0); transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+    .btn:active { transform: scale(0.96); box-shadow: 0 0 10px rgba(0, 242, 254, 0.4); }
+    .stats-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; width: 100%; max-width: 280px; margin-bottom: 24px; }
+    .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; color: #a0a5c0; }
+    .stat-val { font-weight: 700; color: #fff; }
+    .score-big { font-size: 2.2rem; font-weight: 900; color: #00f2fe; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    <div id="start-overlay" class="overlay">
+      <h1>Pulse Blade</h1>
+      <p class="desc">Tap when incoming rings align perfectly with the central core!</p>
+      <button id="btn-start" class="btn">Play</button>
+    </div>
+    <div id="gameover-overlay" class="overlay hidden">
+      <h1>Game Over</h1>
+      <div id="final-score" class="score-big">0</div>
+      <div class="stats-card">
+        <div class="stat-row"><span>Max Combo</span><span id="val-combo" class="stat-val">0</span></div>
+        <div class="stat-row"><span>Accuracy</span><span id="val-accuracy" class="stat-val">0%</span></div>
+      </div>
+      <button id="btn-restart" class="btn">Play Again</button>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById('gameCanvas'), ctx = canvas.getContext('2d');
+    let audioCtx = null, gameState = 'START', score = 0, combo = 0, maxCombo = 0, hits = 0, totalRings = 0, lives = 3;
+    let targetRadius = 45, rings = [], particles = [], shockwaves = [], spawnTimer = 0, baseSpeed = 2.5;
+    
+    function resize() { const dpr = window.devicePixelRatio || 1; canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr; ctx.scale(dpr, dpr); targetRadius = Math.min(window.innerWidth, window.innerHeight) * 0.12; }
+    window.addEventListener('resize', resize); resize();
+    function playSound(type) { try { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = type === 'miss' ? 'sawtooth' : 'sine'; o.frequency.setValueAtTime(type === 'miss' ? 180 : (type === 'perfect' ? 880 : 440), audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(type === 'miss' ? 60 : 1760, audioCtx.currentTime + 0.15); g.gain.setValueAtTime(0.2, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.15); } catch(e) {} }
+    
+    function spawnRing() { rings.push({ radius: Math.max(window.innerWidth, window.innerHeight) * 0.6, speed: baseSpeed + Math.min(score / 1500, 3.5), color: score % 500 > 250 ? '#00f2fe' : '#ff007f' }); totalRings++; }
+    function createExplosion(x, y, color, count = 20) { for (let i = 0; i < count; i++) { const a = Math.random() * Math.PI * 2, s = Math.random() * 6 + 2; particles.push({ x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s, size: Math.random()*4+2, color, alpha: 1 }); } }
+    
+    function triggerHit() {
+      if (gameState !== 'PLAYING') return;
+      if (rings.length === 0) { handleMiss(); return; }
+      const diff = Math.abs(rings[0].radius - targetRadius);
+      if (diff < targetRadius * 0.35) {
+        const isPerfect = diff < targetRadius * 0.12, pts = isPerfect ? 200 : 100;
+        combo++; if (combo > maxCombo) maxCombo = combo; score += pts * (1 + Math.floor(combo / 5) * 0.5); hits++;
+        playSound(isPerfect ? 'perfect' : 'hit'); createExplosion(window.innerWidth/2, window.innerHeight/2, rings[0].color, isPerfect ? 30 : 15);
+        shockwaves.push({ radius: targetRadius, alpha: 1, color: rings[0].color }); rings.shift();
+      } else { handleMiss(); }
+    }
+    function handleMiss() { combo = 0; lives--; playSound('miss'); createExplosion(window.innerWidth/2, window.innerHeight/2, '#ff3366', 10); if (lives <= 0) gameOver(); }
+    
+    function startGame() {
+      if (window.JAMAM && JAMAM.game) JAMAM.game.start('pulse-blade');
+      gameState = 'PLAYING'; score = 0; combo = 0; maxCombo = 0; hits = 0; totalRings = 0; lives = 3; rings = []; particles = []; shockwaves = []; spawnTimer = 0;
+      document.getElementById('start-overlay').classList.add('hidden'); document.getElementById('gameover-overlay').classList.add('hidden');
+    }
+    function gameOver() {
+      gameState = 'GAMEOVER'; const accuracy = totalRings > 0 ? Math.round((hits / totalRings) * 100) : 0;
+      document.getElementById('final-score').innerText = Math.round(score); document.getElementById('val-combo').innerText = maxCombo; document.getElementById('val-accuracy').innerText = `${accuracy}%`; document.getElementById('gameover-overlay').classList.remove('hidden');
+      if (window.JAMAM && JAMAM.game) JAMAM.game.end('pulse-blade', { score: Math.round(score), extra: { maxCombo, accuracy } });
+    }
+    
+    window.addEventListener('pointerdown', (e) => { if (e.target.tagName === 'BUTTON') return; if (gameState === 'PLAYING') triggerHit(); });
+    document.getElementById('btn-start').addEventListener('click', startGame); document.getElementById('btn-restart').addEventListener('click', startGame);
+    
+    function update() {
+      if (gameState === 'PLAYING') {
+        spawnTimer++; if (spawnTimer >= Math.max(35, 80 - Math.floor(score / 400))) { spawnRing(); spawnTimer = 0; }
+        for (let i = rings.length - 1; i >= 0; i--) { rings[i].radius -= rings[i].speed; if (rings[i].radius < targetRadius * 0.5) { rings.splice(i, 1); handleMiss(); } }
+      }
+      for (let i = particles.length - 1; i >= 0; i--) { const p = particles[i]; p.x += p.vx; p.y += p.vy; p.alpha -= 0.03; if (p.alpha <= 0) particles.splice(i, 1); }
+      for (let i = shockwaves.length - 1; i >= 0; i--) { shockwaves[i].radius += 4; shockwaves[i].alpha -= 0.04; if (shockwaves[i].alpha <= 0) shockwaves.splice(i, 1); }
+    }
+    function draw() {
+      const w = window.innerWidth, h = window.innerHeight, cx = w / 2, cy = h / 2;
+      ctx.clearRect(0, 0, w, h); const grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, w * 0.8); grad.addColorStop(0, '#121026'); grad.addColorStop(1, '#080711'); ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+      ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, targetRadius, 0, Math.PI * 2); ctx.strokeStyle = combo > 5 ? '#00f2fe' : 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 4; ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = combo > 5 ? 15 : 5; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fillStyle = '#00f2fe'; ctx.fill(); ctx.restore();
+      rings.forEach(r => { ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r.radius, 0, Math.PI * 2); ctx.strokeStyle = r.color; ctx.lineWidth = 3; ctx.shadowColor = r.color; ctx.shadowBlur = 10; ctx.stroke(); ctx.restore(); });
+      shockwaves.forEach(sw => { ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, sw.radius, 0, Math.PI * 2); ctx.strokeStyle = sw.color; ctx.globalAlpha = Math.max(0, sw.alpha); ctx.lineWidth = 2; ctx.stroke(); ctx.restore(); });
+      particles.forEach(p => { ctx.save(); ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.alpha); ctx.fill(); ctx.restore(); });
+      if (gameState === 'PLAYING') { ctx.save(); ctx.fillStyle = '#ffffff'; ctx.font = '700 24px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(Math.round(score), cx, 60); if (combo > 1) { ctx.fillStyle = '#00f2fe'; ctx.font = '600 16px sans-serif'; ctx.fillText(`${combo}x COMBO`, cx, 90); } for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(cx - 30 + i * 30, cy + targetRadius + 40, 6, 0, Math.PI * 2); ctx.fillStyle = i < lives ? '#ff007f' : 'rgba(255, 255, 255, 0.2)'; ctx.fill(); } ctx.restore(); }
+    }
+    function loop() { update(); draw(); requestAnimationFrame(loop); } requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
