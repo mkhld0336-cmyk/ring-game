@@ -3,387 +3,530 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#050811">
-<title>صائد الرموز | Emoji Hunter</title>
+<meta name="theme-color" content="#0b0b0d">
+<title>صائد الرموز | Emoji Hunter ROYAL</title>
 <style>
-:root{--bg:#050811;--cyan:#00f3ff;--pink:#ff287b;--gold:#ffcf38;--violet:#9a67ff;--text:#f3f7ff;--muted:#9aabc4}
+:root{--bg:#0b0b0d;--gold:#d4af37;--pink:#ff287b;--green:#3cff8c;--orange:#ffaa00;--text:#f5f7ff;--muted:#a1a1a6}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,"Segoe UI",Tahoma,sans-serif;touch-action:manipulation}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Cairo',system-ui,sans-serif;touch-action:manipulation}
 body{display:flex;align-items:center;justify-content:center}
-button{font:inherit;cursor:pointer;touch-action:manipulation}
-#game{position:relative;width:100%;height:100dvh;max-width:520px;max-height:1000px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#101b3a 0%,#070c1a 48%,#03050b 100%);isolation:isolate}
+button{font:inherit;cursor:pointer;touch-action:manipulation;font-family:inherit;border:none;background:none;color:inherit}
+#game{position:relative;width:100%;height:100dvh;max-width:520px;max-height:1000px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#1f1b13 0%,#0b0b0d 60%);isolation:isolate}
 canvas{display:block;width:100%;height:100%;touch-action:pan-y}
 #hud{position:absolute;top:max(12px,env(safe-area-inset-top));left:12px;right:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;z-index:3;pointer-events:none}
-.hud-side{display:flex;gap:6px;align-items:center}
-.stat{min-width:62px;padding:7px 9px;border:1px solid #00f3ff40;border-radius:13px;background:#081021c9;backdrop-filter:blur(10px);box-shadow:0 0 18px #00f3ff0c;text-align:center}
-.label{font-size:10px;color:var(--muted)}.value{font-size:17px;font-weight:900;color:var(--cyan);line-height:1.35;text-shadow:0 0 12px #00f3ff66}.value.gold{color:var(--gold)}
-.iconbtn{pointer-events:auto;border:1px solid #00f3ff55;background:#081021df;color:var(--cyan);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;font-size:15px;box-shadow:0 0 16px #00f3ff15;flex-shrink:0}
-#levelbar-wrap{position:absolute;z-index:3;top:80px;left:16px;right:16px;pointer-events:none}
-#leveltext{font-size:11px;color:#b9c8e5;display:flex;justify-content:space-between;margin-bottom:5px}
-#levelbar{height:5px;border-radius:8px;background:#18243b;overflow:hidden;border:1px solid #273754}
-#levelprogress{height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan));box-shadow:0 0 12px var(--cyan);transition:width .2s}
-#combo{position:absolute;z-index:4;top:118px;left:50%;transform:translateX(-50%) scale(.9);opacity:0;color:var(--gold);font-weight:1000;font-size:18px;text-shadow:0 0 18px #ffcf38;white-space:nowrap;transition:opacity .15s}
-#toast{position:absolute;z-index:8;top:150px;left:50%;transform:translateX(-50%);background:#111b31eF;border:1px solid #00f3ff55;color:#eafaff;border-radius:14px;padding:9px 14px;font-size:13px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
-#toast.show{opacity:1}
-.overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 20px;background:linear-gradient(180deg,#050811d9,#070b18f5);backdrop-filter:blur(12px);transition:opacity .2s;overflow-y:auto}
-.overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.logo{font-size:clamp(32px,8.5vw,46px);font-weight:1000;letter-spacing:-1px;margin:0 0 5px;color:var(--cyan);text-shadow:0 0 9px #00f3ff,0 0 35px #00f3ff66}
-.kicker{font-size:11px;color:#aab7d2;letter-spacing:4px;margin-bottom:16px}
-.description{max-width:340px;font-size:13.5px;line-height:1.85;color:#b4c1d7;margin:6px 0 18px}
-.dangertext{color:var(--pink);font-weight:800}
-.btn{width:min(290px,100%);border:0;border-radius:50px;padding:13px 20px;font-size:14.5px;font-weight:900;margin:5px 0;min-height:47px}
-.primary{background:linear-gradient(110deg,var(--cyan),#478bff);color:#03101b;box-shadow:0 0 24px #00dfff44}
-.secondary{background:#ffffff0a;border:1px solid #b9c8e533;color:#f3f7ff}
-.stats{width:min(320px,100%);background:#0b1427cc;border:1px solid #8aa4d22b;border-radius:18px;padding:15px 20px;margin:8px 0 12px}
-.statrow{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#b9c8dd}.statrow b{color:#fff}
-#submitStatus{width:min(320px,100%);margin:4px 0 10px;padding:10px 14px;border-radius:12px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;border:1px solid transparent;transition:all .2s}
-#submitStatus.pending{background:rgba(88,239,255,.08);border-color:rgba(88,239,255,.3);color:var(--cyan)}
-#submitStatus.success{background:rgba(60,255,140,.08);border-color:rgba(60,255,140,.4);color:#3cff8c}
-#submitStatus.error{background:rgba(255,67,138,.08);border-color:rgba(255,67,138,.35);color:var(--pink)}
-#submitStatus.hidden{display:none}
-#touchhint{position:absolute;bottom:max(18px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;z-index:2;font-size:11px;color:#6f83a7;pointer-events:none}
-#flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;background:#ff0033;mix-blend-mode:screen;transition:opacity 0.05s}
+.hud-side{display:flex;gap:6px;align-items:center;pointer-events:auto}
+.stat{min-width:60px;padding:6px 9px;border:1px solid rgba(212,175,55,0.4);border-radius:12px;background:rgba(20,18,10,0.95);text-align:center}
+.label{font-size:9px;color:var(--muted);font-weight:700}
+.value{font-size:16px;font-weight:900;color:var(--gold)}
+.iconbtn{border:1px solid rgba(212,175,55,0.4);background:rgba(20,18,10,0.9);color:var(--gold);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;font-size:15px}
+#powerups{position:absolute;top:80px;left:12px;right:12px;z-index:3;display:flex;gap:6px;justify-content:flex-end;pointer-events:auto}
+.power-btn{background:rgba(20,18,10,0.9);border:1px solid rgba(212,175,55,0.4);color:var(--gold);padding:6px 10px;border-radius:20px;font-size:11px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s}
+.power-btn:active{transform:scale(0.95)}
+.power-btn.active{background:var(--gold);color:#0b0b0d;box-shadow:0 0 15px rgba(212,175,55,0.6)}
+.power-btn.disabled{opacity:0.4;cursor:not-allowed}
+#levelbar-wrap{position:absolute;z-index:3;top:120px;left:16px;right:16px;pointer-events:none}
+#leveltext{font-size:11px;color:var(--gold);display:flex;justify-content:space-between;margin-bottom:4px;font-weight:bold}
+#levelbar{height:5px;border-radius:8px;background:#2a2518;overflow:hidden;border:1px solid rgba(212,175,55,0.3)}
+#levelprogress{height:100%;width:0;background:linear-gradient(90deg,#aa771c,#fcf6ba);transition:width .3s}
+#bossbar-wrap{position:absolute;z-index:4;top:155px;left:16px;right:16px;display:none;pointer-events:none}
+#bossbar-wrap.active{display:block}
+#bosstext{font-size:12px;color:var(--pink);text-align:center;margin-bottom:4px;font-weight:900;text-shadow:0 0 10px var(--pink)}
+#bossbar{height:8px;border-radius:8px;background:#2a0a1a;overflow:hidden;border:1px solid var(--pink)}
+#bossprogress{height:100%;width:100%;background:linear-gradient(90deg,#ff287b,#ff88bb);transition:width .2s}
+#combo{position:absolute;z-index:4;top:200px;left:50%;transform:translateX(-50%);opacity:0;color:var(--gold);font-weight:1000;font-size:18px;transition:opacity .15s;pointer-events:none}
+#status-banner{position:absolute;z-index:4;top:230px;left:50%;transform:translateX(-50%);background:rgba(60,255,140,0.15);border:1px solid var(--green);color:var(--green);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:900;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 20px;background:linear-gradient(180deg,rgba(11,11,13,0.92),rgba(11,11,13,0.98));backdrop-filter:blur(12px);overflow-y:auto}
+.overlay.hidden{display:none}
+.logo{font-size:clamp(32px,8vw,44px);font-weight:900;margin:0 0 5px;background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.description{max-width:340px;font-size:13px;line-height:1.8;color:#b4c1d7;margin:6px 0 18px}
+.btn{width:min(290px,100%);border:0;border-radius:50px;padding:14px 20px;font-size:15px;font-weight:900;margin:6px 0;min-height:48px;color:#0b0b0d;background:linear-gradient(135deg,#fcf6ba,#b38728);box-shadow:0 0 25px rgba(212,175,55,0.3)}
+.btn:active{transform:scale(0.96)}
+.btn-secondary{background:transparent;border:1px solid var(--gold);color:var(--gold);box-shadow:none}
+.shop-card{width:min(320px,100%);background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.3);border-radius:16px;padding:16px;margin:8px 0;text-align:right}
+.shop-card h3{font-size:14px;margin-bottom:8px;color:var(--gold)}
+.shop-card p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.btn-buy{width:100%;background:linear-gradient(135deg,#fcf6ba,#b38728);color:#0b0b0d;border-radius:12px;padding:10px;font-weight:900;font-size:13px;cursor:pointer}
+#flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;background:#ff287b;mix-blend-mode:screen}
 </style>
+<script src="../js/jamam-core.js"></script>
+<script src="../js/jamam-progress.js"></script>
+<script src="../js/jamam-achievements.js"></script>
 </head>
 <body>
 <div id="game">
   <canvas id="canvas"></canvas>
   <div id="hud">
     <div class="hud-side">
-      <div class="stat"><div class="label" data-i18n="hudScore">النقاط</div><div class="value" id="score">0</div></div>
-      <div class="stat"><div class="label" data-i18n="hudBest">أفضل نتيجة</div><div class="value gold" id="best">0</div></div>
+      <div class="stat"><div class="label">SCORE</div><div class="value" id="score">0</div></div>
+      <div class="stat"><div class="label">COINS</div><div class="value" id="coinsHud">0</div></div>
     </div>
-    <div class="hud-side">
-      <button class="iconbtn" id="pauseBtn" aria-label="Pause">Ⅱ</button>
-    </div>
+    <div class="hud-side"><button class="iconbtn" id="pauseBtn">Ⅱ</button></div>
   </div>
-  <div id="levelbar-wrap"><div id="leveltext"><span id="levelLabel">Level 1</span><span id="goalLabel">0 / 1000</span></div><div id="levelbar"><div id="levelprogress"></div></div></div>
+  <div id="powerups">
+    <button class="power-btn" id="shieldBtn">🛡️ <span id="shieldCount">0</span></button>
+    <button class="power-btn" id="magnetBtn">🧲 <span id="magnetCount">0</span></button>
+    <button class="power-btn" id="slowBtn">⏱️ <span id="slowCount">0</span></button>
+  </div>
+  <div id="levelbar-wrap">
+    <div id="leveltext"><span id="levelLabel">المستوى 1</span><span id="goalLabel">0 / 500</span></div>
+    <div id="levelbar"><div id="levelprogress"></div></div>
+  </div>
+  <div id="bossbar-wrap">
+    <div id="bosstext">👑 بوس الجمجمة</div>
+    <div id="bossbar"><div id="bossprogress"></div></div>
+  </div>
   <div id="combo"></div>
-  <div id="toast"></div><div id="flash"></div>
-  <div id="touchhint" data-i18n="touchHint">المس الرموز الجميلة ✦ واحذر الجمجمة ☠️</div>
+  <div id="status-banner"></div>
+  <div id="flash"></div>
 
   <section id="start" class="overlay">
-    <h1 class="logo" data-i18n="title">صائد الرموز</h1>
-    <div class="kicker">EMOJI HUNTER · 2.0</div>
-    <p class="description" data-i18n-html="startDesc1">اجمع الورود والقلوب والهدايا.<br>تجنب الجماجم المخادعة وسط الجمال!</p>
-    <button class="btn primary" id="startBtn" data-i18n="startBtn">العب الآن ⚡</button>
+    <h1 class="logo">صائد الرموز ROYAL</h1>
+    <p class="description">اجمع الرموز، تجنب الجماجم،<br>واهزم بوس الجمجمة في المستوى 5!</p>
+    <button class="btn" id="startBtn">ابدأ اللعب ⚡</button>
+    <button class="btn btn-secondary" id="shopBtn">🛒 متجر القوة</button>
+  </section>
+
+  <section id="shop" class="overlay hidden">
+    <h1 class="logo" style="font-size:28px">متجر القوة</h1>
+    <div class="shop-card">
+      <h3>🛡️ درع الحماية</h3>
+      <p>يحميك من جمجمة قاتلة. يُستخدم تلقائياً.</p>
+      <button class="btn-buy" onclick="buyItem('shield')">شراء (100 🪙)</button>
+    </div>
+    <div class="shop-card">
+      <h3>🧲 المغناطيس الخارق</h3>
+      <p>يجذب كل الرموز إليك لمدة 10 ثوانٍ.</p>
+      <button class="btn-buy" onclick="buyItem('magnet')">شراء (200 🪙)</button>
+    </div>
+    <div class="shop-card">
+      <h3>⏱️ التباطؤ الزمني</h3>
+      <p>يبطئ اللعبة 50% لمدة 20 ثانية.</p>
+      <button class="btn-buy" onclick="buyItem('slow')">شراء (150 🪙)</button>
+    </div>
+    <button class="btn btn-secondary" onclick="closeShop()" style="margin-top:12px">عودة</button>
+  </section>
+
+  <section id="levelComplete" class="overlay hidden">
+    <h1 class="logo" style="color:#3cff8c;-webkit-text-fill-color:#3cff8c">🎉 مبروك!</h1>
+    <p class="description">أكملت المستوى <span id="completedLevel">1</span>!<br>استعد للمستوى التالي.</p>
+    <button class="btn" id="nextLevelBtn">المستوى التالي ⏩</button>
   </section>
 
   <section id="over" class="overlay hidden">
-    <h1 class="logo" style="font-size:34px;color:var(--pink);text-shadow:0 0 18px #ff287b" data-i18n="overTitle">انتهت اللعبة!</h1>
-    <div class="stats">
-      <div class="statrow"><span data-i18n="finalScore">النتيجة</span><b id="finalScore">0</b></div>
-      <div class="statrow"><span data-i18n="finalBest">أفضل نتيجة</span><b id="finalBest">0</b></div>
-    </div>
-    <div id="submitStatus" class="hidden"></div>
-    <button class="btn primary" id="retryBtn" data-i18n="retry">جولة جديدة ⚡</button>
+    <h1 class="logo" style="color:var(--pink);-webkit-text-fill-color:var(--pink)">💥 انفجار!</h1>
+    <p class="description">لقد لمست الجمجمة القاتلة ☠️.<br>نقاطك: <b id="finalScore">0</b></p>
+    <button class="btn" id="retryBtn">إعادة 🔄</button>
+    <button class="btn btn-secondary" id="shopFromOver">🛒 متجر القوة</button>
   </section>
 </div>
+
 <script>
 (() => {
 'use strict';
-
-const translations = {
-  en: { title:"Emoji Hunter", startDesc1:"Collect roses, hearts, and gifts.<br>Avoid the sneaky skulls!", startBtn:"Play Now ⚡", overTitle:"Game Over!", finalScore:"Score", finalBest:"Best", retry:"Play Again ⚡", hudScore:"Score", hudBest:"Best", touchHint:"Touch the pretty emojis ✦ Avoid the skull ☠️" },
-  ar: { title:"صائد الرموز", startDesc1:"اجمع الورود والقلوب والهدايا.<br>تجنب الجماجم المخادعة وسط الجمال!", startBtn:"العب الآن ⚡", overTitle:"انتهت اللعبة!", finalScore:"النتيجة", finalBest:"أفضل نتيجة", retry:"جولة جديدة ⚡", hudScore:"النقاط", hudBest:"أفضل نتيجة", touchHint:"المس الرموز الجميلة ✦ واحذر الجمجمة ☠️" }
-};
-const currentLang = (window.JAMAM && JAMAM.lang) ? JAMAM.lang() : 'ar';
-const T = translations[currentLang] || translations.en;
-function t(k){ return T[k] || translations.en[k] || k; }
-
 const $ = id => document.getElementById(id);
 const canvas = $('canvas'), ctx = canvas.getContext('2d');
 const W = 450, H = 800;
 let dpr = 1;
-function resize(){dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
-resize(); window.addEventListener('resize',resize);
+function resize(){ dpr = Math.min(window.devicePixelRatio || 1, 2); canvas.width = W * dpr; canvas.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+resize(); window.addEventListener('resize', resize);
 
-const C={cyan:'#00f3ff',pink:'#ff287b',gold:'#ffcf38',violet:'#9a67ff',white:'#f4fbff',red:'#ff0033',orange:'#ff8800',yellow:'#ffff00'};
-const STORE='neon_pulse_v2_save';
-const saved=(()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{}')}catch(e){return {}}})();
-let best = Math.max(0, Number(saved.best)||0);
-let state='start', score=0, level=1, combo=0, spawn=0, last=0, flash=0, time=0;
-let items=[], particles=[], stars=[], rings=[], laneLast=-1, toastTimer=0;
-let shake = 0;
-let audio=null, soundOn=true;
+const EMOJIS_POSITIVE = ['🌹','🌸','🌻','🌈','🦋','🎁','💖','🌟','✨','💎'];
+const EMOJI_ELECTRIC = '💀';
+const EMOJI_FATAL = '☠️';
+const lanes = [W*0.16, W*0.39, W*0.61, W*0.84];
 
-const EMOJIS_POSITIVE = ['🌹', '🌸', '🌻', '🌈', '🦋', '🎁', '💖', '🌟', '✨', '💎'];
-const EMOJI_DANGER = '☠️';
+let state = 'start';
+let score = 0, currentLevel = 1, combo = 0, goalScore = 500;
+let items = [], particles = [], rings = [];
+let lastTime = 0, spawnTimer = 0, flash = 0;
+let gameSpeedMultiplier = 1;
+let slowMoUntil = 0, magnetUntil = 0;
+let shieldActive = false;
+let powerups = { shield: 0, magnet: 0, slow: 0 };
 
-const lanes=[W*.16,W*.39,W*.61,W*.84];
+// Dynamic Luck System (Jundee 4)
+let failStreak = 0;
+let luckBonus = 1;
 
-function save(){try{localStorage.setItem(STORE,JSON.stringify({best,soundOn}))}catch(e){}}
-function audioInit(){if(!audio){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audio=new AC()}if(audio&&audio.state==='suspended')audio.resume();}
-function tone(freq,duration,type='sine',volume=.08,when=0,endFreq=null){
-  if(!audio||!soundOn)return;
-  try{
-    const o=audio.createOscillator(),g=audio.createGain(),tt=audio.currentTime+when;
-    o.type=type;o.frequency.setValueAtTime(freq,tt);
-    if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(1,endFreq),tt+duration);
-    g.gain.setValueAtTime(.0001,tt);
-    g.gain.exponentialRampToValueAtTime(volume,tt+.012);
-    g.gain.exponentialRampToValueAtTime(.0001,tt+duration);
-    o.connect(g);g.connect(audio.destination);o.start(tt);o.stop(tt+duration+.03);
-  }catch(e){}
+// Boss
+let boss = null;
+
+function loadPowerups() {
+  try { const s = localStorage.getItem('jamam_powerups'); if(s) powerups = JSON.parse(s); } catch(e){}
+  updatePowerupHUD();
 }
-function sfx(type){
-  if(!soundOn)return; audioInit();
-  if(type==='hit'){tone(420+Math.min(combo,12)*30,.09,'sine',.08,0,900)}
-  if(type==='gold'){tone(660,.2,'triangle',.12);tone(990,.24,'triangle',.09,.08);tone(1320,.3,'sine',.07,.16)}
-  if(type==='explosion'){
-    // محاكاة انفجار مدوي
-    try {
-      const dur = 1.5;
-      const osc = audio.createOscillator();
-      const gain = audio.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(100, audio.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(10, audio.currentTime + dur);
-      gain.gain.setValueAtTime(0.5, audio.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + dur);
-      osc.connect(gain); gain.connect(audio.destination);
-      osc.start(); osc.stop(audio.currentTime + dur);
-
-      for(let i=0; i<3; i++){
-          const o = audio.createOscillator();
-          const g = audio.createGain();
-          o.type = 'square';
-          o.frequency.setValueAtTime(150 + i*50, audio.currentTime);
-          o.frequency.exponentialRampToValueAtTime(20, audio.currentTime + 0.5);
-          g.gain.setValueAtTime(0.2, audio.currentTime);
-          g.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + 0.5);
-          o.connect(g); g.connect(audio.destination);
-          o.start(); o.stop(audio.currentTime + 0.5);
-      }
-    } catch(e){}
+function savePowerups() {
+  try { localStorage.setItem('jamam_powerups', JSON.stringify(powerups)); } catch(e){}
+  updatePowerupHUD();
+}
+function updatePowerupHUD() {
+  $('shieldCount').textContent = powerups.shield;
+  $('magnetCount').textContent = powerups.magnet;
+  $('slowCount').textContent = powerups.slow;
+  $('shieldBtn').classList.toggle('disabled', powerups.shield === 0);
+  $('magnetBtn').classList.toggle('disabled', powerups.magnet === 0);
+  $('slowBtn').classList.toggle('disabled', powerups.slow === 0);
+  if (window.JAMAM) {
+    const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
+    $('coinsHud').textContent = coinData.balance || 0;
   }
 }
-function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');toastTimer=2}
-function show(id){['start','over'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
 
-function startGame(){
-  audioInit();
-  score=0;level=1;combo=0;items=[];particles=[];rings=[];spawn=0;flash=0;time=0;shake=0;
-  state='playing';show('');updateUI();last=performance.now();
-  $('submitStatus').className='hidden';
-  if(window.JAMAM && JAMAM.game) JAMAM.game.start('neon-pulse');
+function buyItem(type) {
+  const prices = { shield: 100, magnet: 200, slow: 150 };
+  const cost = prices[type];
+  if (!cost || !window.JAMAM) return;
+  const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
+  if (coinData.balance < cost) { alert('عملات غير كافية!'); return; }
+  coinData.balance -= cost;
+  JAMAM.store.set(JAMAM.KEYS.coins, coinData);
+  powerups[type]++;
+  savePowerups();
+  if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('coin');
 }
-function updateUI(){
-  $('score').textContent=score.toLocaleString('en-US');$('best').textContent=best.toLocaleString('en-US');
-  $('levelLabel').textContent='LVL '+level;
-  $('levelprogress').style.width=((score%1000)/10)+'%';$('goalLabel').textContent=(score%1000)+' / 1000';
-  $('combo').textContent='⚡ COMBO ×'+combo;
-  $('combo').style.opacity=combo>=2?'1':'0';
+function openShop() { $('shop').classList.remove('hidden'); }
+function closeShop() { $('shop').classList.add('hidden'); }
+
+function initLevel() {
+  currentLevel = window.JAMAM ? JAMAM.levels.getCurrentLevel('neon-pulse') : 1;
+  const goals = [500, 1200, 2200, 3500, 5000, 7000, 9500, 12500, 16000, 20000];
+  goalScore = goals[Math.min(currentLevel - 1, goals.length - 1)];
+  gameSpeedMultiplier = 1 + (currentLevel - 1) * 0.15;
+  score = 0; combo = 0;
+  items = []; particles = []; rings = []; boss = null;
+  spawnTimer = 0; flash = 0;
+  slowMoUntil = 0; magnetUntil = 0; shieldActive = false;
+  
+  $('levelLabel').textContent = 'المستوى ' + currentLevel;
+  $('goalLabel').textContent = '0 / ' + goalScore;
+  $('levelprogress').style.width = '0%';
+  $('score').textContent = '0';
+  $('bossbar-wrap').classList.remove('active');
+  updatePowerupHUD();
 }
 
-class Particle{
-  constructor(x,y,color,power=1){
-    this.x=x;this.y=y;
-    const a=Math.random()*Math.PI*2,v=(50+Math.random()*260)*power;
-    this.vx=Math.cos(a)*v;this.vy=Math.sin(a)*v;
-    this.life=this.max=.35+Math.random()*.65;
-    this.r=1.5+Math.random()*4;this.color=color;
+function startGame() {
+  initLevel();
+  state = 'playing';
+  $('start').classList.add('hidden');
+  $('over').classList.add('hidden');
+  $('levelComplete').classList.add('hidden');
+  $('shop').classList.add('hidden');
+  if (window.JAMAM && JAMAM.game) JAMAM.game.start('neon-pulse');
+  lastTime = performance.now();
+  requestAnimationFrame(frame);
+}
+
+function updateUI() {
+  $('score').textContent = score;
+  $('combo').textContent = '⚡ COMBO ×' + combo;
+  $('combo').style.opacity = combo >= 2 ? '1' : '0';
+  const progress = Math.min(100, (score / goalScore) * 100);
+  $('levelprogress').style.width = progress + '%';
+  $('goalLabel').textContent = score + ' / ' + goalScore;
+  
+  // Boss trigger at levels 5 and 10 (at 70% of goal)
+  if ((currentLevel === 5 || currentLevel === 10) && !boss && score >= goalScore * 0.7) {
+    spawnBoss();
   }
-  update(dt){this.x+=this.vx*dt;this.y+=this.vy*dt;this.vx*=Math.pow(.04,dt);this.vy*=Math.pow(.04,dt);this.life-=dt}
-  draw(){
-    ctx.globalAlpha=Math.max(0,this.life/this.max);
-    ctx.fillStyle=this.color;ctx.shadowBlur=12;ctx.shadowColor=this.color;
-    ctx.beginPath();ctx.arc(this.x,this.y,this.r*Math.max(.2,this.life/this.max),0,Math.PI*2);
-    ctx.fill();ctx.globalAlpha=1;ctx.shadowBlur=0;
+  
+  if (score >= goalScore && state === 'playing' && (!boss || !boss.active)) {
+    levelComplete();
   }
 }
-function burst(x,y,color,count=24,power=1){
-  for(let i=0;i<count;i++)particles.push(new Particle(x,y,color,power));
-  rings.push({x,y,r:3,life:.38,color});
+
+function spawnBoss() {
+  boss = {
+    x: W/2, y: 120,
+    hp: 20 + (currentLevel * 5),
+    maxHp: 20 + (currentLevel * 5),
+    direction: 1,
+    shootTimer: 0,
+    active: true,
+    pulse: 0
+  };
+  $('bossbar-wrap').classList.add('active');
+  $('bossprogress').style.width = '100%';
+  showStatus('👑 بوس الجمجمة ظهر!');
+  if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
 }
 
-class Item{
-  constructor(type,speed,x){
-    this.type=type;
-    this.char = type==='danger' ? EMOJI_DANGER : EMOJIS_POSITIVE[Math.floor(Math.random()*EMOJIS_POSITIVE.length)];
+function updateBoss(dt) {
+  if (!boss || !boss.active) return;
+  boss.pulse += dt * 5;
+  boss.x += boss.direction * 100 * dt;
+  if (boss.x > W - 60) boss.direction = -1;
+  if (boss.x < 60) boss.direction = 1;
+  boss.shootTimer += dt;
+  if (boss.shootTimer > 1.8) {
+    boss.shootTimer = 0;
+    items.push(new Item('fatal', boss.x));
+  }
+}
+
+function drawBoss() {
+  if (!boss || !boss.active) return;
+  ctx.save();
+  ctx.translate(boss.x, boss.y);
+  ctx.shadowBlur = 25 + Math.sin(boss.pulse) * 8;
+  ctx.shadowColor = '#ff287b';
+  ctx.font = '60px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('👑', 0, -35);
+  ctx.font = '70px sans-serif';
+  ctx.fillText('☠️', 0, 15);
+  ctx.restore();
+  const hpPct = (boss.hp / boss.maxHp) * 100;
+  $('bossprogress').style.width = hpPct + '%';
+}
+
+function damageBoss() {
+  if (!boss || !boss.active) return;
+  boss.hp--;
+  if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('hit');
+  if (boss.hp <= 0) {
+    boss.active = false;
+    $('bossbar-wrap').classList.remove('active');
+    showStatus('🎉 هزمت البوس!');
+    // Bonus points
+    score += 500;
+    updateUI();
+  }
+}
+
+function showStatus(text) {
+  const el = $('status-banner');
+  el.textContent = text;
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+
+function activatePowerup(type) {
+  if (powerups[type] <= 0) { showStatus('❌ لا تملك هذا العنصر'); return; }
+  powerups[type]--; savePowerups();
+  if (type === 'shield') { shieldActive = true; showStatus('🛡️ الدرع نشط!'); }
+  else if (type === 'magnet') { magnetUntil = performance.now() + 10000; showStatus('🧲 المغناطيس نشط!'); }
+  else if (type === 'slow') { slowMoUntil = performance.now() + 20000; showStatus('⏱️ تباطؤ!'); }
+  if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('levelup');
+}
+
+function levelComplete() {
+  state = 'levelComplete';
+  if (window.JAMAM && JAMAM.game) JAMAM.levels.completeLevel('neon-pulse', score);
+  $('completedLevel').textContent = currentLevel;
+  $('levelComplete').classList.remove('hidden');
+  if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('levelup');
+}
+
+function gameOver() {
+  state = 'over';
+  $('finalScore').textContent = score;
+  $('over').classList.remove('hidden');
+  if (window.JAMAM && JAMAM.game) JAMAM.game.end('neon-pulse', { score: score });
+  
+  // Dynamic Luck System - after 2 fails, activate luck
+  failStreak++;
+  if (failStreak >= 2) {
+    luckBonus = 3;
+    showStatus('🍀 حظ سعيد! الماسات 3x في المحاولة القادمة');
+  }
+}
+
+class Item {
+  constructor(type, x) {
+    this.type = type;
+    if (type === 'fatal') this.char = EMOJI_FATAL;
+    else if (type === 'electric') this.char = EMOJI_ELECTRIC;
+    else this.char = EMOJIS_POSITIVE[Math.floor(Math.random() * EMOJIS_POSITIVE.length)];
+    this.x = x; this.y = H + 40;
+    this.vy = -(150 + (currentLevel * 20)) * gameSpeedMultiplier;
+    this.active = true;
+    this.pulse = Math.random() * 6;
     this.r = 22;
-    this.x=x;this.y=H+40;this.vy=-speed;
-    this.active=true;this.pulse=Math.random()*6;
   }
-  update(dt){
-    this.y+=this.vy*dt;this.pulse+=dt*5;
-    if(this.y<-60){this.active=false;if(this.type!=='danger')combo=0}
+  update(dt) {
+    this.y += this.vy * dt;
+    this.pulse += dt * 5;
+    // Magnet effect
+    if (performance.now() < magnetUntil && this.type === 'emoji') {
+      const dx = W/2 - this.x, dy = H - 80 - this.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 300) {
+        this.x += (dx / dist) * 200 * dt;
+        this.y += (dy / dist) * 200 * dt;
+      }
+    }
+    if (this.y < -60) { this.active = false; if (this.type === 'emoji') combo = 0; }
   }
-  hit(x,y){return Math.hypot(x-this.x,y-this.y)<this.r*1.6}
-  draw(){
-    ctx.save();
-    ctx.translate(this.x,this.y);
-    const glow = this.type==='danger'?C.pink:C.cyan;
-    ctx.shadowBlur = 15 + Math.sin(this.pulse)*5;
+  hit(x, y) { return Math.hypot(x - this.x, y - this.y) < this.r * 1.6; }
+  draw() {
+    ctx.save(); ctx.translate(this.x, this.y);
+    let glow = '#d4af37';
+    if (this.type === 'electric') glow = '#ffaa00';
+    if (this.type === 'fatal') glow = '#ff287b';
+    ctx.shadowBlur = 15 + Math.sin(this.pulse) * 5;
     ctx.shadowColor = glow;
     ctx.font = '36px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(this.char, 0, 0);
     ctx.restore();
   }
 }
 
-for(let i=0;i<90;i++) stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.3,a:Math.random()*.6+.1,s:10+Math.random()*25});
-
-function background(dt){
-  const grad=ctx.createRadialGradient(W/2,H*.4,20,W/2,H*.4,H*.85);
-  grad.addColorStop(0,'#111a37');grad.addColorStop(1,'#03050b');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
-  for(const s of stars){
-    if(state==='playing')s.y+=s.s*dt*(1+level*.04);
-    if(s.y>H)s.y=0;
-    ctx.globalAlpha=s.a*(.65+.35*Math.sin(time*2+s.x));
-    ctx.fillStyle='#c4eaff';ctx.fillRect(s.x,s.y,s.r,s.r);
+class Particle {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    const a = Math.random() * Math.PI * 2, v = 50 + Math.random() * 200;
+    this.vx = Math.cos(a) * v; this.vy = Math.sin(a) * v;
+    this.life = 1; this.color = color; this.r = 2 + Math.random() * 3;
   }
-  ctx.globalAlpha=1;
+  update(dt) { this.x += this.vx * dt; this.y += this.vy * dt; this.vx *= 0.95; this.vy *= 0.95; this.life -= dt * 2; }
+  draw() {
+    ctx.globalAlpha = Math.max(0, this.life);
+    ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = this.color;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  }
 }
 
-function collect(item){
-  if(state !== 'playing') return;
-  item.active=false;
-  
-  if(item.type==='danger'){
-    // إعداد الانفجار المدوي
-    state='dead'; 
-    flash=1.0;
-    shake=1.0;
-    sfx('explosion');
-    
-    if(window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
+function burst(x, y, color, count = 20) {
+  for (let i = 0; i < count; i++) particles.push(new Particle(x, y, color));
+  rings.push({ x, y, r: 5, life: 1, color });
+}
 
-    // شظايا الانفجار (لهب ونار)
-    burst(item.x,item.y,C.red,80,2.0);
-    burst(item.x,item.y,C.orange,60,1.5);
-    burst(item.x,item.y,C.yellow,40,1.0);
-    burst(item.x,item.y,'#333333',30,0.5); // دخان
-
-    if(score>best){ best=score; save(); }
-    
-    // تأخير بسيط لرؤية الانفجار
-    setTimeout(() => {
-      state='over';
-      finish();
-    }, 700);
+function collect(item) {
+  item.active = false;
+  if (item.type === 'fatal') {
+    if (shieldActive) {
+      shieldActive = false;
+      showStatus('🛡️ الدرع أنقذك!');
+      burst(item.x, item.y, '#3cff8c', 40);
+      if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
+      return;
+    }
+    flash = 1;
+    burst(item.x, item.y, '#ff287b', 60);
+    if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
+    gameOver();
     return;
   }
-  
+  if (item.type === 'electric') {
+    const lost = Math.min(score, 50);
+    score = Math.max(0, score - lost);
+    combo = 0;
+    burst(item.x, item.y, '#ffaa00', 30);
+    showStatus('💀 -' + lost);
+    if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactLight');
+    updateUI();
+    return;
+  }
+  // Good emoji
   combo++;
-  const isGold = item.char === '💎' || item.char === '🎁';
-  const reaction = Math.max(0, Math.floor((1-item.y/H)*90));
-  const mult = Math.min(5, 1 + Math.max(0,combo-1)*.12);
-  const pts = Math.floor((100+reaction+level*10) * mult * (isGold?2.5:1));
+  const isDiamond = item.char === '💎';
+  let basePts = 50 + currentLevel * 10;
+  if (isDiamond) basePts *= luckBonus; // Dynamic Luck System
+  const pts = Math.floor(basePts * Math.min(5, 1 + (combo * 0.1)));
   score += pts;
-  burst(item.x,item.y,isGold?C.gold:C.cyan,isGold?40:20,isGold?1.25:1);
-  sfx(isGold?'gold':'hit');
+  burst(item.x, item.y, isDiamond ? '#fcf6ba' : '#d4af37');
+  if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('hit');
   
-  const newLevel = 1 + Math.floor(score/1000);
-  if(newLevel>level){ level=newLevel; toast('🚀 Level '+level); tone(520,.15,'triangle',.07); }
-  if(score>best){ best=score; }
-  save();updateUI();
+  // Damage boss if active
+  if (boss && boss.active && isDiamond) damageBoss();
+  
+  updateUI();
 }
 
-function finish(){
-  $('finalScore').textContent=score.toLocaleString('en-US');
-  $('finalBest').textContent=best.toLocaleString('en-US');
-  show('over');
-  
-  if(window.JAMAM && JAMAM.game) {
-    JAMAM.game.end('neon-pulse', { score: score });
-  }
-
-  const st = $('submitStatus');
-  if(score > 0) {
-    st.className='pending';
-    st.textContent='⏳ جاري حفظ النتيجة...';
-    setTimeout(() => {
-      st.className='success';
-      st.textContent='✓ تم حفظ النتيجة بنجاح';
-    }, 800);
-  }
-}
-
-function spawnItem(){
-  const dangerChance = level < 2 ? 0 : 0.15;
+function spawnItem() {
   const r = Math.random();
-  let type = r < dangerChance ? 'danger' : 'emoji';
+  let type;
+  const electricChance = 0.08 + (currentLevel * 0.015);
+  const fatalChance = 0.03 + (currentLevel * 0.008);
+  if (r < fatalChance) type = 'fatal';
+  else if (r < fatalChance + electricChance) type = 'electric';
+  else type = 'emoji';
+  const lane = lanes[Math.floor(Math.random() * lanes.length)];
+  items.push(new Item(type, lane));
+}
+
+function handlePointer(e) {
+  if (state !== 'playing') return;
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width * W;
+  const y = (e.clientY - rect.top) / rect.height * H;
+  for (let i = items.length - 1; i >= 0; i--) {
+    const it = items[i];
+    if (it.active && it.hit(x, y)) { collect(it); return; }
+  }
+  rings.push({ x, y, r: 2, life: 0.5, color: '#fff' });
+}
+
+function frame(ts) {
+  if (state !== 'playing') return;
+  const now = performance.now();
+  let dt = Math.min(0.045, Math.max(0, (ts - lastTime) / 1000 || 0));
+  lastTime = ts;
+  if (now < slowMoUntil) dt *= 0.5;
   
-  let li; do{li=Math.floor(Math.random()*lanes.length)}while(li===laneLast);
-  laneLast=li;
-  const speed = 150 + level*20;
-  items.push(new Item(type, speed, lanes[li]));
-}
-
-function handlePointer(e){
-  if(state!=='playing')return;
-  const rect=canvas.getBoundingClientRect();
-  const x=(e.clientX-rect.left)/rect.width*W;
-  const y=(e.clientY-rect.top)/rect.height*H;
-  for(let i=items.length-1;i>=0;i--){
-    const it=items[i];
-    if(it.active && it.hit(x,y)){collect(it);return}
+  ctx.fillStyle = '#0b0b0d';
+  ctx.fillRect(0, 0, W, H);
+  
+  // Spawn
+  spawnTimer += dt;
+  const spawnInterval = Math.max(0.35, 0.9 - (currentLevel * 0.05));
+  if (spawnTimer > spawnInterval) { spawnTimer = 0; spawnItem(); }
+  
+  // Boss
+  if (boss && boss.active) { updateBoss(dt); drawBoss(); }
+  
+  // Items
+  for (let i = items.length - 1; i >= 0; i--) {
+    const it = items[i];
+    it.update(dt); it.draw();
+    if (!it.active) items.splice(i, 1);
   }
-  rings.push({x,y,r:2,life:.22,color:'#d5e8ff'});
-}
-
-canvas.addEventListener('pointerdown', e=>{e.preventDefault();handlePointer(e)}, {passive:false});
-
-$('startBtn').onclick = startGame;
-$('retryBtn').onclick = startGame;
-$('pauseBtn').onclick = ()=>{ if(state==='playing'){state='over'; finish();} };
-
-function frame(ts){
-  let dt = Math.min(.045, Math.max(0,(ts-last)/1000||0));
-  last = ts;
-  time += dt;
-
-  if(state==='playing'){
-    spawn += dt;
-    const interval = Math.max(.38, 1.05-level*.045);
-    if(spawn>=interval){spawn=0;spawnItem()}
-    for(const it of items) it.update(dt);
-    items = items.filter(i=>i.active);
+  
+  // Particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update(dt); particles[i].draw();
+    if (particles[i].life <= 0) particles.splice(i, 1);
   }
-
-  let sx = 0, sy = 0;
-  if (shake > 0) {
-      shake -= dt * 1.8;
-      if(shake < 0) shake = 0;
-      sx = (Math.random() - 0.5) * 25 * shake;
-      sy = (Math.random() - 0.5) * 25 * shake;
+  
+  // Rings
+  for (let i = rings.length - 1; i >= 0; i--) {
+    const r = rings[i];
+    r.r += 100 * dt; r.life -= dt;
+    ctx.globalAlpha = Math.max(0, r.life);
+    ctx.strokeStyle = r.color; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+    if (r.life <= 0) rings.splice(i, 1);
   }
-
-  ctx.save();
-  ctx.translate(sx, sy);
-
-  background(dt);
-
-  for(const it of items) it.draw();
-
-  for(let i=particles.length-1;i>=0;i--){
-    particles[i].update(dt);particles[i].draw();
-    if(particles[i].life<=0) particles.splice(i,1);
-  }
-  for(let i=rings.length-1;i>=0;i--){
-    const r=rings[i];
-    r.r+=180*dt;r.life-=dt;
-    ctx.save();
-    ctx.globalAlpha=Math.max(0,r.life/.4);
-    ctx.strokeStyle=r.color;ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke();
-    ctx.restore();
-    if(r.life<=0) rings.splice(i,1);
-  }
-
-  ctx.restore();
-
-  if(flash>0){flash-=dt*1.5;$('flash').style.opacity=Math.max(0,flash)*.8}
-  if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').classList.remove('show')}
-
+  
+  if (flash > 0) { flash -= dt * 2; $('flash').style.opacity = Math.max(0, flash) * 0.6; }
+  
+  $('shieldBtn').classList.toggle('active', shieldActive);
+  $('magnetBtn').classList.toggle('active', now < magnetUntil);
+  $('slowBtn').classList.toggle('active', now < slowMoUntil);
+  
   requestAnimationFrame(frame);
 }
 
-$('best').textContent=best.toLocaleString('en-US');updateUI();requestAnimationFrame(frame);
+canvas.addEventListener('pointerdown', handlePointer, { passive: false });
+$('startBtn').onclick = () => { failStreak = 0; luckBonus = 1; startGame(); };
+$('retryBtn').onclick = startGame;
+$('nextLevelBtn').onclick = startGame;
+$('pauseBtn').onclick = () => { if(state === 'playing') gameOver(); };
+$('shopBtn').onclick = openShop;
+$('shopFromOver').onclick = openShop;
+$('shieldBtn').onclick = () => activatePowerup('shield');
+$('magnetBtn').onclick = () => activatePowerup('magnet');
+$('slowBtn').onclick = () => activatePowerup('slow');
 
+loadPowerups();
+document.documentElement.lang = 'ar';
+document.documentElement.dir = 'rtl';
 })();
 </script>
 </body>
