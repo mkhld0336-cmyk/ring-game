@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0b0b0d">
 <title>صائد الرموز | Emoji Hunter ROYAL</title>
 <style>
-:root{--bg:#0b0b0d;--gold:#d4af37;--pink:#ff287b;--green:#3cff8c;--orange:#ffaa00;--text:#f5f7ff;--muted:#a1a1a6}
+:root{--bg:#0b0b0d;--gold:#d4af37;--pink:#ff287b;--green:#3cff8c;--text:#f5f7ff;--muted:#a1a1a6}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Cairo',system-ui,sans-serif;touch-action:manipulation}
 body{display:flex;align-items:center;justify-content:center}
@@ -21,20 +21,19 @@ canvas{display:block;width:100%;height:100%;touch-action:pan-y}
 .iconbtn{border:1px solid rgba(212,175,55,0.4);background:rgba(20,18,10,0.9);color:var(--gold);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;font-size:15px}
 #powerups{position:absolute;top:80px;left:12px;right:12px;z-index:3;display:flex;gap:6px;justify-content:flex-end;pointer-events:auto}
 .power-btn{background:rgba(20,18,10,0.9);border:1px solid rgba(212,175,55,0.4);color:var(--gold);padding:6px 10px;border-radius:20px;font-size:11px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s}
-.power-btn:active{transform:scale(0.95)}
 .power-btn.active{background:var(--gold);color:#0b0b0d;box-shadow:0 0 15px rgba(212,175,55,0.6)}
-.power-btn.disabled{opacity:0.4;cursor:not-allowed}
-#levelbar-wrap{position:absolute;z-index:3;top:120px;left:16px;right:16px;pointer-events:none}
-#leveltext{font-size:11px;color:var(--gold);display:flex;justify-content:space-between;margin-bottom:4px;font-weight:bold}
-#levelbar{height:5px;border-radius:8px;background:#2a2518;overflow:hidden;border:1px solid rgba(212,175,55,0.3)}
-#levelprogress{height:100%;width:0;background:linear-gradient(90deg,#aa771c,#fcf6ba);transition:width .3s}
-#bossbar-wrap{position:absolute;z-index:4;top:155px;left:16px;right:16px;display:none;pointer-events:none}
+.power-btn.disabled{opacity:0.4}
+#zeigarnik-bar{position:absolute;z-index:3;top:120px;left:16px;right:16px;pointer-events:none;background:rgba(20,18,10,0.85);padding:6px 10px;border-radius:10px;border:1px solid rgba(212,175,55,0.3)}
+#zeigarnik-text{font-size:10px;color:var(--gold);display:flex;justify-content:space-between;margin-bottom:4px;font-weight:bold}
+#progress-bg{height:4px;border-radius:8px;background:#2a2518;overflow:hidden}
+#progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#aa771c,#fcf6ba);transition:width .3s}
+#bossbar-wrap{position:absolute;z-index:4;top:165px;left:16px;right:16px;display:none;pointer-events:none}
 #bossbar-wrap.active{display:block}
-#bosstext{font-size:12px;color:var(--pink);text-align:center;margin-bottom:4px;font-weight:900;text-shadow:0 0 10px var(--pink)}
+#bosstext{font-size:12px;color:var(--pink);text-align:center;margin-bottom:4px;font-weight:900}
 #bossbar{height:8px;border-radius:8px;background:#2a0a1a;overflow:hidden;border:1px solid var(--pink)}
 #bossprogress{height:100%;width:100%;background:linear-gradient(90deg,#ff287b,#ff88bb);transition:width .2s}
-#combo{position:absolute;z-index:4;top:200px;left:50%;transform:translateX(-50%);opacity:0;color:var(--gold);font-weight:1000;font-size:18px;transition:opacity .15s;pointer-events:none}
-#status-banner{position:absolute;z-index:4;top:230px;left:50%;transform:translateX(-50%);background:rgba(60,255,140,0.15);border:1px solid var(--green);color:var(--green);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:900;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+#combo{position:absolute;z-index:4;top:210px;left:50%;transform:translateX(-50%);opacity:0;color:var(--gold);font-weight:1000;font-size:18px;transition:opacity .15s;pointer-events:none}
+#status-banner{position:absolute;z-index:4;top:240px;left:50%;transform:translateX(-50%);background:rgba(60,255,140,0.15);border:1px solid var(--green);color:var(--green);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:900;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
 .overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 20px;background:linear-gradient(180deg,rgba(11,11,13,0.92),rgba(11,11,13,0.98));backdrop-filter:blur(12px);overflow-y:auto}
 .overlay.hidden{display:none}
 .logo{font-size:clamp(32px,8vw,44px);font-weight:900;margin:0 0 5px;background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -67,9 +66,9 @@ canvas{display:block;width:100%;height:100%;touch-action:pan-y}
     <button class="power-btn" id="magnetBtn">🧲 <span id="magnetCount">0</span></button>
     <button class="power-btn" id="slowBtn">⏱️ <span id="slowCount">0</span></button>
   </div>
-  <div id="levelbar-wrap">
-    <div id="leveltext"><span id="levelLabel">المستوى 1</span><span id="goalLabel">0 / 500</span></div>
-    <div id="levelbar"><div id="levelprogress"></div></div>
+  <div id="zeigarnik-bar">
+    <div id="zeigarnik-text"><span id="levelLabel">المستوى 1</span><span id="goalLabel">0 / 500</span></div>
+    <div id="progress-bg"><div id="progress-fill"></div></div>
   </div>
   <div id="bossbar-wrap">
     <div id="bosstext">👑 بوس الجمجمة</div>
@@ -106,7 +105,6 @@ canvas{display:block;width:100%;height:100%;touch-action:pan-y}
     <button class="btn btn-secondary" onclick="closeShop()" style="margin-top:12px">عودة</button>
   </section>
 
-  <!-- شاشة الإيقاف المؤقت الجديدة -->
   <section id="pause-screen" class="overlay hidden">
     <h1 class="logo" style="font-size:32px">استراحة محارب</h1>
     <p class="description">اللعبة متوقفة مؤقتاً.</p>
@@ -122,7 +120,7 @@ canvas{display:block;width:100%;height:100%;touch-action:pan-y}
 
   <section id="over" class="overlay hidden">
     <h1 class="logo" style="color:var(--pink);-webkit-text-fill-color:var(--pink)">💥 انفجار!</h1>
-    <p class="description">لقد لمست الجمجمة القاتلة ☠️.<br>نقاطك: <b id="finalScore">0</b></p>
+    <p class="description" id="lossAversionText">لقد لمست الجمجمة القاتلة ☠️.<br>نقاطك: <b id="finalScore">0</b></p>
     <button class="btn" id="retryBtn">إعادة 🔄</button>
     <button class="btn btn-secondary" id="shopFromOver">🛒 متجر القوة</button>
   </section>
@@ -154,9 +152,10 @@ let powerups = { shield: 0, magnet: 0, slow: 0 };
 let failStreak = 0, luckBonus = 1;
 let boss = null;
 let animationId = null;
+let lastWarningTime = 0;
 
 // ============================================================
-// 1. الأصوات (تم إرجاعها)
+// 🎵 الأصوات الجديدة (من الجيش)
 // ============================================================
 let audioCtx = null;
 function initAudio() {
@@ -166,19 +165,75 @@ function initAudio() {
   }
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 }
-function playSound(freq, type = 'sine', duration = 0.1, vol = 0.1) {
+
+function playSound(type) {
   if (!audioCtx) return;
+  const now = audioCtx.currentTime;
   try {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
+    if (type === 'diamond') {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1046, now);
+      osc.frequency.exponentialRampToValueAtTime(2093, now + 0.08);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (type === 'boss') {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(60, now + 0.4);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.4);
+    } else if (type === 'warning') {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(440, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.15);
+    } else if (type === 'box') {
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, now + i * 0.05);
+        gain.gain.setValueAtTime(0.15, now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.05);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.05); osc.stop(now + i * 0.05 + 0.05);
+      });
+    } else if (type === 'levelup') {
+      [440, 554, 659, 880].forEach((f, i) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, now + i * 0.15);
+        gain.gain.setValueAtTime(0.2, now + i * 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.15);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.15); osc.stop(now + i * 0.15 + 0.15);
+      });
+    } else if (type === 'gold') {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(660, now);
+      osc.frequency.exponentialRampToValueAtTime(1320, now + 0.15);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.15);
+    } else if (type === 'hit') {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(700 + combo * 20, now);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.08);
+    }
   } catch(e) {}
 }
 
@@ -213,7 +268,7 @@ function buyItem(type) {
   JAMAM.store.set(JAMAM.KEYS.coins, coinData);
   powerups[type]++;
   savePowerups();
-  playSound(800, 'triangle', 0.1);
+  playSound('gold');
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('coin');
 }
 function openShop() { $('shop').classList.remove('hidden'); }
@@ -231,7 +286,7 @@ function initLevel() {
   
   $('levelLabel').textContent = 'المستوى ' + currentLevel;
   $('goalLabel').textContent = '0 / ' + goalScore;
-  $('levelprogress').style.width = '0%';
+  $('progress-fill').style.width = '0%';
   $('score').textContent = '0';
   $('bossbar-wrap').classList.remove('active');
   updatePowerupHUD();
@@ -239,7 +294,7 @@ function initLevel() {
 
 function startGame() {
   initLevel();
-  initAudio(); // تشغيل الصوت عند بدء اللعب
+  initAudio();
   state = 'playing';
   $('start').classList.add('hidden');
   $('over').classList.add('hidden');
@@ -252,9 +307,6 @@ function startGame() {
   animationId = requestAnimationFrame(frame);
 }
 
-// ============================================================
-// 2. إيقاف مؤقت حقيقي (تم إصلاحه)
-// ============================================================
 function pauseGame() {
   if (state !== 'playing') return;
   state = 'paused';
@@ -277,13 +329,27 @@ function quitGame() {
   $('start').classList.remove('hidden');
 }
 
+// ============================================================
+// 🎯 ميزة Zeigarnik Bar
+// ============================================================
 function updateUI() {
   $('score').textContent = score;
   $('combo').textContent = '⚡ COMBO ×' + combo;
   $('combo').style.opacity = combo >= 2 ? '1' : '0';
-  const progress = Math.min(100, (score / goalScore) * 100);
-  $('levelprogress').style.width = progress + '%';
+  
+  // Zeigarnik Bar (شريط التقدم)
+  const pointsNeeded = goalScore - score;
   $('goalLabel').textContent = score + ' / ' + goalScore;
+  const progress = Math.min(100, (score / goalScore) * 100);
+  $('progress-fill').style.width = progress + '%';
+  
+  if (pointsNeeded > 0 && pointsNeeded < 100) {
+    $('levelLabel').textContent = '🎯 بقي ' + pointsNeeded + ' نقطة!';
+    $('levelLabel').style.color = '#3cff8c';
+  } else {
+    $('levelLabel').textContent = 'المستوى ' + currentLevel;
+    $('levelLabel').style.color = 'var(--gold)';
+  }
   
   if ((currentLevel === 5 || currentLevel === 10) && !boss && score >= goalScore * 0.7) {
     spawnBoss();
@@ -304,7 +370,7 @@ function spawnBoss() {
   $('bossbar-wrap').classList.add('active');
   $('bossprogress').style.width = '100%';
   showStatus('👑 بوس الجمجمة ظهر!');
-  playSound(200, 'sawtooth', 0.3, 0.2);
+  playSound('boss');
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
 }
 
@@ -328,25 +394,24 @@ function drawBoss() {
   ctx.shadowBlur = 25 + Math.sin(boss.pulse) * 8;
   ctx.shadowColor = '#ff287b';
   ctx.font = '60px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText('👑', 0, -35);
   ctx.font = '70px sans-serif';
   ctx.fillText('☠️', 0, 15);
   ctx.restore();
-  const hpPct = (boss.hp / boss.maxHp) * 100;
-  $('bossprogress').style.width = hpPct + '%';
+  $('bossprogress').style.width = ((boss.hp / boss.maxHp) * 100) + '%';
 }
 
 function damageBoss() {
   if (!boss || !boss.active) return;
   boss.hp--;
-  playSound(900, 'square', 0.05);
+  playSound('gold');
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('hit');
   if (boss.hp <= 0) {
     boss.active = false;
     $('bossbar-wrap').classList.remove('active');
     showStatus('🎉 هزمت البوس!');
+    playSound('levelup');
     score += 500;
     updateUI();
   }
@@ -362,7 +427,7 @@ function showStatus(text) {
 function activatePowerup(type) {
   if (powerups[type] <= 0) { showStatus('❌ لا تملك هذا العنصر'); return; }
   powerups[type]--; savePowerups();
-  playSound(700, 'triangle', 0.1);
+  playSound('levelup');
   if (type === 'shield') { shieldActive = true; showStatus('🛡️ الدرع نشط!'); }
   else if (type === 'magnet') { magnetUntil = performance.now() + 10000; showStatus('🧲 المغناطيس نشط!'); }
   else if (type === 'slow') { slowMoUntil = performance.now() + 20000; showStatus('⏱️ تباطؤ!'); }
@@ -373,16 +438,36 @@ function levelComplete() {
   if (window.JAMAM && JAMAM.game) JAMAM.levels.completeLevel('neon-pulse', score);
   $('completedLevel').textContent = currentLevel;
   $('levelComplete').classList.remove('hidden');
-  playSound(600, 'sine', 0.1);
-  setTimeout(() => playSound(900, 'sine', 0.15), 100);
+  playSound('levelup');
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('levelup');
 }
 
+// ============================================================
+// 💥 ميزة Loss Aversion (رسالة الخسارة)
+// ============================================================
 function gameOver() {
   state = 'over';
-  playSound(150, 'sawtooth', 0.4, 0.2);
-  $('finalScore').textContent = score;
+  playSound('boss');
+  
+  const best = window.JAMAM ? JAMAM.store.get(JAMAM.KEYS.xp, {level:1}) : {level:1};
+  const lastBest = parseInt(localStorage.getItem('lastBestScore') || '0');
+  const pointsDiff = lastBest - score;
+  
+  let message = '';
+  if (pointsDiff > 0 && pointsDiff < 500) {
+    message = `كنت على بعد <b style="color:#ff287b;font-size:20px">${pointsDiff}</b> نقطة من كسر رقمك القياسي (${lastBest})!<br>حاول مرة أخرى!`;
+  } else {
+    message = `لقد لمست الجمجمة القاتلة ☠️.<br>نقاطك: <b id="finalScore">${score}</b>`;
+  }
+  
+  if (score > lastBest) {
+    localStorage.setItem('lastBestScore', score);
+    message = `🎉 رقم قياسي جديد: <b style="color:#3cff8c;font-size:20px">${score}</b> نقطة!`;
+  }
+  
+  $('lossAversionText').innerHTML = message;
   $('over').classList.remove('hidden');
+  
   if (window.JAMAM && JAMAM.game) JAMAM.game.end('neon-pulse', { score: score });
   
   failStreak++;
@@ -407,6 +492,16 @@ class Item {
   update(dt) {
     this.y += this.vy * dt;
     this.pulse += dt * 5;
+    
+    // صوت التحذير عند القرب من الجمجمة
+    if (this.type === 'fatal' && this.y > H * 0.5 && this.y < H * 0.8) {
+      const now = performance.now();
+      if (now - lastWarningTime > 250) {
+        playSound('warning');
+        lastWarningTime = now;
+      }
+    }
+    
     if (performance.now() < magnetUntil && this.type === 'emoji') {
       const dx = W/2 - this.x, dy = H - 80 - this.y;
       const dist = Math.hypot(dx, dy);
@@ -460,7 +555,7 @@ function collect(item) {
       shieldActive = false;
       showStatus('🛡️ الدرع أنقذك!');
       burst(item.x, item.y, '#3cff8c', 40);
-      playSound(300, 'square', 0.2);
+      playSound('box');
       if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
       return;
     }
@@ -475,20 +570,24 @@ function collect(item) {
     score = Math.max(0, score - lost);
     combo = 0;
     burst(item.x, item.y, '#ffaa00', 30);
-    playSound(120, 'sawtooth', 0.15);
+    playSound('warning');
     showStatus('💀 -' + lost);
     if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactLight');
     updateUI();
     return;
   }
+  // Good emoji
   combo++;
   const isDiamond = item.char === '💎';
+  const isGift = item.char === '🎁';
   let basePts = 50 + currentLevel * 10;
-  if (isDiamond) basePts *= luckBonus;
+  if (isDiamond) { basePts *= luckBonus; playSound('diamond'); }
+  else if (isGift) { basePts *= 1.5; playSound('box'); }
+  else { playSound('hit'); }
+  
   const pts = Math.floor(basePts * Math.min(5, 1 + (combo * 0.1)));
   score += pts;
   burst(item.x, item.y, isDiamond ? '#fcf6ba' : '#d4af37');
-  playSound(isDiamond ? 1000 : 700 + combo * 20, 'sine', 0.08);
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('hit');
   if (boss && boss.active && isDiamond) damageBoss();
   updateUI();
@@ -561,14 +660,13 @@ function frame(ts) {
   animationId = requestAnimationFrame(frame);
 }
 
-// ربط الأزرار
 canvas.addEventListener('pointerdown', handlePointer, { passive: false });
 $('startBtn').onclick = () => { failStreak = 0; luckBonus = 1; startGame(); };
 $('retryBtn').onclick = startGame;
 $('nextLevelBtn').onclick = startGame;
-$('pauseBtn').onclick = pauseGame; // تم الإصلاح
-$('resumeBtn').onclick = resumeGame; // تم الإصلاح
-$('quitBtn').onclick = quitGame; // تم الإصلاح
+$('pauseBtn').onclick = pauseGame;
+$('resumeBtn').onclick = resumeGame;
+$('quitBtn').onclick = quitGame;
 $('shopBtn').onclick = openShop;
 $('shopFromOver').onclick = openShop;
 $('shieldBtn').onclick = () => activatePowerup('shield');
