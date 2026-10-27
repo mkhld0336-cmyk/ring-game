@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Echo Pulse | نبض الصدى</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; user-select: none; }
+    body { overflow: hidden; background: #040d1c; font-family: system-ui, sans-serif; color: #fff; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+    #ui { position: absolute; top: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; pointer-events: none; }
+    .stat-box { background: rgba(9,26,44,0.8); border: 1px solid rgba(51,240,208,0.3); padding: 10px 20px; border-radius: 15px; text-align: center; }
+    .stat-box small { display: block; font-size: 10px; color: #7fa4bd; letter-spacing: 1px; }
+    .stat-box b { font-size: 24px; color: #33f0d0; text-shadow: 0 0 10px rgba(51,240,208,0.5); }
+    #combo-box { color: #ffc24d; font-weight: bold; font-size: 18px; text-align: center; opacity: 0; transition: opacity 0.2s; text-shadow: 0 0 10px #ffc24d; margin-top: 10px; }
+    
+    .screen { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(4,13,28,0.95); backdrop-filter: blur(5px); z-index: 10; text-align: center; padding: 20px; }
+    .hidden { display: none !important; }
+    h1 { font-size: 40px; color: #33f0d0; text-shadow: 0 0 20px rgba(51,240,208,0.6); margin-bottom: 10px; }
+    p { color: #7fa4bd; margin-bottom: 30px; max-width: 300px; line-height: 1.6; }
+    button { background: linear-gradient(135deg, #33f0d0, #0a9cae); color: #000; border: none; padding: 15px 40px; font-size: 20px; font-weight: 900; border-radius: 30px; cursor: pointer; box-shadow: 0 0 20px rgba(51,240,208,0.4); }
+</style>
+<script src="../js/jamam-core.js"></script>
+<script src="../js/jamam-progress.js"></script>
+<script src="../js/jamam-achievements.js"></script>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui">
+        <div class="stat-box"><small>SCORE</small><b id="score-display">0</b></div>
+        <div class="stat-box"><small>ENERGY</small><b id="energy-display">100%</b></div>
+    </div>
+    <div id="combo-box">COMBO x<span id="combo-display">1</span></div>
+
+    <div id="start-screen" class="screen">
+        <h1 id="txt-title">Echo Pulse</h1>
+        <p id="txt-desc">Tap the screen to emit a sonar pulse.<br>Reveal the hidden nodes and collect them before they fade.</p>
+        <button id="btn-start" onclick="startGame()">Play</button>
+    </div>
+    <div id="game-over" class="screen hidden">
+        <h1 id="txt-go" style="color:#ff5d7a; text-shadow: 0 0 20px rgba(255,93,122,0.6);">Game Over</h1>
+        <p style="font-size:24px; color:white; margin-bottom:20px;">Score: <span id="final-score">0</span></p>
+        <button onclick="startGame()">Retry</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const I18N = {
+            en: { title: "Echo Pulse", desc: "Tap the screen to emit a sonar pulse.<br>Reveal the hidden nodes and collect them before they fade.", play: "Play", over: "Game Over" },
+            ar: { title: "نبض الصدى", desc: "انقر على الشاشة لإطلاق موجة صدى.<br>اكشف العقد المخفية واجمعها قبل أن تتلاشى.", play: "ابدأ", over: "انتهت اللعبة" }
+        };
+        const T = I18N[(window.JAMAM && JAMAM.lang && I18N[JAMAM.lang()]) ? JAMAM.lang() : 'en'];
+        document.getElementById('txt-title').innerHTML = T.title;
+        document.getElementById('txt-desc').innerHTML = T.desc;
+        document.getElementById('btn-start').innerText = T.play;
+        document.getElementById('txt-go').innerText = T.over;
+
+        let w, h;
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let score = 0, energy = 100, combo = 1;
+        let isPlaying = false;
+        let animationId;
+        let waves = [];
+        let nodes = [];
+        let particles = [];
+        let lastTime = 0;
+        let spawnTimer = 0;
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+            score = 0; energy = 100; combo = 1;
+            waves = []; nodes = []; particles = [];
+            isPlaying = true;
+            updateUI();
+            if(window.JAMAM && JAMAM.game) JAMAM.game.start('echo-pulse');
+            lastTime = performance.now();
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function updateUI() {
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('energy-display').innerText = Math.floor(energy) + '%';
+            document.getElementById('combo-display').innerText = combo;
+            const cb = document.getElementById('combo-box');
+            if(combo > 1) cb.style.opacity = 1; else cb.style.opacity = 0;
+            
+            if(energy < 20) {
+                document.getElementById('energy-display').style.color = '#ff5d7a';
+            } else {
+                document.getElementById('energy-display').style.color = '#33f0d0';
+            }
+        }
+
+        // Spawn hidden nodes
+        function spawnNode() {
+            nodes.push({
+                x: 50 + Math.random() * (w - 100),
+                y: 100 + Math.random() * (h - 200),
+                r: 8,
+                revealed: false,
+                life: 0,
+                maxLife: 120, // frames to live after revealed
+                type: Math.random() < 0.2 ? 'bad' : 'good' // 20% chance to be a trap
+            });
+        }
+
+        // Tap to emit wave
+        canvas.addEventListener('pointerdown', (e) => {
+            if(!isPlaying) return;
+            if(energy < 5) return;
+
+            energy -= 5;
+            updateUI();
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            waves.push({ x: x, y: y, r: 5, speed: 8, alpha: 1 });
+            
+            if(window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('hit');
+            
+            // Check if tapped directly on a revealed node
+            for(let i = nodes.length - 1; i >= 0; i--) {
+                let n = nodes[i];
+                if(n.revealed && Math.hypot(x - n.x, y - n.y) < n.r + 20) {
+                    collectNode(i);
+                }
+            }
+        });
+
+        function collectNode(index) {
+            let n = nodes[index];
+            if(n.type === 'bad') {
+                // Trap!
+                energy = Math.max(0, energy - 20);
+                combo = 1;
+                if(window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('miss');
+                createParticles(n.x, n.y, '#ff5d7a');
+                nodes.splice(index, 1);
+            } else {
+                // Good!
+                score += 10 * combo;
+                energy = Math.min(100, energy + 10);
+                combo++;
+                if(window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('levelup');
+                createParticles(n.x, n.y, '#33f0d0');
+                nodes.splice(index, 1);
+            }
+            updateUI();
+        }
+
+        function createParticles(x, y, color) {
+            for(let i=0; i<15; i++) {
+                let angle = Math.random() * Math.PI * 2;
+                let speed = 2 + Math.random() * 5;
+                particles.push({
+                    x: x, y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 1,
+                    color: color
+                });
+            }
+        }
+
+        function gameLoop(now) {
+            if(!isPlaying) return;
+            let dt = (now - lastTime) / 1000;
+            lastTime = now;
+            
+            animationId = requestAnimationFrame(gameLoop);
+
+            ctx.fillStyle = '#040d1c';
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw grid background
+            ctx.strokeStyle = 'rgba(51,240,208,0.05)';
+            ctx.lineWidth = 1;
+            for(let i=0; i<w; i+=40) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,h); ctx.stroke(); }
+            for(let i=0; i<h; i+=40) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(w,i); ctx.stroke(); }
+
+            // Regenerate energy slowly
+            energy = Math.min(100, energy + 2 * dt);
+            updateUI();
+
+            // Spawn nodes
+            spawnTimer += dt;
+            if(spawnTimer > 1.5 && nodes.length < 8) {
+                spawnNode();
+                spawnTimer = 0;
+            }
+
+            // Update Waves
+            for(let i=waves.length-1; i>=0; i--) {
+                let wave = waves[i];
+                wave.r += wave.speed;
+                wave.alpha -= 0.015;
+
+                ctx.beginPath();
+                ctx.arc(wave.x, wave.y, wave.r, 0, Math.PI*2);
+                ctx.strokeStyle = `rgba(51,240,208,${wave.alpha})`;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Reveal nodes
+                nodes.forEach(n => {
+                    if(!n.revealed && Math.hypot(wave.x - n.x, wave.y - n.y) < wave.r) {
+                        n.revealed = true;
+                        n.life = n.maxLife;
+                        // Wave visual hit
+                        ctx.beginPath();
+                        ctx.arc(n.x, n.y, n.r+5, 0, Math.PI*2);
+                        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                        ctx.stroke();
+                    }
+                });
+
+                if(wave.alpha <= 0) waves.splice(i, 1);
+            }
+
+            // Update Nodes
+            for(let i=nodes.length-1; i>=0; i--) {
+                let n = nodes[i];
+                if(n.revealed) {
+                    n.life -= 1;
+                    if(n.life <= 0) {
+                        // Missed!
+                        if(n.type === 'good') { combo = 1; updateUI(); }
+                        nodes.splice(i, 1);
+                        continue;
+                    }
+                    
+                    // Draw revealed node
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r + Math.sin(now/100)*2, 0, Math.PI*2);
+                    ctx.fillStyle = n.type === 'bad' ? '#ff5d7a' : '#33f0d0';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = n.type === 'bad' ? '#ff5d7a' : '#33f0d0';
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    
+                    // Life bar
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    ctx.fillRect(n.x - 10, n.y + 15, 20, 3);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(n.x - 10, n.y + 15, 20 * (n.life/n.maxLife), 3);
+                }
+            }
+
+            // Update Particles
+            for(let i=particles.length-1; i>=0; i--) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                p.vx *= 0.95; p.vy *= 0.95;
+                p.life -= 0.05;
+                if(p.life <= 0) { particles.splice(i,1); continue; }
+                
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+
+            // Check Game Over
+            if(energy <= 0 && waves.length === 0) {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            isPlaying = false;
+            cancelAnimationFrame(animationId);
+            document.getElementById('game-over').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            if(window.JAMAM && JAMAM.game) JAMAM.game.end('echo-pulse', { score: score });
+        }
+    </script>
+</body>
+</html>
