@@ -3,64 +3,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#070817">
-<title>JAMAM GAMES | منصة الألعاب</title>
+<meta name="theme-color" content="#0b0b0d">
+<title>JAMAM GAMES | منصة الألعاب الملكية</title>
 <link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Cinzel:wght@600;700;900&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#070914;--card:#10172a;--cyan:#57e8ff;--gold:#f7c969;--text:#f5f7ff;--pink:#ff4f9a}
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, -apple-system, sans-serif}
-body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;background-image:radial-gradient(ellipse at 50% -20%,rgba(87,232,255,0.1),transparent 55%)}
-header,main,footer{width:100%;max-width:1040px;padding:20px}
-header{display:flex;justify-content:space-between;align-items:center;padding-top:30px;flex-wrap:wrap;gap:10px}
-.logo{font-size:1.5rem;font-weight:900;letter-spacing:1px}.logo span{color:var(--cyan)}
-.stats-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.stat-box{background:var(--card);padding:10px 15px;border-radius:12px;border:1px solid #ffffff15;font-weight:bold;font-size:0.9rem;display:flex;align-items:center;gap:5px}
-.top-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
-.top-btn.active { background: rgba(0, 242, 254, 0.15); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
-.featured{background:linear-gradient(135deg,#10172a,#1a2340);border:1px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;margin-bottom:30px;box-shadow: 0 10px 30px rgba(0,0,0,0.5);position:relative;overflow:hidden}
-.featured::before{content:'👑';position:absolute;top:-20px;right:10px;font-size:8rem;opacity:0.05;transform:rotate(20deg)}
-.featured h2{font-size: 2rem; margin-bottom: 10px; color:var(--gold)}
-.btn{background:linear-gradient(110deg,var(--gold),#e9a83d);color:#000;padding:12px 30px;border-radius:12px;text-decoration:none;font-weight:900;display:inline-block;margin-top:15px;transition:0.2s;box-shadow: 0 4px 15px rgba(247,201,105,0.3);border:none;cursor:pointer}
-.btn:hover{transform:scale(1.05)}
-.hub-actions { display: flex; gap: 12px; justify-content: center; margin: 0 0 20px 0; flex-wrap:wrap; }
-.btn-secondary { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: background 0.2s ease; }
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:15px;margin-bottom:30px}
-.game-card{background:var(--card);padding:20px;border-radius:15px;text-align:center;text-decoration:none;color:#fff;border:1px solid #ffffff10;transition:0.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.game-card:hover{border-color:var(--cyan);background:#151c33;transform:translateY(-3px)}
-.icon{font-size:2.5rem;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2))}
-.game-card h3{font-size:0.95rem;font-weight:bold}
-footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9rem;border-top:1px solid #ffffff05}
+:root{
+  --bg-main:#0b0b0d;
+  --bg-card:#141419;
+  --gold-primary:#d4af37;
+  --gold-light:#fcf6ba;
+  --gold-dark:#aa771c;
+  --gold-gradient:linear-gradient(135deg,#bf953f 0%,#fcf6ba 25%,#b38728 50%,#fbf5b7 75%,#aa771c 100%);
+  --gold-glow:rgba(212,175,55,0.25);
+  --text-main:#f5f5f7;
+  --text-muted:#a1a1a6;
+  --border-gold:1px solid rgba(212,175,55,0.3);
+  --radius-sm:4px;
+  --radius-lg:14px;
+  --radius-pill:50px;
+  --font-ar:'Cairo',system-ui,sans-serif;
+  --font-en:'Cinzel','Montserrat',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background-color:var(--bg-main);color:var(--text-main);font-family:var(--font-ar);min-height:100vh;overflow-x:hidden;background-image:radial-gradient(circle at 50% 0%,#1f1b13 0%,var(--bg-main) 70%)}
+body{display:flex;flex-direction:column;align-items:center}
 
-/* Modals */
-.jamam-modal-overlay { position: fixed; inset: 0; background: rgba(8, 7, 17, 0.85); backdrop-filter: blur(10px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-.jamam-modal-overlay.active { opacity: 1; pointer-events: auto; }
-.jamam-modal { background: rgba(25, 22, 45, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; width: 90%; max-width: 420px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; }
-.jamam-modal-overlay.active .jamam-modal { transform: scale(1); }
-.modal-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
-.modal-header h3 { font-size: 1.25rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(135deg, var(--cyan) 0%, #4facfe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.close-btn { background: rgba(255, 255, 255, 0.08); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.modal-body { padding: 20px 24px; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+/* HEADER */
+header{width:100%;max-width:1040px;padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:rgba(11,11,13,0.85);border-bottom:1px solid rgba(212,175,55,0.25);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.logo{font-family:var(--font-en);font-size:1.5rem;font-weight:900;letter-spacing:2px;color:#fff;text-shadow:0 0 20px rgba(212,175,55,0.3)}
+.logo span{background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stats-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.stat-box{background:var(--bg-card);padding:8px 14px;border-radius:var(--radius-sm);border:var(--border-gold);font-weight:700;font-size:0.85rem;display:flex;align-items:center;gap:5px}
+.top-btn{background:var(--bg-card);border:var(--border-gold);color:var(--gold-primary);padding:9px 14px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s}
+.top-btn:hover{background:#1f1d16;box-shadow:0 0 15px var(--gold-glow)}
+.top-btn.active{background:rgba(212,175,55,0.15);color:var(--gold-light)}
 
-/* Language Options */
-.lang-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
-.lang-btn:hover { background: rgba(0, 242, 254, 0.1); border-color: var(--cyan); }
-.lang-btn.active { background: rgba(0, 242, 254, 0.2); border-color: var(--cyan); color: var(--cyan); }
+/* MAIN */
+main{width:100%;max-width:1040px;padding:1.5rem;flex:1}
 
-/* Shop Items */
-.shop-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 16px; text-align: center; }
-.shop-item .item-icon { font-size: 2rem; margin-bottom: 8px; }
-.shop-item .item-title { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
-.shop-item .item-cost { font-size: 0.8rem; color: var(--gold); margin-bottom: 12px; }
-.btn-buy { background: linear-gradient(135deg, var(--cyan) 0%, #4facfe 100%); color: #080711; border: none; padding: 8px 16px; font-weight: 700; border-radius: 20px; cursor: pointer; width: 100%; }
-.btn-buy:disabled { background: rgba(255, 255, 255, 0.1); color: #888; cursor: not-allowed; }
+/* ACTIONS */
+.hub-actions{display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.btn-secondary{background:var(--bg-card);border:var(--border-gold);color:var(--text-main);padding:11px 24px;border-radius:var(--radius-pill);font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--font-ar)}
+.btn-secondary:hover{background:#1f1d16;box-shadow:0 0 15px var(--gold-glow)}
 
-/* Achievements */
-.badge-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.badge-card.unlocked { background: rgba(0, 242, 254, 0.05); border-color: rgba(0, 242, 254, 0.3); box-shadow: 0 0 15px rgba(0, 242, 254, 0.1); }
-.badge-icon { font-size: 2.2rem; margin-bottom: 8px; filter: grayscale(100%); opacity: 0.4; }
-.badge-card.unlocked .badge-icon { filter: grayscale(0%); opacity: 1; }
-.badge-title { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
-.badge-desc { font-size: 0.75rem; color: #a0a5c0; line-height: 1.3; }
+/* FEATURED CARD */
+.featured{position:relative;border-radius:var(--radius-lg);background:linear-gradient(180deg,rgba(25,23,20,0.95) 0%,rgba(14,13,11,0.98) 100%);padding:3rem 2rem;margin:0 0 2rem 0;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 30px rgba(212,175,55,0.15);overflow:hidden}
+.featured::before{content:'';position:absolute;inset:0;border-radius:var(--radius-lg);padding:1.5px;background:var(--gold-gradient);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.featured::after{content:'♛';position:absolute;top:50%;right:5%;transform:translateY(-50%);font-size:12rem;color:rgba(212,175,55,0.04);pointer-events:none}
+.featured h2{font-family:var(--font-ar);font-weight:900;font-size:clamp(1.8rem,5vw,2.5rem);margin-bottom:12px;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.featured p{color:var(--text-muted);font-size:1rem;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.7}
+.btn{background:var(--gold-gradient);color:#0b0b0d;font-family:var(--font-ar);font-weight:900;font-size:1.05rem;letter-spacing:1px;padding:15px 40px;border:none;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 20px rgba(212,175,55,0.35);transition:all 0.3s ease;text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(1.15);box-shadow:0 8px 30px rgba(212,175,55,0.5);transform:translateY(-2px)}
+
+/* GAMES GRID */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px;margin-bottom:2rem}
+.game-card{background:var(--bg-card);border-radius:var(--radius-sm);border:var(--border-gold);padding:1.5rem 1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-decoration:none;color:var(--text-main);box-shadow:0 10px 30px -10px rgba(0,0,0,0.8);transition:all 0.4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden}
+.game-card::before{content:'';position:absolute;inset:0;background:var(--gold-gradient);opacity:0;transition:opacity 0.3s;pointer-events:none;mix-blend-mode:overlay}
+.game-card:hover{transform:translateY(-8px);border-color:var(--gold-primary);box-shadow:0 15px 35px rgba(0,0,0,0.9),0 0 25px rgba(212,175,55,0.3)}
+.game-card:hover::before{opacity:0.05}
+.game-card .icon{font-size:2.5rem;filter:drop-shadow(0 0 10px rgba(212,175,55,0.3))}
+.game-card h3{font-size:0.95rem;font-weight:700;text-align:center}
+
+/* FOOTER */
+footer{width:100%;max-width:1040px;padding:25px 20px;text-align:center;color:var(--text-muted);font-size:0.85rem;border-top:1px solid rgba(212,175,55,0.15);font-family:var(--font-en);letter-spacing:1px}
+
+/* MODALS */
+.jamam-modal-overlay{position:fixed;inset:0;background:rgba(5,5,8,0.88);backdrop-filter:blur(12px);z-index:9999;display:flex;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease;padding:20px}
+.jamam-modal-overlay.active{opacity:1;pointer-events:auto}
+.jamam-modal{background:linear-gradient(180deg,#1a1814 0%,#0d0c09 100%);border:1px solid rgba(212,175,55,0.4);border-radius:var(--radius-lg);width:100%;max-width:440px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,0.8),0 0 40px rgba(212,175,55,0.15);transform:scale(0.95);transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);overflow:hidden}
+.jamam-modal-overlay.active .jamam-modal{transform:scale(1)}
+.modal-header{padding:20px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,175,55,0.2)}
+.modal-header h3{font-size:1.15rem;font-weight:900;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px}
+.close-btn{background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);color:var(--gold-primary);width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.close-btn:hover{background:rgba(212,175,55,0.2)}
+.modal-body{padding:20px 24px;overflow-y:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+
+/* LANGUAGE OPTIONS */
+.lang-btn{background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);color:var(--text-main);padding:14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;font-family:var(--font-ar);transition:all 0.2s;text-align:center}
+.lang-btn:hover{background:rgba(212,175,55,0.15);border-color:var(--gold-primary)}
+.lang-btn.active{background:rgba(212,175,55,0.25);border-color:var(--gold-primary);color:var(--gold-light);box-shadow:0 0 15px var(--gold-glow)}
+
+/* SHOP */
+.shop-item{background:rgba(212,175,55,0.03);border:1px solid rgba(212,175,55,0.2);border-radius:var(--radius-sm);padding:18px 14px;text-align:center}
+.shop-item .item-icon{font-size:2.2rem;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(212,175,55,0.3))}
+.shop-item .item-title{font-size:0.85rem;font-weight:700;margin-bottom:5px;color:var(--text-main)}
+.shop-item .item-cost{font-size:0.8rem;color:var(--gold-primary);margin-bottom:12px;font-weight:700}
+.btn-buy{background:var(--gold-gradient);color:#0b0b0d;border:none;padding:9px 16px;font-weight:900;border-radius:var(--radius-sm);cursor:pointer;width:100%;font-family:var(--font-ar);transition:all 0.2s}
+.btn-buy:hover{filter:brightness(1.15)}
+.btn-buy:disabled{background:rgba(255,255,255,0.08);color:#666;cursor:not-allowed;filter:none}
+
+/* ACHIEVEMENTS */
+.badge-card{background:rgba(212,175,55,0.03);border:1px solid rgba(212,175,55,0.15);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.badge-card.unlocked{background:rgba(212,175,55,0.1);border-color:rgba(212,175,55,0.5);box-shadow:0 0 20px rgba(212,175,55,0.15)}
+.badge-icon{font-size:2.2rem;margin-bottom:8px;filter:grayscale(100%);opacity:0.35}
+.badge-card.unlocked .badge-icon{filter:grayscale(0%);opacity:1;filter:drop-shadow(0 0 10px var(--gold-primary))}
+.badge-title{font-size:0.85rem;font-weight:700;color:var(--text-main);margin-bottom:4px}
+.badge-desc{font-size:0.7rem;color:var(--text-muted);line-height:1.4}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(212,175,55,0.3);border-radius:3px}
+
+@media(max-width:560px){
+  header{padding:1rem 1.2rem}
+  .logo{font-size:1.2rem}
+  main{padding:1.2rem}
+  .featured{padding:2rem 1.2rem}
+  .featured::after{font-size:8rem}
+}
 </style>
 </head>
 <body>
@@ -70,8 +124,8 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
   <div class="stats-bar">
     <button id="btn-lang-toggle" class="top-btn" title="Change Language">🌐</button>
     <button id="btn-audio-toggle" class="top-btn" title="Toggle Music">🎵 <span id="txt-audio-status">OFF</span></button>
-    <div class="stat-box"><span id="lbl-level">المستوى:</span> <span id="ui-level" style="color:var(--cyan)">1</span></div>
-    <div class="stat-box"><span id="lbl-coins">العملات:</span> <span id="ui-coins" style="color:var(--gold)">0 🪙</span></div>
+    <div class="stat-box"><span id="lbl-level">المستوى:</span> <span id="ui-level" style="color:var(--gold-primary)">1</span></div>
+    <div class="stat-box"><span id="lbl-coins">العملات:</span> <span id="ui-coins" style="color:var(--gold-primary)">0 🪙</span></div>
   </div>
 </header>
 
@@ -83,11 +137,12 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 
   <div class="featured">
     <h2 id="lbl-title">صائد الرموز 🌹</h2>
-    <p id="lbl-desc" style="color:#b4c1d8">التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!</p>
+    <p id="lbl-desc" style="color:var(--text-muted)">التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!</p>
     <a href="games/neon-pulse.html" class="btn" id="lbl-play">العب الآن ⚡</a>
   </div>
 
   <div class="games-grid">
+    <a href="games/echo-pulse.html" class="game-card"><div class="icon">🔊</div><h3 id="game-13">نبض الصدى</h3></a>
     <a href="games/tower-of-glory.html" class="game-card"><div class="icon">🏛️</div><h3 id="game-12">برج المجد</h3></a>
     <a href="games/aura-dash.html" class="game-card"><div class="icon">🏃</div><h3 id="game-10">أورا داش</h3></a>
     <a href="games/pulse-blade.html" class="game-card"><div class="icon">🌀</div><h3 id="game-1">نبض الشفرة</h3></a>
@@ -131,7 +186,7 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
   </div>
 </div>
 
-<footer>JAMAM GAMES © 2026</footer>
+<footer>JAMAM GAMES © 2026 · ROYAL EDITION</footer>
 
 <!-- JAMAM System Core & Audio -->
 <script src="./js/jamam-core.js"></script>
@@ -141,11 +196,11 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
 
 <script>
   const HUB_I18N = {
-    ar: { lvl:"المستوى:", coins:"العملات:", shop:"متجر العملات", ach:"الإنجازات", title:"صائد الرموز 🌹", desc:"التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!", play:"العب الآن ⚡", g1:"نبض الشفرة", g2:"السقوط المداري", g3:"أوربت سويتش", g6:"بيت سلاشر", g7:"شبح الماضي", g8:"الأرضية المتلاشية", g9:"صدى الظلام", g10:"أورا داش", g12:"برج المجد" },
-    en: { lvl:"Level:", coins:"Coins:", shop:"Coin Shop", ach:"Achievements", title:"Emoji Hunter 🌹", desc:"Collect roses, hearts, and gifts... avoid the sneaky skull ☠️!", play:"Play Now ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Tower of Glory" },
-    es: { lvl:"Nivel:", coins:"Monedas:", shop:"Tienda", ach:"Logros", title:"Cazador de Emojis 🌹", desc:"Recoge rosas, corazones y regalos... ¡evita la calavera ☠️!", play:"Jugar ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Torre de la Gloria" },
-    fr: { lvl:"Niveau:", coins:"Pièces:", shop:"Boutique", ach:"Succès", title:"Chasseur d'Emojis 🌹", desc:"Collectez des roses, cœurs et cadeaux... évitez le crâne ☠️!", play:"Jouer ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Tour de Gloire" },
-    de: { lvl:"Level:", coins:"Münzen:", shop:"Shop", ach:"Erfolge", title:"Emoji Jäger 🌹", desc:"Sammle Rosen, Herzen und Geschenke... meide den Schädel ☠️!", play:"Spielen ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Turm des Ruhms" }
+    ar: { lvl:"المستوى:", coins:"العملات:", shop:"متجر العملات", ach:"الإنجازات", title:"صائد الرموز 🌹", desc:"التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!", play:"العب الآن ⚡", g1:"نبض الشفرة", g2:"السقوط المداري", g3:"أوربت سويتش", g6:"بيت سلاشر", g7:"شبح الماضي", g8:"الأرضية المتلاشية", g9:"صدى الظلام", g10:"أورا داش", g12:"برج المجد", g13:"نبض الصدى" },
+    en: { lvl:"Level:", coins:"Coins:", shop:"Coin Shop", ach:"Achievements", title:"Emoji Hunter 🌹", desc:"Collect roses, hearts, and gifts... avoid the sneaky skull ☠️!", play:"Play Now ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Tower of Glory", g13:"Echo Pulse" },
+    es: { lvl:"Nivel:", coins:"Monedas:", shop:"Tienda", ach:"Logros", title:"Cazador de Emojis 🌹", desc:"Recoge rosas, corazones y regalos... ¡evita la calavera ☠️!", play:"Jugar ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Torre de la Gloria", g13:"Echo Pulse" },
+    fr: { lvl:"Niveau:", coins:"Pièces:", shop:"Boutique", ach:"Succès", title:"Chasseur d'Emojis 🌹", desc:"Collectez des roses, cœurs et cadeaux... évitez le crâne ☠️!", play:"Jouer ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Tour de Gloire", g13:"Echo Pulse" },
+    de: { lvl:"Level:", coins:"Münzen:", shop:"Shop", ach:"Erfolge", title:"Emoji Jäger 🌹", desc:"Sammle Rosen, Herzen und Geschenke... meide den Schädel ☠️!", play:"Spielen ⚡", g1:"Pulse Blade", g2:"Orbit Drop", g3:"Orbit Switch", g6:"Beat Slasher", g7:"Ghost of Me", g8:"Vanishing Floor", g9:"Echo Sonar", g10:"Aura Dash", g12:"Turm des Ruhms", g13:"Echo Pulse" }
   };
 
   let currentLang = localStorage.getItem('jamam_games_lang') || 'ar';
@@ -159,16 +214,10 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
     document.getElementById('lbl-title').textContent = t.title;
     document.getElementById('lbl-desc').textContent = t.desc;
     document.getElementById('lbl-play').textContent = t.play;
-    document.getElementById('game-1').textContent = t.g1;
-    document.getElementById('game-2').textContent = t.g2;
-    document.getElementById('game-3').textContent = t.g3;
-    document.getElementById('game-6').textContent = t.g6;
-    document.getElementById('game-7').textContent = t.g7;
-    document.getElementById('game-8').textContent = t.g8;
-    document.getElementById('game-9').textContent = t.g9;
-    document.getElementById('game-10').textContent = t.g10;
-    document.getElementById('game-12').textContent = t.g12;
-    
+    ['1','2','3','6','7','8','9','10','12','13'].forEach(n => {
+      const el = document.getElementById('game-' + n);
+      if(el) el.textContent = t['g' + n];
+    });
     document.documentElement.lang = currentLang;
     document.documentElement.dir = (currentLang === 'ar') ? 'rtl' : 'ltr';
     localStorage.setItem('jamam_games_lang', currentLang);
@@ -177,7 +226,6 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
   document.addEventListener('DOMContentLoaded', () => {
     applyHubLanguage();
 
-    // إعدادات اللغة
     const langOverlay = document.getElementById('lang-modal-overlay');
     document.getElementById('btn-lang-toggle').onclick = () => {
       const grid = document.getElementById('lang-grid');
@@ -194,7 +242,6 @@ footer{text-align:center;color:#666;margin-top:auto;padding:30px;font-size:0.9re
       if(window.updateHubCoins) window.updateHubCoins();
     };
 
-    // الأكواد السابقة (العملات، الصوت، الإنجازات، المتجر)
     function updateHubCoins() {
       if(window.JAMAM) {
         const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
