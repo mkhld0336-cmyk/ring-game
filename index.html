@@ -31,21 +31,26 @@
 html,body{background-color:var(--bg-main);color:var(--text-main);font-family:var(--font-ar);min-height:100vh;overflow-x:hidden;background-image:radial-gradient(circle at 50% 0%,#1f1b13 0%,var(--bg-main) 70%)}
 body{display:flex;flex-direction:column;align-items:center}
 
+/* HEADER */
 header{width:100%;max-width:1040px;padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:rgba(11,11,13,0.85);border-bottom:1px solid rgba(212,175,55,0.25);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .logo{font-family:var(--font-en);font-size:1.5rem;font-weight:900;letter-spacing:2px;color:#fff;text-shadow:0 0 20px rgba(212,175,55,0.3)}
 .logo span{background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .stats-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .stat-box{background:var(--bg-card);padding:8px 14px;border-radius:var(--radius-sm);border:var(--border-gold);font-weight:700;font-size:0.85rem;display:flex;align-items:center;gap:5px}
-.top-btn{background:var(--bg-card);border:var(--border-gold);color:var(--gold-primary);padding:9px 14px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s}
+.top-btn{background:var(--bg-card);border:var(--border-gold);color:var(--gold-primary);padding:9px 14px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;font-family:var(--font-ar)}
 .top-btn:hover{background:#1f1d16;box-shadow:0 0 15px var(--gold-glow)}
 .top-btn.active{background:rgba(212,175,55,0.15);color:var(--gold-light)}
+.daily-badge{background:#ff287b;color:#fff;border-radius:50%;width:18px;height:18px;display:none;align-items:center;justify-content:center;font-size:10px;font-weight:900;margin-inline-start:4px}
 
+/* MAIN */
 main{width:100%;max-width:1040px;padding:1.5rem;flex:1}
 
-.hub-actions{display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
-.btn-secondary{background:var(--bg-card);border:var(--border-gold);color:var(--text-main);padding:11px 24px;border-radius:var(--radius-pill);font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--font-ar)}
+/* ACTIONS */
+.hub-actions{display:flex;gap:10px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.btn-secondary{background:var(--bg-card);border:var(--border-gold);color:var(--text-main);padding:11px 20px;border-radius:var(--radius-pill);font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--font-ar);display:inline-flex;align-items:center;gap:6px;font-size:0.88rem}
 .btn-secondary:hover{background:#1f1d16;box-shadow:0 0 15px var(--gold-glow)}
 
+/* FEATURED CARD */
 .featured{position:relative;border-radius:var(--radius-lg);background:linear-gradient(180deg,rgba(25,23,20,0.95) 0%,rgba(14,13,11,0.98) 100%);padding:3rem 2rem;margin:0 0 2rem 0;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 30px rgba(212,175,55,0.15);overflow:hidden}
 .featured::before{content:'';position:absolute;inset:0;border-radius:var(--radius-lg);padding:1.5px;background:var(--gold-gradient);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
 .featured::after{content:'♛';position:absolute;top:50%;right:5%;transform:translateY(-50%);font-size:12rem;color:rgba(212,175,55,0.04);pointer-events:none}
@@ -54,6 +59,7 @@ main{width:100%;max-width:1040px;padding:1.5rem;flex:1}
 .btn{background:var(--gold-gradient);color:#0b0b0d;font-family:var(--font-ar);font-weight:900;font-size:1.05rem;letter-spacing:1px;padding:15px 40px;border:none;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 20px rgba(212,175,55,0.35);transition:all 0.3s ease;text-decoration:none;display:inline-block}
 .btn:hover{filter:brightness(1.15);box-shadow:0 8px 30px rgba(212,175,55,0.5);transform:translateY(-2px)}
 
+/* GAMES GRID */
 .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px;margin-bottom:2rem}
 .game-card{background:var(--bg-card);border-radius:var(--radius-sm);border:var(--border-gold);padding:1.5rem 1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-decoration:none;color:var(--text-main);box-shadow:0 10px 30px -10px rgba(0,0,0,0.8);transition:all 0.4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden}
 .game-card::before{content:'';position:absolute;inset:0;background:var(--gold-gradient);opacity:0;transition:opacity 0.3s;pointer-events:none;mix-blend-mode:overlay}
@@ -62,37 +68,57 @@ main{width:100%;max-width:1040px;padding:1.5rem;flex:1}
 .game-card .icon{font-size:2.5rem;filter:drop-shadow(0 0 10px rgba(212,175,55,0.3))}
 .game-card h3{font-size:0.95rem;font-weight:700;text-align:center}
 
+/* FOOTER */
 footer{width:100%;max-width:1040px;padding:25px 20px;text-align:center;color:var(--text-muted);font-size:0.85rem;border-top:1px solid rgba(212,175,55,0.15);font-family:var(--font-en);letter-spacing:1px}
 
+/* MODALS */
 .jamam-modal-overlay{position:fixed;inset:0;background:rgba(5,5,8,0.88);backdrop-filter:blur(12px);z-index:9999;display:flex;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease;padding:20px}
 .jamam-modal-overlay.active{opacity:1;pointer-events:auto}
 .jamam-modal{background:linear-gradient(180deg,#1a1814 0%,#0d0c09 100%);border:1px solid rgba(212,175,55,0.4);border-radius:var(--radius-lg);width:100%;max-width:440px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,0.8),0 0 40px rgba(212,175,55,0.15);transform:scale(0.95);transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);overflow:hidden}
 .jamam-modal-overlay.active .jamam-modal{transform:scale(1)}
-.modal-header{padding:20px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,175,55,0.2)}
-.modal-header h3{font-size:1.15rem;font-weight:900;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px}
-.close-btn{background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);color:var(--gold-primary);width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.modal-header{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,175,55,0.2)}
+.modal-header h3{font-size:1.1rem;font-weight:900;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px}
+.close-btn{background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);color:var(--gold-primary);width:32px;height:32px;border-radius:50%;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;font-family:inherit}
 .close-btn:hover{background:rgba(212,175,55,0.2)}
-.modal-body{padding:20px 24px;overflow-y:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.modal-body{padding:18px 22px;overflow-y:auto}
 
-.lang-btn{background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);color:var(--text-main);padding:14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;font-family:var(--font-ar);transition:all 0.2s;text-align:center}
+/* LANGUAGE OPTIONS */
+.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.lang-btn{background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);color:var(--text-main);padding:12px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;font-family:var(--font-ar);transition:all 0.2s;text-align:center;font-size:0.88rem}
 .lang-btn:hover{background:rgba(212,175,55,0.15);border-color:var(--gold-primary)}
 .lang-btn.active{background:rgba(212,175,55,0.25);border-color:var(--gold-primary);color:var(--gold-light);box-shadow:0 0 15px var(--gold-glow)}
 
-.shop-item{background:rgba(212,175,55,0.03);border:1px solid rgba(212,175,55,0.2);border-radius:var(--radius-sm);padding:18px 14px;text-align:center}
-.shop-item .item-icon{font-size:2.2rem;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(212,175,55,0.3))}
-.shop-item .item-title{font-size:0.85rem;font-weight:700;margin-bottom:5px;color:var(--text-main)}
-.shop-item .item-cost{font-size:0.8rem;color:var(--gold-primary);margin-bottom:12px;font-weight:700}
-.btn-buy{background:var(--gold-gradient);color:#0b0b0d;border:none;padding:9px 16px;font-weight:900;border-radius:var(--radius-sm);cursor:pointer;width:100%;font-family:var(--font-ar);transition:all 0.2s}
+/* SHOP */
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.shop-item{background:rgba(212,175,55,0.03);border:1px solid rgba(212,175,55,0.2);border-radius:var(--radius-sm);padding:16px 12px;text-align:center}
+.shop-item .item-icon{font-size:2rem;margin-bottom:8px;filter:drop-shadow(0 0 10px rgba(212,175,55,0.3))}
+.shop-item .item-title{font-size:0.82rem;font-weight:700;margin-bottom:5px;color:var(--text-main)}
+.shop-item .item-cost{font-size:0.78rem;color:var(--gold-primary);margin-bottom:10px;font-weight:700}
+.btn-buy{background:var(--gold-gradient);color:#0b0b0d;border:none;padding:8px 14px;font-weight:900;border-radius:var(--radius-sm);cursor:pointer;width:100%;font-family:var(--font-ar);transition:all 0.2s;font-size:0.82rem}
 .btn-buy:hover{filter:brightness(1.15)}
 .btn-buy:disabled{background:rgba(255,255,255,0.08);color:#666;cursor:not-allowed;filter:none}
 
-.badge-card{background:rgba(212,175,55,0.03);border:1px solid rgba(212,175,55,0.15);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center}
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.badge-card{background:rgba(212,175,55,0.03);border:1px solid rgba(212,175,55,0.15);border-radius:var(--radius-sm);padding:14px 10px;text-align:center;display:flex;flex-direction:column;align-items:center}
 .badge-card.unlocked{background:rgba(212,175,55,0.1);border-color:rgba(212,175,55,0.5);box-shadow:0 0 20px rgba(212,175,55,0.15)}
-.badge-icon{font-size:2.2rem;margin-bottom:8px;filter:grayscale(100%);opacity:0.35}
+.badge-icon{font-size:2rem;margin-bottom:6px;filter:grayscale(100%);opacity:0.35}
 .badge-card.unlocked .badge-icon{filter:grayscale(0%);opacity:1;filter:drop-shadow(0 0 10px var(--gold-primary))}
-.badge-title{font-size:0.85rem;font-weight:700;color:var(--text-main);margin-bottom:4px}
-.badge-desc{font-size:0.7rem;color:var(--text-muted);line-height:1.4}
+.badge-title{font-size:0.8rem;font-weight:700;color:var(--text-main);margin-bottom:3px}
+.badge-desc{font-size:0.68rem;color:var(--text-muted);line-height:1.3}
 
+/* DAILY MISSIONS */
+.mission-row{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(212,175,55,0.03);border:1px solid rgba(212,175,55,0.15);border-radius:var(--radius-sm);margin-bottom:10px}
+.mission-icon{font-size:1.8rem;flex-shrink:0}
+.mission-info{flex:1;min-width:0}
+.mission-text{font-size:0.85rem;font-weight:700;color:var(--text-main);margin-bottom:6px}
+.mission-bar{height:5px;background:#2a2518;border-radius:6px;overflow:hidden}
+.mission-bar>div{height:100%;background:var(--gold-gradient);transition:width 0.3s;box-shadow:0 0 8px var(--gold-primary)}
+.mission-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(212,175,55,0.3);color:var(--text-muted);padding:8px 12px;border-radius:var(--radius-pill);font-size:0.75rem;font-weight:900;cursor:pointer;font-family:var(--font-ar);min-width:80px;transition:all 0.2s}
+.mission-btn:disabled{cursor:not-allowed;opacity:0.5}
+.mission-btn.claimable{background:var(--gold-gradient);color:#0b0b0d;border:none;box-shadow:0 0 15px rgba(212,175,55,0.4);cursor:pointer;opacity:1}
+
+/* SCROLLBAR */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(212,175,55,0.3);border-radius:3px}
@@ -103,6 +129,8 @@ footer{width:100%;max-width:1040px;padding:25px 20px;text-align:center;color:var
   main{padding:1.2rem}
   .featured{padding:2rem 1.2rem}
   .featured::after{font-size:8rem}
+  .hub-actions{gap:8px}
+  .btn-secondary{padding:10px 14px;font-size:0.8rem}
 }
 </style>
 </head>
@@ -122,6 +150,7 @@ footer{width:100%;max-width:1040px;padding:25px 20px;text-align:center;color:var
   <div class="hub-actions">
     <button id="btn-open-shop" class="btn-secondary">🛒 <span id="lbl-shop">متجر العملات</span></button>
     <button id="btn-open-achievements" class="btn-secondary">🏆 <span id="lbl-ach">الإنجازات</span></button>
+    <button id="btn-open-daily" class="btn-secondary">🎯 <span id="lbl-daily">المهام اليومية</span> <span id="dailyBadge" class="daily-badge"></span></button>
     <button id="btn-feedback" class="btn-secondary" onclick="window.open('https://wa.me/966592859590?text=' + encodeURIComponent('مرحباً، عندي ملاحظة على منصة JAMAM GAMES'), '_blank')">💬 ملاحظاتك</button>
   </div>
 
@@ -149,7 +178,7 @@ footer{width:100%;max-width:1040px;padding:25px 20px;text-align:center;color:var
 <div id="lang-modal-overlay" class="jamam-modal-overlay">
   <div class="jamam-modal">
     <div class="modal-header"><h3>Language / اللغة</h3><button class="close-btn" id="btn-close-lang">✕</button></div>
-    <div class="modal-body" id="lang-grid"></div>
+    <div class="modal-body"><div class="lang-grid" id="lang-grid"></div></div>
   </div>
 </div>
 
@@ -158,156 +187,228 @@ footer{width:100%;max-width:1040px;padding:25px 20px;text-align:center;color:var
   <div class="jamam-modal">
     <div class="modal-header"><h3>JAMAM Coin Shop</h3><button class="close-btn" id="btn-close-shop">✕</button></div>
     <div class="modal-body">
-      <div class="shop-item" data-item="neon_theme" data-cost="500">
-        <div class="item-icon">🌈</div><div class="item-title">Cyber Neon Theme</div><div class="item-cost">🪙 500</div><button class="btn-buy">Buy</button>
-      </div>
-      <div class="shop-item" data-item="gold_avatar" data-cost="1000">
-        <div class="item-icon">👑</div><div class="item-title">Golden Crown</div><div class="item-cost">🪙 1000</div><button class="btn-buy">Buy</button>
+      <div class="shop-grid">
+        <div class="shop-item" data-item="neon_theme" data-cost="500">
+          <div class="item-icon">🌈</div><div class="item-title">Cyber Neon Theme</div><div class="item-cost">🪙 500</div><button class="btn-buy">Buy</button>
+        </div>
+        <div class="shop-item" data-item="gold_avatar" data-cost="1000">
+          <div class="item-icon">👑</div><div class="item-title">Golden Crown</div><div class="item-cost">🪙 1000</div><button class="btn-buy">Buy</button>
+        </div>
+        <div class="shop-item" data-item="shield_pack" data-cost="300">
+          <div class="item-icon">🛡️</div><div class="item-title">Shield Pack (5x)</div><div class="item-cost">🪙 300</div><button class="btn-buy">Buy</button>
+        </div>
+        <div class="shop-item" data-item="magnet_pack" data-cost="400">
+          <div class="item-icon">🧲</div><div class="item-title">Magnet Pack (5x)</div><div class="item-cost">🪙 400</div><button class="btn-buy">Buy</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Achievements Modal -->
-<div id="jamam-modal-overlay" class="jamam-modal-overlay">
+<div id="ach-modal-overlay" class="jamam-modal-overlay">
   <div class="jamam-modal">
-    <div class="modal-header"><h3>Achievement Gallery</h3><button class="close-btn" id="btn-close-modal">✕</button></div>
-    <div class="modal-body" id="achievement-grid-container"></div>
+    <div class="modal-header"><h3>Achievement Gallery</h3><button class="close-btn" id="btn-close-ach">✕</button></div>
+    <div class="modal-body"><div class="ach-grid" id="ach-container"></div></div>
+  </div>
+</div>
+
+<!-- Daily Missions Modal -->
+<div id="daily-modal-overlay" class="jamam-modal-overlay">
+  <div class="jamam-modal">
+    <div class="modal-header"><h3>🎯 المهام اليومية</h3><button class="close-btn" id="btn-close-daily">✕</button></div>
+    <div class="modal-body" id="daily-missions-list">
+      <p style="color:var(--text-muted);text-align:center;padding:20px 0">جاري تحميل المهام...</p>
+    </div>
   </div>
 </div>
 
 <footer>JAMAM GAMES © 2026 · ROYAL EDITION</footer>
 
+<!-- JAMAM Core Scripts -->
 <script src="./js/jamam-core.js"></script>
 <script src="./js/jamam-progress.js"></script>
 <script src="./js/jamam-achievements.js"></script>
 <script src="./js/jamam-audio.js"></script>
+<script src="./js/jamam-daily.js"></script>
 
 <script>
-  const HUB_I18N = {
-    ar: { lvl:"المستوى:", coins:"العملات:", shop:"متجر العملات", ach:"الإنجازات", title:"صائد الرموز 🌹", desc:"التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!", play:"العب الآن ⚡", g1:"برج المجد", g2:"أورا داش", g3:"نبض الصدى", g4:"نبض الشفرة", g5:"السقوط المداري", g6:"أوربت سويتش", g7:"بيت سلاشر", g8:"شبح الماضي", g9:"الأرضية المتلاشية", g10:"صدى الظلام" },
-    en: { lvl:"Level:", coins:"Coins:", shop:"Coin Shop", ach:"Achievements", title:"Emoji Hunter 🌹", desc:"Collect roses, hearts, and gifts... avoid the sneaky skull ☠️!", play:"Play Now ⚡", g1:"Tower of Glory", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" },
-    es: { lvl:"Nivel:", coins:"Monedas:", shop:"Tienda", ach:"Logros", title:"Cazador de Emojis 🌹", desc:"Recoge rosas, corazones y regalos... ¡evita la calavera ☠️!", play:"Jugar ⚡", g1:"Torre de la Gloria", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" },
-    fr: { lvl:"Niveau:", coins:"Pièces:", shop:"Boutique", ach:"Succès", title:"Chasseur d'Emojis 🌹", desc:"Collectez des roses, cœurs et cadeaux... évitez le crâne ☠️!", play:"Jouer ⚡", g1:"Tour de Gloire", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" },
-    de: { lvl:"Level:", coins:"Münzen:", shop:"Shop", ach:"Erfolge", title:"Emoji Jäger 🌹", desc:"Sammle Rosen, Herzen und Geschenke... meide den Schädel ☠️!", play:"Spielen ⚡", g1:"Turm des Ruhms", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" }
+// ============================================================
+// HUB LANGUAGE SYSTEM
+// ============================================================
+const HUB_I18N = {
+  ar: { lvl:"المستوى:", coins:"العملات:", shop:"متجر العملات", ach:"الإنجازات", daily:"المهام اليومية", title:"صائد الرموز 🌹", desc:"التقط الورود والقلوب والهدايا... واحذر الجمجمة المخادعة ☠️!", play:"العب الآن ⚡", g1:"برج المجد", g2:"أورا داش", g3:"نبض الصدى", g4:"نبض الشفرة", g5:"السقوط المداري", g6:"أوربت سويتش", g7:"بيت سلاشر", g8:"شبح الماضي", g9:"الأرضية المتلاشية", g10:"صدى الظلام" },
+  en: { lvl:"Level:", coins:"Coins:", shop:"Coin Shop", ach:"Achievements", daily:"Daily Missions", title:"Emoji Hunter 🌹", desc:"Collect roses, hearts, and gifts... avoid the sneaky skull ☠️!", play:"Play Now ⚡", g1:"Tower of Glory", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" },
+  es: { lvl:"Nivel:", coins:"Monedas:", shop:"Tienda", ach:"Logros", daily:"Misiones Diarias", title:"Cazador de Emojis 🌹", desc:"Recoge rosas, corazones y regalos... ¡evita la calavera ☠️!", play:"Jugar ⚡", g1:"Torre de Gloria", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" },
+  fr: { lvl:"Niveau:", coins:"Pièces:", shop:"Boutique", ach:"Succès", daily:"Missions Quotidiennes", title:"Chasseur d'Emojis 🌹", desc:"Collectez des roses, cœurs et cadeaux... évitez le crâne ☠️!", play:"Jouer ⚡", g1:"Tour de Gloire", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" },
+  de: { lvl:"Level:", coins:"Münzen:", shop:"Shop", ach:"Erfolge", daily:"Tägliche Missionen", title:"Emoji Jäger 🌹", desc:"Sammle Rosen, Herzen und Geschenke... meide den Schädel ☠️!", play:"Spielen ⚡", g1:"Turm des Ruhms", g2:"Aura Dash", g3:"Echo Pulse", g4:"Pulse Blade", g5:"Orbit Drop", g6:"Orbit Switch", g7:"Beat Slasher", g8:"Ghost of Me", g9:"Vanishing Floor", g10:"Echo Sonar" }
+};
+
+let currentLang = localStorage.getItem('jamam_games_lang') || 'ar';
+
+function applyHubLanguage() {
+  const t = HUB_I18N[currentLang] || HUB_I18N.en;
+  const map = {
+    'lbl-level': t.lvl, 'lbl-coins': t.coins, 'lbl-shop': t.shop,
+    'lbl-ach': t.ach, 'lbl-daily': t.daily, 'lbl-title': t.title,
+    'lbl-desc': t.desc, 'lbl-play': t.play
+  };
+  for (let i = 1; i <= 10; i++) map['game-' + i] = t['g' + i];
+  
+  for (const [id, text] of Object.entries(map)) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+  
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = (currentLang === 'ar') ? 'rtl' : 'ltr';
+  localStorage.setItem('jamam_games_lang', currentLang);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  applyHubLanguage();
+
+  // ----- Language Picker -----
+  const langOverlay = document.getElementById('lang-modal-overlay');
+  document.getElementById('btn-lang-toggle').onclick = () => {
+    const grid = document.getElementById('lang-grid');
+    const langs = [
+      {c:'ar', n:'العربية'}, {c:'en', n:'English'}, {c:'es', n:'Español'},
+      {c:'fr', n:'Français'}, {c:'de', n:'Deutsch'}
+    ];
+    grid.innerHTML = langs.map(l => 
+      `<button class="lang-btn ${l.c===currentLang?'active':''}" onclick="setLang('${l.c}')">${l.n}</button>`
+    ).join('');
+    langOverlay.classList.add('active');
+  };
+  document.getElementById('btn-close-lang').onclick = () => langOverlay.classList.remove('active');
+
+  window.setLang = (lang) => {
+    currentLang = lang;
+    applyHubLanguage();
+    langOverlay.classList.remove('active');
+    if (window.updateHubCoins) window.updateHubCoins();
   };
 
-  let currentLang = localStorage.getItem('jamam_games_lang') || 'ar';
-
-  function applyHubLanguage() {
-    const t = HUB_I18N[currentLang] || HUB_I18N.en;
-    document.getElementById('lbl-level').textContent = t.lvl;
-    document.getElementById('lbl-coins').textContent = t.coins;
-    document.getElementById('lbl-shop').textContent = t.shop;
-    document.getElementById('lbl-ach').textContent = t.ach;
-    document.getElementById('lbl-title').textContent = t.title;
-    document.getElementById('lbl-desc').textContent = t.desc;
-    document.getElementById('lbl-play').textContent = t.play;
-    for(let i=1; i<=10; i++) {
-      const el = document.getElementById('game-' + i);
-      if(el) el.textContent = t['g' + i];
+  // ----- Update Coins HUD -----
+  function updateHubCoins() {
+    if (window.JAMAM) {
+      const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
+      const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
+      document.getElementById('ui-level').textContent = xpData.level || 1;
+      document.getElementById('ui-coins').textContent = (coinData.balance || 0) + ' 🪙';
     }
-    document.documentElement.lang = currentLang;
-    document.documentElement.dir = (currentLang === 'ar') ? 'rtl' : 'ltr';
-    localStorage.setItem('jamam_games_lang', currentLang);
   }
+  updateHubCoins();
+  window.updateHubCoins = updateHubCoins;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    applyHubLanguage();
-
-    const langOverlay = document.getElementById('lang-modal-overlay');
-    document.getElementById('btn-lang-toggle').onclick = () => {
-      const grid = document.getElementById('lang-grid');
-      const langs = [{c:'ar', n:'العربية'}, {c:'en', n:'English'}, {c:'es', n:'Español'}, {c:'fr', n:'Français'}, {c:'de', n:'Deutsch'}];
-      grid.innerHTML = langs.map(l => `<button class="lang-btn ${l.c===currentLang?'active':''}" onclick="setLang('${l.c}')">${l.n}</button>`).join('');
-      langOverlay.classList.add('active');
-    };
-    document.getElementById('btn-close-lang').onclick = () => langOverlay.classList.remove('active');
-
-    window.setLang = (lang) => {
-      currentLang = lang;
-      applyHubLanguage();
-      langOverlay.classList.remove('active');
-      if(window.updateHubCoins) window.updateHubCoins();
-    };
-
-    function updateHubCoins() {
-      if(window.JAMAM) {
-        const xpData = JAMAM.store.get(JAMAM.KEYS.xp, { level: 1 });
-        const coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
-        document.getElementById('ui-level').textContent = xpData.level || 1;
-        document.getElementById('ui-coins').textContent = (coinData.balance || 0) + ' 🪙';
-      }
-    }
-    updateHubCoins();
-    window.updateHubCoins = updateHubCoins;
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').then(reg => {
-        reg.addEventListener('updatefound', () => {
-          const newWorker = reg.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              newWorker.postMessage({ action: 'SKIP_WAITING' });
-              window.location.reload();
-            }
-          });
+  // ----- Service Worker -----
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            newWorker.postMessage({ action: 'SKIP_WAITING' });
+            window.location.reload();
+          }
         });
       });
-    }
+    }).catch(() => {});
+  }
 
-    const audioBtn = document.getElementById('btn-audio-toggle');
-    const statusTxt = document.getElementById('txt-audio-status');
-    if (audioBtn && window.JAMAM && window.JAMAM.ambientAudio) {
-      audioBtn.addEventListener('click', () => {
-        const isPlaying = window.JAMAM.ambientAudio.toggle();
-        audioBtn.classList.toggle('active', isPlaying);
-        statusTxt.innerText = isPlaying ? 'ON' : 'OFF';
-      });
-    }
+  // ----- Audio Toggle -----
+  const audioBtn = document.getElementById('btn-audio-toggle');
+  const statusTxt = document.getElementById('txt-audio-status');
+  if (audioBtn && window.JAMAM && window.JAMAM.ambientAudio) {
+    audioBtn.addEventListener('click', () => {
+      const isPlaying = window.JAMAM.ambientAudio.toggle();
+      audioBtn.classList.toggle('active', isPlaying);
+      statusTxt.innerText = isPlaying ? 'ON' : 'OFF';
+    });
+  }
 
-    const achOverlay = document.getElementById('jamam-modal-overlay');
-    document.getElementById('btn-open-achievements').onclick = () => {
-      const ALL_ACHIEVEMENTS = [
-        { id: 'blade_master', title: 'Blade Master', desc: 'Achieve a 10x combo in Pulse Blade.', icon: '⚡' },
-        { id: 'orbit_survivor', title: 'Deep Space', desc: 'Survive 30 seconds in Orbit Drop.', icon: '🪐' },
-        { id: 'pulse_master', title: 'Neon Lightning', desc: 'Score 500+ in Emoji Hunter.', icon: '🌩️' }
-      ];
-      const unlockedList = JAMAM.store.get(JAMAM.KEYS.achievements, []);
-      document.getElementById('achievement-grid-container').innerHTML = ALL_ACHIEVEMENTS.map(ach => {
-        const isUnlocked = unlockedList.includes(ach.id);
-        return `<div class="badge-card ${isUnlocked ? 'unlocked' : ''}">
-          <div class="badge-icon">${ach.icon}</div>
-          <div class="badge-title">${ach.title}</div>
-          <div class="badge-desc">${ach.desc}</div>
-        </div>`;
-      }).join('');
-      achOverlay.classList.add('active');
-    };
-    document.getElementById('btn-close-modal').onclick = () => achOverlay.classList.remove('active');
+  // ----- Shop Modal -----
+  const shopOverlay = document.getElementById('shop-modal-overlay');
+  document.getElementById('btn-open-shop').onclick = () => shopOverlay.classList.add('active');
+  document.getElementById('btn-close-shop').onclick = () => shopOverlay.classList.remove('active');
 
-    const shopOverlay = document.getElementById('shop-modal-overlay');
-    document.getElementById('btn-open-shop').onclick = () => shopOverlay.classList.add('active');
-    document.getElementById('btn-close-shop').onclick = () => shopOverlay.classList.remove('active');
-
-    document.querySelectorAll('.shop-item').forEach(card => {
-      const itemId = card.dataset.item;
-      const cost = parseInt(card.dataset.cost);
-      const buyBtn = card.querySelector('.btn-buy');
-      let inventory = JSON.parse(localStorage.getItem('jamam_inventory') || '[]');
-      if (inventory.includes(itemId)) { buyBtn.innerText = 'Owned'; buyBtn.disabled = true; }
-      buyBtn.addEventListener('click', () => {
-        let coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
-        if (coinData.balance >= cost && !inventory.includes(itemId)) {
-          coinData.balance -= cost; inventory.push(itemId);
-          JAMAM.store.set(JAMAM.KEYS.coins, coinData);
-          localStorage.setItem('jamam_inventory', JSON.stringify(inventory));
-          buyBtn.innerText = 'Owned'; buyBtn.disabled = true;
-          updateHubCoins(); alert('Purchase Successful!');
-        } else { alert('Not Enough Coins!'); }
-      });
+  document.querySelectorAll('.shop-item').forEach(card => {
+    const itemId = card.dataset.item;
+    const cost = parseInt(card.dataset.cost);
+    const buyBtn = card.querySelector('.btn-buy');
+    let inventory = JSON.parse(localStorage.getItem('jamam_inventory') || '[]');
+    if (inventory.includes(itemId)) { buyBtn.innerText = 'Owned'; buyBtn.disabled = true; }
+    
+    buyBtn.addEventListener('click', () => {
+      let coinData = JAMAM.store.get(JAMAM.KEYS.coins, { balance: 0 });
+      if (coinData.balance >= cost && !inventory.includes(itemId)) {
+        coinData.balance -= cost;
+        inventory.push(itemId);
+        JAMAM.store.set(JAMAM.KEYS.coins, coinData);
+        localStorage.setItem('jamam_inventory', JSON.stringify(inventory));
+        buyBtn.innerText = 'Owned'; buyBtn.disabled = true;
+        updateHubCoins();
+        alert('🎉 Purchase Successful!');
+      } else {
+        alert('Not Enough Coins! Keep playing.');
+      }
     });
   });
+
+  // ----- Achievements Modal -----
+  const achOverlay = document.getElementById('ach-modal-overlay');
+  const ALL_ACHIEVEMENTS = [
+    { id: 'blade_master', title: 'Blade Master', desc: 'Achieve a 10x combo in Pulse Blade', icon: '⚡' },
+    { id: 'orbit_survivor', title: 'Deep Space', desc: 'Survive 30 seconds in Orbit Drop', icon: '🪐' },
+    { id: 'pulse_master', title: 'Neon Lightning', desc: 'Score 500+ in Emoji Hunter', icon: '🌩️' },
+    { id: 'tower_king', title: 'Tower King', desc: 'Reach 20 blocks in Tower of Glory', icon: '🏛️' },
+    { id: 'aura_master', title: 'Aura Master', desc: 'Score 1000+ in Aura Dash', icon: '🌟' },
+    { id: 'boss_slayer', title: 'Boss Slayer', desc: 'Defeat the boss in Emoji Hunter', icon: '☠️' }
+  ];
+  
+  document.getElementById('btn-open-achievements').onclick = () => {
+    const unlockedList = JAMAM.store.get(JAMAM.KEYS.achievements, []);
+    const container = document.getElementById('ach-container');
+    container.innerHTML = ALL_ACHIEVEMENTS.map(ach => {
+      const isUnlocked = unlockedList.includes(ach.id);
+      return `<div class="badge-card ${isUnlocked ? 'unlocked' : ''}">
+        <div class="badge-icon">${ach.icon}</div>
+        <div class="badge-title">${ach.title}</div>
+        <div class="badge-desc">${ach.desc}</div>
+      </div>`;
+    }).join('');
+    achOverlay.classList.add('active');
+  };
+  document.getElementById('btn-close-ach').onclick = () => achOverlay.classList.remove('active');
+
+  // ----- Daily Missions Modal -----
+  const dailyOverlay = document.getElementById('daily-modal-overlay');
+  document.getElementById('btn-open-daily').onclick = () => {
+    if (window.JAMAM && JAMAM.daily) {
+      JAMAM.daily.renderList();
+    }
+    dailyOverlay.classList.add('active');
+  };
+  document.getElementById('btn-close-daily').onclick = () => dailyOverlay.classList.remove('active');
+
+  // Close on backdrop click
+  [langOverlay, shopOverlay, achOverlay, dailyOverlay].forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+  });
+
+  // Escape key closes modals
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      [langOverlay, shopOverlay, achOverlay, dailyOverlay].forEach(o => o.classList.remove('active'));
+    }
+  });
+});
 </script>
 </body>
 </html>
