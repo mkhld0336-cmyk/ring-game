@@ -106,6 +106,14 @@ canvas{display:block;width:100%;height:100%;touch-action:pan-y}
     <button class="btn btn-secondary" onclick="closeShop()" style="margin-top:12px">عودة</button>
   </section>
 
+  <!-- شاشة الإيقاف المؤقت الجديدة -->
+  <section id="pause-screen" class="overlay hidden">
+    <h1 class="logo" style="font-size:32px">استراحة محارب</h1>
+    <p class="description">اللعبة متوقفة مؤقتاً.</p>
+    <button class="btn" id="resumeBtn">استئناف ▶</button>
+    <button class="btn btn-secondary" id="quitBtn">الخروج للقائمة</button>
+  </section>
+
   <section id="levelComplete" class="overlay hidden">
     <h1 class="logo" style="color:#3cff8c;-webkit-text-fill-color:#3cff8c">🎉 مبروك!</h1>
     <p class="description">أكملت المستوى <span id="completedLevel">1</span>!<br>استعد للمستوى التالي.</p>
@@ -143,13 +151,36 @@ let gameSpeedMultiplier = 1;
 let slowMoUntil = 0, magnetUntil = 0;
 let shieldActive = false;
 let powerups = { shield: 0, magnet: 0, slow: 0 };
-
-// Dynamic Luck System (Jundee 4)
-let failStreak = 0;
-let luckBonus = 1;
-
-// Boss
+let failStreak = 0, luckBonus = 1;
 let boss = null;
+let animationId = null;
+
+// ============================================================
+// 1. الأصوات (تم إرجاعها)
+// ============================================================
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) audioCtx = new AC();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playSound(freq, type = 'sine', duration = 0.1, vol = 0.1) {
+  if (!audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e) {}
+}
 
 function loadPowerups() {
   try { const s = localStorage.getItem('jamam_powerups'); if(s) powerups = JSON.parse(s); } catch(e){}
@@ -182,6 +213,7 @@ function buyItem(type) {
   JAMAM.store.set(JAMAM.KEYS.coins, coinData);
   powerups[type]++;
   savePowerups();
+  playSound(800, 'triangle', 0.1);
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('coin');
 }
 function openShop() { $('shop').classList.remove('hidden'); }
@@ -207,14 +239,42 @@ function initLevel() {
 
 function startGame() {
   initLevel();
+  initAudio(); // تشغيل الصوت عند بدء اللعب
   state = 'playing';
   $('start').classList.add('hidden');
   $('over').classList.add('hidden');
   $('levelComplete').classList.add('hidden');
   $('shop').classList.add('hidden');
+  $('pause-screen').classList.add('hidden');
   if (window.JAMAM && JAMAM.game) JAMAM.game.start('neon-pulse');
   lastTime = performance.now();
-  requestAnimationFrame(frame);
+  if(animationId) cancelAnimationFrame(animationId);
+  animationId = requestAnimationFrame(frame);
+}
+
+// ============================================================
+// 2. إيقاف مؤقت حقيقي (تم إصلاحه)
+// ============================================================
+function pauseGame() {
+  if (state !== 'playing') return;
+  state = 'paused';
+  cancelAnimationFrame(animationId);
+  $('pause-screen').classList.remove('hidden');
+}
+
+function resumeGame() {
+  if (state !== 'paused') return;
+  state = 'playing';
+  $('pause-screen').classList.add('hidden');
+  lastTime = performance.now();
+  animationId = requestAnimationFrame(frame);
+}
+
+function quitGame() {
+  state = 'start';
+  cancelAnimationFrame(animationId);
+  $('pause-screen').classList.add('hidden');
+  $('start').classList.remove('hidden');
 }
 
 function updateUI() {
@@ -225,7 +285,6 @@ function updateUI() {
   $('levelprogress').style.width = progress + '%';
   $('goalLabel').textContent = score + ' / ' + goalScore;
   
-  // Boss trigger at levels 5 and 10 (at 70% of goal)
   if ((currentLevel === 5 || currentLevel === 10) && !boss && score >= goalScore * 0.7) {
     spawnBoss();
   }
@@ -240,14 +299,12 @@ function spawnBoss() {
     x: W/2, y: 120,
     hp: 20 + (currentLevel * 5),
     maxHp: 20 + (currentLevel * 5),
-    direction: 1,
-    shootTimer: 0,
-    active: true,
-    pulse: 0
+    direction: 1, shootTimer: 0, active: true, pulse: 0
   };
   $('bossbar-wrap').classList.add('active');
   $('bossprogress').style.width = '100%';
   showStatus('👑 بوس الجمجمة ظهر!');
+  playSound(200, 'sawtooth', 0.3, 0.2);
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
 }
 
@@ -284,12 +341,12 @@ function drawBoss() {
 function damageBoss() {
   if (!boss || !boss.active) return;
   boss.hp--;
+  playSound(900, 'square', 0.05);
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('hit');
   if (boss.hp <= 0) {
     boss.active = false;
     $('bossbar-wrap').classList.remove('active');
     showStatus('🎉 هزمت البوس!');
-    // Bonus points
     score += 500;
     updateUI();
   }
@@ -305,10 +362,10 @@ function showStatus(text) {
 function activatePowerup(type) {
   if (powerups[type] <= 0) { showStatus('❌ لا تملك هذا العنصر'); return; }
   powerups[type]--; savePowerups();
+  playSound(700, 'triangle', 0.1);
   if (type === 'shield') { shieldActive = true; showStatus('🛡️ الدرع نشط!'); }
   else if (type === 'magnet') { magnetUntil = performance.now() + 10000; showStatus('🧲 المغناطيس نشط!'); }
   else if (type === 'slow') { slowMoUntil = performance.now() + 20000; showStatus('⏱️ تباطؤ!'); }
-  if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('levelup');
 }
 
 function levelComplete() {
@@ -316,20 +373,22 @@ function levelComplete() {
   if (window.JAMAM && JAMAM.game) JAMAM.levels.completeLevel('neon-pulse', score);
   $('completedLevel').textContent = currentLevel;
   $('levelComplete').classList.remove('hidden');
+  playSound(600, 'sine', 0.1);
+  setTimeout(() => playSound(900, 'sine', 0.15), 100);
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('levelup');
 }
 
 function gameOver() {
   state = 'over';
+  playSound(150, 'sawtooth', 0.4, 0.2);
   $('finalScore').textContent = score;
   $('over').classList.remove('hidden');
   if (window.JAMAM && JAMAM.game) JAMAM.game.end('neon-pulse', { score: score });
   
-  // Dynamic Luck System - after 2 fails, activate luck
   failStreak++;
   if (failStreak >= 2) {
     luckBonus = 3;
-    showStatus('🍀 حظ سعيد! الماسات 3x في المحاولة القادمة');
+    showStatus('🍀 حظ سعيد! الماسات 3x');
   }
 }
 
@@ -348,7 +407,6 @@ class Item {
   update(dt) {
     this.y += this.vy * dt;
     this.pulse += dt * 5;
-    // Magnet effect
     if (performance.now() < magnetUntil && this.type === 'emoji') {
       const dx = W/2 - this.x, dy = H - 80 - this.y;
       const dist = Math.hypot(dx, dy);
@@ -402,6 +460,7 @@ function collect(item) {
       shieldActive = false;
       showStatus('🛡️ الدرع أنقذك!');
       burst(item.x, item.y, '#3cff8c', 40);
+      playSound(300, 'square', 0.2);
       if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactHeavy');
       return;
     }
@@ -416,24 +475,22 @@ function collect(item) {
     score = Math.max(0, score - lost);
     combo = 0;
     burst(item.x, item.y, '#ffaa00', 30);
+    playSound(120, 'sawtooth', 0.15);
     showStatus('💀 -' + lost);
     if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('impactLight');
     updateUI();
     return;
   }
-  // Good emoji
   combo++;
   const isDiamond = item.char === '💎';
   let basePts = 50 + currentLevel * 10;
-  if (isDiamond) basePts *= luckBonus; // Dynamic Luck System
+  if (isDiamond) basePts *= luckBonus;
   const pts = Math.floor(basePts * Math.min(5, 1 + (combo * 0.1)));
   score += pts;
   burst(item.x, item.y, isDiamond ? '#fcf6ba' : '#d4af37');
+  playSound(isDiamond ? 1000 : 700 + combo * 20, 'sine', 0.08);
   if (window.JAMAM && JAMAM.haptics) JAMAM.haptics.tap('hit');
-  
-  // Damage boss if active
   if (boss && boss.active && isDiamond) damageBoss();
-  
   updateUI();
 }
 
@@ -472,28 +529,21 @@ function frame(ts) {
   ctx.fillStyle = '#0b0b0d';
   ctx.fillRect(0, 0, W, H);
   
-  // Spawn
   spawnTimer += dt;
   const spawnInterval = Math.max(0.35, 0.9 - (currentLevel * 0.05));
   if (spawnTimer > spawnInterval) { spawnTimer = 0; spawnItem(); }
   
-  // Boss
   if (boss && boss.active) { updateBoss(dt); drawBoss(); }
   
-  // Items
   for (let i = items.length - 1; i >= 0; i--) {
     const it = items[i];
     it.update(dt); it.draw();
     if (!it.active) items.splice(i, 1);
   }
-  
-  // Particles
   for (let i = particles.length - 1; i >= 0; i--) {
     particles[i].update(dt); particles[i].draw();
     if (particles[i].life <= 0) particles.splice(i, 1);
   }
-  
-  // Rings
   for (let i = rings.length - 1; i >= 0; i--) {
     const r = rings[i];
     r.r += 100 * dt; r.life -= dt;
@@ -503,21 +553,22 @@ function frame(ts) {
     ctx.globalAlpha = 1;
     if (r.life <= 0) rings.splice(i, 1);
   }
-  
   if (flash > 0) { flash -= dt * 2; $('flash').style.opacity = Math.max(0, flash) * 0.6; }
-  
   $('shieldBtn').classList.toggle('active', shieldActive);
   $('magnetBtn').classList.toggle('active', now < magnetUntil);
   $('slowBtn').classList.toggle('active', now < slowMoUntil);
   
-  requestAnimationFrame(frame);
+  animationId = requestAnimationFrame(frame);
 }
 
+// ربط الأزرار
 canvas.addEventListener('pointerdown', handlePointer, { passive: false });
 $('startBtn').onclick = () => { failStreak = 0; luckBonus = 1; startGame(); };
 $('retryBtn').onclick = startGame;
 $('nextLevelBtn').onclick = startGame;
-$('pauseBtn').onclick = () => { if(state === 'playing') gameOver(); };
+$('pauseBtn').onclick = pauseGame; // تم الإصلاح
+$('resumeBtn').onclick = resumeGame; // تم الإصلاح
+$('quitBtn').onclick = quitGame; // تم الإصلاح
 $('shopBtn').onclick = openShop;
 $('shopFromOver').onclick = openShop;
 $('shieldBtn').onclick = () => activatePowerup('shield');
