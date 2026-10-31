@@ -1,300 +1,94 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>ديربي أرينا الملكي</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#03050b;color:#fff;font-family:Cairo,Tahoma,sans-serif;overflow:hidden;touch-action:manipulation}
-#app{display:flex;flex-direction:column;height:100%;max-width:520px;margin:auto}
-header{display:flex;align-items:center;gap:6px;padding:6px 8px;height:54px}
-#vip{flex:1;display:flex;align-items:center;gap:8px;padding:4px 10px;border-radius:14px;background:linear-gradient(135deg,#2a2008,#0d0b06 60%,#3a2c0a);border:1px solid #f5c542;animation:vp 2s ease-in-out infinite;min-width:0}
-@keyframes vp{50%{box-shadow:0 0 16px #f5c54288}0%,100%{box-shadow:0 0 4px #f5c54233}}
-#av{width:32px;height:32px;border-radius:50%;border:2px solid #f5c542;background:#1a1a2e;display:grid;place-items:center;font-weight:800;color:#f5c542;flex:none}
-#vn{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#sp{font-size:12px;color:#f5c542;font-weight:800}
-.chip{font-size:11px;font-weight:800;color:#ffd77a;text-align:center;line-height:1.1}
-.ib{width:34px;height:34px;border-radius:10px;border:1px solid #f5c54266;background:#10131f;color:#f5c542;font-size:15px;cursor:pointer}
-#stage{flex:1;position:relative;min-height:0}
-#c{position:absolute;inset:0;width:100%;height:100%;display:block}
-#feed{position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:3px;pointer-events:none}
-.k{width:80px;padding:2px 5px;font-size:10px;font-weight:800;background:rgba(40,6,10,.85);border:1px solid #e53145;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:kin .3s ease-out}
-@keyframes kin{from{transform:translateX(100px);opacity:0}}
-#banner{position:absolute;left:0;right:0;top:12%;text-align:center;font-size:30px;font-weight:800;color:#ff4455;text-shadow:0 0 18px #f00;opacity:0;pointer-events:none}
-#banner.on{animation:bn 1.6s ease-out}
-@keyframes bn{0%{opacity:0;transform:scale(2)}15%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0}}
-#win{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:radial-gradient(circle,rgba(255,200,60,.55),rgba(60,35,0,.8) 75%);text-align:center}
-#crown{font-size:70px;animation:fl 2s ease-in-out infinite;filter:drop-shadow(0 0 14px #ffc83c)}
-@keyframes fl{50%{transform:translateY(-10px) scale(1.12)}}
-#wn{font-size:40px;font-weight:800;color:#fff;text-shadow:0 0 20px #ffc83c,0 0 40px #ffa600;min-height:56px;padding:0 10px}
-#wt{font-size:20px;color:#ffe08a;min-height:30px}
-.gold{padding:10px 22px;border-radius:14px;border:0;font:800 16px Cairo,Tahoma;color:#2a1a00;background:linear-gradient(#ffe08a,#f5a623);animation:vp 1.6s infinite;cursor:pointer}
-footer{padding:6px 8px 8px;display:flex;flex-direction:column;gap:6px}
-#chat{font-size:11px;color:#9aa6c4;height:42px;overflow:hidden;line-height:1.35}
-#row{display:flex;gap:6px}
-#nm{flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid #2b3552;background:#0c101c;color:#fff;font:600 14px Cairo,Tahoma}
-#sel{max-width:96px;padding:6px;border-radius:10px;border:1px solid #2b3552;background:#0c101c;color:#fff;font:600 12px Cairo,Tahoma}
-#send{padding:0 14px;border-radius:10px;border:0;background:#2d6cff;color:#fff;font:800 13px Cairo,Tahoma;cursor:pointer}
-#tac{display:flex;gap:6px}
-.t{flex:1;padding:7px 2px;border-radius:12px;border:1px solid;font:800 12px Cairo,Tahoma;color:#fff;cursor:pointer;transition:transform .12s,box-shadow .12s;line-height:1.2}
-.t small{display:block;font-size:10px;opacity:.85}
-.t:active:not(:disabled),.t:hover:not(:disabled){transform:scale(1.05)}
-.t:disabled{opacity:.3;cursor:default}
-#bo{background:#3a1d00;border-color:#ff9a1f;box-shadow:0 0 10px #ff9a1f66}
-#sh{background:#002a3a;border-color:#27c8ff;box-shadow:0 0 10px #27c8ff66}
-#st{background:#3a0010;border-color:#ff3358;box-shadow:0 0 10px #ff335866}
-#shopb{background:#2a2008;border-color:#f5c542;box-shadow:0 0 10px #f5c54266}
-.ov{position:fixed;inset:0;background:rgba(3,5,11,.93);display:none;align-items:center;justify-content:center;z-index:9;padding:16px}
-.box{width:100%;max-width:360px;background:#0d111d;border:1px solid #f5c542;border-radius:18px;padding:18px;text-align:center;box-shadow:0 0 30px #f5c54233}
-.box h2{color:#f5c542;margin-bottom:10px;font-size:22px}
-.box p{font-size:13px;color:#9aa6c4;margin-bottom:12px}
-#wi{width:100%;padding:11px;border-radius:12px;border:1px solid #2b3552;background:#0c101c;color:#fff;font:700 16px Cairo,Tahoma;text-align:center;margin-bottom:12px}
-.pk{display:flex;justify-content:space-between;align-items:center;margin:7px 0;padding:11px 14px;border-radius:12px;background:linear-gradient(90deg,#2a2008,#12100a);border:1px solid #f5c54288;color:#fff;text-decoration:none;font-weight:800;cursor:pointer}
-.pk b{color:#f5c542}
-.pk:active{transform:scale(.98)}
-#msg{font-size:12px;color:#7dffb0;min-height:18px;margin-top:6px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر دله - بطاقات شحن اللعبة الخاصة</title>
+    <!-- Bootstrap 5 CSS للربط السريع والتصميم المتجاوب -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .card-custom {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.2);
+        }
+        .badge-bronze { background-color: #cd7f32; }
+        .badge-silver { background-color: #c0c0c0; color: #000; }
+        .badge-gold { background-color: #ffc107; color: #000; }
+        .btn-store {
+            background-color: #ffc107;
+            color: #000;
+            font-weight: bold;
+            border: none;
+        }
+        .btn-store:hover {
+            background-color: #e0a800;
+        }
+    </style>
 </head>
 <body>
-<div id="app">
-<header>
- <div id="vip"><div id="av">؟</div><div style="min-width:0"><div id="vn">زائر</div><div id="sp">✦ 0 شارة</div></div></div>
- <div class="chip">الأرباح<br><span id="earn">0</span></div>
- <button class="ib" id="pz" title="إيقاف">⏸</button>
- <button class="ib" id="rs" title="تصفير">↺</button>
- <button class="ib" id="mt" title="الصوت">🔊</button>
-</header>
-<div id="stage"><canvas id="c"></canvas><div id="feed"></div><div id="banner">⚔️ FINAL DUEL ⚔️</div>
- <div id="win"><div id="crown">👑</div><div id="wn"></div><div id="wt"></div><button class="gold" id="again">معركة جديدة</button></div></div>
-<footer>
- <div id="chat"></div>
- <div id="row"><select id="sel"></select><input id="nm" maxlength="14" placeholder="اكتب اسم حيّك أو مدينتك" autocomplete="off"><button id="send">أطلق</button></div>
- <div id="tac">
-  <button class="t" id="bo">🚀 Boost<small>50 ✦</small></button>
-  <button class="t" id="sh">🛡️ Shield<small>120 ✦</small></button>
-  <button class="t" id="st">⚡ Strike<small>250 ✦</small></button>
-  <button class="t" id="shopb">💎 المتجر<small>شحن</small></button>
- </div>
-</footer>
-</div>
 
-<div class="ov" id="welcome" style="display:flex"><div class="box"><div style="font-size:50px">👑</div><h2>ديربي أرينا الملكي</h2><p>اكتب اسمك لتدخل الحلبة. كل كرة تحمل اسم حيّ أو مدينة، والأخيرة الصامدة هي البطل.</p><input id="wi" maxlength="14" placeholder="اسمك"><button class="gold" id="go" style="width:100%">ادخل الحلبة</button></div></div>
+    <div class="container py-5">
+        <!-- هيدر المتجر -->
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-warning">متجر دله الرقمي</h1>
+            <p class="lead text-muted">احصل على بطاقات الشحن الخاصة بلعبتك فوراً وفعّل ميزاتك بكل سهولة</p>
+        </div>
 
-<div class="ov" id="shop"><div class="box"><h2>💎 متجر الشارات</h2><p>الشارات تدعم كرتك بـ Boost وShield وStrike.</p><div id="packs"></div><div id="msg"></div><button class="ib" id="closeShop" style="width:auto;padding:0 18px;margin-top:8px">إغلاق</button></div></div>
+        <!-- شبكة عرض البطاقات (Grid System) -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            
+            <!-- 1. البطاقة البرونزية -->
+            <div class="col">
+                <div class="card card-custom h-100 p-3 text-center">
+                    <div class="card-body">
+                        <span class="badge badge-bronze mb-3 px-3 py-2 fs-6">الفئة البرونزية</span>
+                        <h3 class="card-title fw-bold mb-3">حزمة البداية</h3>
+                        <p class="text-muted">تتضمن نقاط أساسية + درع بداية اللعبة لتسريع تقدمك.</p>
+                        <h4 class="text-warning fw-bold my-3">35 ر.س</h4>
+                        <button class="btn btn-store w-100 py-2 mt-3">شحن فوري</button>
+                    </div>
+                </div>
+            </div>
 
-<script>
-'use strict';
-const PAYPAL_PACKS=[
-{id:'tier_500',sparks:500,price:'1.35$',url:'https://www.paypal.com/ncp/payment/YR6MF6C7QMJPA'},
-{id:'tier_1600',sparks:1600,price:'4.00$',url:'https://www.paypal.com/ncp/payment/G2PZE5QB6MV5N'},
-{id:'tier_3800',sparks:3800,price:'8.00$',url:'https://www.paypal.com/ncp/payment/L893U4GE7FMTL'},
-{id:'tier_10000',sparks:10000,price:'20.00$',url:'https://www.paypal.com/ncp/payment/RZQJW9ULEWPC2'},
-{id:'tier_unlimited',sparks:'∞',price:'70.00$',url:'https://www.paypal.com/ncp/payment/RXDLN2A9XVHUG'}];
-const SERIES={
-'الأحياء':['النظيم','النسيم','الملز','الروضة','العليا','الياسمين','الملقا','حطين','الشفا','العزيزية','الربوة','السليمانية','الحمراء','الصفا'],
-'المدن':['الرياض','جدة','الدمام','مكة','المدينة','أبها','تبوك','حائل','القصيم','الطائف','جازان','نجران','الخبر','ينبع'],
-'المطاعم':['البيك','كودو','هرفي','الطازج','شاورمر','كيف','ماما نوره','البيت الشامي','تتش','الشيف','كنتاكي','دومينوز','برجر فيو','هاف مون'],
-'الشركات':['أرامكو','سابك','الراجحي','جرير','نون','مرسول','جاهز','المراعي','stc','سلة','تمارا','تبي','سوق','الأهلي'],
-'السيارات':['كامري','لكزس','تاهو','باترول','هايلكس','سوناتا','أكورد','كورولا','لاندكروزر','مرسيدس','جي واجن','تسلا','يوكن','شارجر'],
-'الأساطير':['العنقاء','التنين','الصقر','الأسد','الذئب','الفهد','النمر','العقاب','الجني','العملاق','الفارس','السلطان','الملك','القيصر']};
-const $=id=>document.getElementById(id),cv=$('c'),ctx=cv.getContext('2d');
-const rnd=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),TAU=Math.PI*2;
-let name='زائر',sparks=100,spent=0,series='الأحياء';
-try{name=localStorage.getItem('dar_n')||name;const s=localStorage.getItem('dar_s');if(s!==null)sparks=+s||0;spent=+localStorage.getItem('dar_e')||0;}catch(e){}
-function save(){try{localStorage.setItem('dar_n',name);localStorage.setItem('dar_s',sparks);localStorage.setItem('dar_e',spent)}catch(e){}}
-/* ---------- AUDIO ---------- */
-let AC,master,amb,ambG,muted=false,lastBounce=0;
-function A(){if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=.5;master.connect(AC.destination);}
- if(AC.state==='suspended')AC.resume();return AC;}
-function tone(f,d,type,v,to,delay,echo){if(muted)return;const c=A(),t=c.currentTime+(delay||0);f*=1+rnd(-.05,.05);
- const o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);
- if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v||.2,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
- o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.05);if(echo)tone(f,d,type,(v||.2)*.35,to,(delay||0)+.16,false);}
-function noise(d,v,delay){if(muted)return;const c=A(),n=c.sampleRate*d,b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);
- for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);const s=c.createBufferSource(),g=c.createGain();s.buffer=b;g.gain.value=v||.2;s.connect(g);g.connect(master);s.start(c.currentTime+(delay||0));}
-const SND={
- vote(){tone(523,.15,'sine',.2);tone(659,.15,'sine',.2,0,.08)},
- bounce(){tone(rnd(400,800),.05,'triangle',.1)},
- elim(){tone(300,.4,'sawtooth',.22,80,0,true);noise(.4,.22)},
- win(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,.45,'sine',.25,0,i*.1))},
- boost(){tone(200,.3,'square',.14,800)},
- shield(){tone(1200,.9,'sine',.2);tone(2000,1,'sine',.05)},
- strike(){tone(800,.4,'sawtooth',.22,50);noise(.3,.2)},
- duel(){tone(880,.25,'square',.16,440);tone(880,.25,'square',.16,440,.3)},
- shop(){[523,659,784].forEach((f,i)=>tone(f,.12,'triangle',.2,0,i*.08))},
- pay(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,.15,'triangle',.22,0,i*.07))}};
-function ambient(){if(muted)return;const c=A();if(amb)return;amb=c.createOscillator();ambG=c.createGain();amb.type='sine';amb.frequency.value=45;ambG.gain.value=.03;amb.connect(ambG);ambG.connect(master);amb.start();}
-function ambUpdate(){if(!amb)return;const t=AC.currentTime;let g=muted||over?0:(balls.length<=3?.09:.035),f=balls.length<=3?70:45;
- ambG.gain.setTargetAtTime(g,t,.3);amb.frequency.setTargetAtTime(f,t,.4);}
-/* ---------- STATE ---------- */
-let W=0,H=0,cx=0,cy=0,R=0,BR=16,U=1,holes=[],stars=[];
-let balls=[],parts=[],rings=[],mine=null,over=false,duel=false,paused=false,fanA=0,T=0,slowT=0,shake=0,flash=0,flashC='255,255,255',winT=0,winName='',startCount=0,uiT=0;
-for(let i=0;i<14;i++)stars.push({a:rnd(0,TAU),d:Math.sqrt(Math.random()),p:rnd(0,TAU),s:rnd(.8,1.8)});
-function resize(){const d=Math.min(devicePixelRatio||1,2),w=$('stage').clientWidth,h=$('stage').clientHeight;if(!w||!h)return;
- cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);const ocx=cx,ocy=cy,oR=R;W=w;H=h;cx=w/2;cy=h/2;R=Math.min(w,h)/2-8;U=R/170;BR=clamp(R*.085,13,22);
- const k=oR?R/oR:1;balls.forEach(b=>{b.x=cx+(b.x-ocx)*k;b.y=cy+(b.y-ocy)*k;b.vx*=k;b.vy*=k;});
- holes=[0,1,2].map(i=>{const a=i*TAU/3+.5;return{a,x:cx+Math.cos(a)*R*.6,y:cy+Math.sin(a)*R*.6,r:R*.1}});}
-function hue(){return`hsl(${Math.floor(rnd(0,360))},85%,58%)`}
-function addBall(n,own){let x,y,ok,tr=0;do{const a=rnd(0,TAU),d=rnd(.3,.8)*R;x=cx+Math.cos(a)*d;y=cy+Math.sin(a)*d;ok=holes.every(h=>Math.hypot(x-h.x,y-h.y)>h.r*3)&&balls.every(b=>Math.hypot(x-b.x,y-b.y)>BR*2.2);}while(!ok&&++tr<40);
- const a=rnd(0,TAU),s=rnd(130,220)*U,b={n,x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,c:hue(),ph:rnd(0,TAU),tr:new Float32Array(10),ti:0,tt:0,sh:0,bo:0};
- for(let i=0;i<5;i++){b.tr[i*2]=x;b.tr[i*2+1]=y}balls.push(b);if(own&&!mine)mine=b;return b;}
-function newRound(){balls=[];parts=[];rings=[];mine=null;over=false;duel=false;slowT=0;$('win').style.display='none';
- const pool=SERIES[series].slice().sort(()=>Math.random()-.5);for(let i=0;i<9;i++)addBall(pool[i],false);startCount=balls.length;ui();ambUpdate();}
-/* ---------- FX ---------- */
-function burst(x,y,n,cols,sp,life){for(let i=0;i<n;i++){const a=rnd(0,TAU),s=rnd(.3,1)*sp*U;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:life*rnd(.6,1),m:life,c:cols[i%cols.length],s:rnd(1.5,3.5)});}
- if(parts.length>200)parts.splice(0,parts.length-200);}
-function ring(x,y,max,c){rings.push({x,y,r:4,max,l:.45,m:.45,c});}
-function confetti(n){const cs=['#ff3b4e','#2d8cff','#f5c542','#ffffff'];for(let i=0;i<n;i++)parts.push({x:rnd(0,W),y:rnd(-30,0),vx:rnd(-40,40),vy:rnd(60,160),l:rnd(2.2,3.5),m:3,c:cs[i%4],s:rnd(4,8),rect:1,rot:rnd(0,TAU),vr:rnd(-6,6),g:1});
- if(parts.length>200)parts.splice(0,parts.length-200);}
-function feed(n){const d=document.createElement('div');d.className='k';d.textContent='💀 '+n+' خرج';$('feed').appendChild(d);setTimeout(()=>d.remove(),3200);while($('feed').children.length>4)$('feed').firstChild.remove();}
-/* ---------- GAME ---------- */
-function eliminate(b,x,y){balls.splice(balls.indexOf(b),1);if(b===mine)mine=null;
- burst(x,y,24,[b.c,'#fff','#f5c542'],260,.8);ring(x,y,R*.35,'255,255,255');flash=.35;flashC='255,255,255';shake=Math.max(shake,3);SND.elim();feed(b.n);ui();ambUpdate();
- if(balls.length===2&&!duel&&startCount>2){duel=true;slowT=1.5;SND.duel();const bn=$('banner');bn.classList.remove('on');void bn.offsetWidth;bn.classList.add('on');}
- if(balls.length<=1&&!over)winner(balls[0]);}
-function winner(b){over=true;winName=b?b.n:'—';winT=T;flash=.5;flashC='255,200,60';SND.win();
- if(b)burst(b.x,b.y,50,['#f5c542','#ffe08a','#fff','#ffb300'],380,1.4);confetti(120);$('win').style.display='flex';$('wn').textContent='';$('wt').textContent='';ui();ambUpdate();}
-function step(dt){fanA+=dt*1.7;const L=R*.3,om=1.7,h=dt/2;
- for(let s=0;s<2;s++){
-  for(const b of balls){
-   b.x+=b.vx*h;b.y+=b.vy*h;if(b.sh>0)b.sh-=h;if(b.bo>0)b.bo-=h;
-   let sp=Math.hypot(b.vx,b.vy);if(sp<80*U){const k=80*U/(sp||1);b.vx*=k||1;b.vy*=k||1;if(!sp)b.vx=80*U;}
-   const mx=(b.bo>0?800:520)*U;if(sp>mx){b.vx*=mx/sp;b.vy*=mx/sp;}
-   const dx=b.x-cx,dy=b.y-cy,d=Math.hypot(dx,dy);
-   if(d+BR>R){const nx=dx/d,ny=dy/d,vn=b.vx*nx+b.vy*ny;b.x=cx+nx*(R-BR);b.y=cy+ny*(R-BR);
-    if(vn>0){b.vx-=1.9*vn*nx;b.vy-=1.9*vn*ny;if(vn>60*U){burst(b.x,b.y,4,[b.c],120,.4);wallSnd();}}}
-   const fx=b.x-cx,fy=b.y-cy;
-   for(let k=0;k<4;k++){const a=fanA+k*TAU/4,ex=Math.cos(a)*L,ey=Math.sin(a)*L,t=clamp((fx*ex+fy*ey)/(L*L),0,1),px=ex*t,py=ey*t,qx=fx-px,qy=fy-py,qd=Math.hypot(qx,qy);
-    if(qd<BR+4){const nx=qx/(qd||1),ny=qy/(qd||1),bx=-py*om,by=px*om;let rx=b.vx-bx,ry=b.vy-by;const vn=rx*nx+ry*ny;
-     b.x=cx+px+nx*(BR+4);b.y=cy+py+ny*(BR+4);if(vn<0){rx-=1.9*vn*nx;ry-=1.9*vn*ny;b.vx=rx+bx;b.vy=ry+by;burst(b.x,b.y,3,['#f5c542'],100,.3);}}}
-   for(const o of holes){const hx=o.x-b.x,hy=o.y-b.y,hd=Math.hypot(hx,hy);
-    if(b.sh>0){if(hd<o.r*1.6){const k=(o.r*1.6-hd)/hd;b.x-=hx*k*.3;b.y-=hy*k*.3;b.vx-=hx/hd*60*U;b.vy-=hy/hd*60*U;}}
-    else{if(hd<o.r*2.4){b.vx+=hx/hd*90*U*h;b.vy+=hy/hd*90*U*h;}if(hd<o.r*.8){b.dead=o;}}}
-  }
-  for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){const a=balls[i],c=balls[j],dx=c.x-a.x,dy=c.y-a.y,d=Math.hypot(dx,dy),m=BR*2;
-   if(d<m&&d>0){const nx=dx/d,ny=dy/d,ov=(m-d)/2;a.x-=nx*ov;a.y-=ny*ov;c.x+=nx*ov;c.y+=ny*ov;const vn=(c.vx-a.vx)*nx+(c.vy-a.vy)*ny;
-    if(vn<0){const j2=-(1+.95)*vn/2;a.vx-=j2*nx;a.vy-=j2*ny;c.vx+=j2*nx;c.vy+=j2*ny;
-     if(-vn>70*U){const mx=(a.x+c.x)/2,my=(a.y+c.y)/2;burst(mx,my,7,[a.c,c.c],160,.5);ring(mx,my,BR*2.4,'255,255,255');shake=Math.max(shake,1);wallSnd();}}}}
- }
- for(const b of balls){b.tt+=dt;if(b.tt>.03){b.tt=0;b.ti=(b.ti+1)%5;b.tr[b.ti*2]=b.x;b.tr[b.ti*2+1]=b.y;}}
- for(const b of balls.slice())if(b.dead&&!over)eliminate(b,b.x,b.y);
-}
-function wallSnd(){if(T-lastBounce>.05){lastBounce=T;SND.bounce();}}
-/* ---------- DRAW ---------- */
-function draw(){
- ctx.save();ctx.fillStyle='#02040a';ctx.fillRect(0,0,W,H);
- if(shake>0){ctx.translate(rnd(-shake,shake),rnd(-shake,shake));}
- const g=ctx.createRadialGradient(cx,cy,0,cx,cy,R);g.addColorStop(0,'#1a1a2e');g.addColorStop(.6,'#0b0d1c');g.addColorStop(1,'#050810');
- ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fill();
- for(const s of stars){const a=.5+.5*Math.sin(T*2+s.p),x=cx+Math.cos(s.a)*s.d*R*.95,y=cy+Math.sin(s.a)*s.d*R*.95;ctx.globalAlpha=a*.8;ctx.fillStyle='#fff';ctx.fillRect(x,y,s.s,s.s);}
- ctx.globalAlpha=1;
- ctx.save();ctx.translate(cx,cy);ctx.rotate(T*TAU/10);ctx.setLineDash([22,16]);ctx.strokeStyle='rgba(255,200,80,.28)';ctx.shadowColor='#f5c542';ctx.shadowBlur=12;ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,R*.82,0,TAU);ctx.stroke();ctx.restore();
- ctx.save();ctx.strokeStyle='#f5c542';ctx.lineWidth=5;ctx.shadowColor='#f5c542';ctx.shadowBlur=30+10*Math.sin(T*Math.PI);ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();ctx.restore();
- for(const o of holes){const pu=1+.1*Math.sin(T*Math.PI),r=o.r*pu;
-  let hg=ctx.createRadialGradient(o.x,o.y,r*.6,o.x,o.y,r*2.3);hg.addColorStop(0,'rgba(255,30,50,.5)');hg.addColorStop(1,'rgba(255,30,50,0)');ctx.fillStyle=hg;ctx.beginPath();ctx.arc(o.x,o.y,r*2.3,0,TAU);ctx.fill();
-  ctx.fillStyle='#000';ctx.beginPath();ctx.arc(o.x,o.y,r,0,TAU);ctx.fill();
-  ctx.save();ctx.translate(o.x,o.y);ctx.rotate(T*Math.PI);ctx.strokeStyle='#ff2a44';ctx.lineWidth=3;ctx.shadowColor='#f00';ctx.shadowBlur=8;ctx.beginPath();ctx.arc(0,0,r*.8,0,4.2);ctx.stroke();ctx.restore();
-  ctx.fillStyle='#ff4455';for(let i=0;i<6;i++){const u=(T*.8+i/6)%1,a=o.a*3+i*1.05+u*2,d=r*(2.1-1.6*u);ctx.globalAlpha=u;ctx.fillRect(o.x+Math.cos(a)*d,o.y+Math.sin(a)*d,2.2,2.2);}ctx.globalAlpha=1;}
- const L=R*.3;ctx.save();ctx.translate(cx,cy);
- for(let gh=3;gh>=0;gh--){ctx.globalAlpha=gh?.18/gh+.04:1;for(let k=0;k<4;k++){ctx.save();ctx.rotate(fanA+k*TAU/4-gh*.18);const bg=ctx.createLinearGradient(0,0,L,0);bg.addColorStop(0,'#ffd35a');bg.addColorStop(1,'rgba(255,211,90,.15)');ctx.fillStyle=bg;if(!gh){ctx.shadowColor='#f5c542';ctx.shadowBlur=12;}ctx.fillRect(0,-4,L,8);ctx.restore();}}
- ctx.globalAlpha=1;const cr=9*(1+.2*Math.sin(T*4)),cg=ctx.createRadialGradient(0,0,0,0,0,cr);cg.addColorStop(0,'#fff6c0');cg.addColorStop(1,'#f5a623');ctx.fillStyle=cg;ctx.shadowColor='#ffc83c';ctx.shadowBlur=20;ctx.beginPath();ctx.arc(0,0,cr,0,TAU);ctx.fill();ctx.restore();
- for(const r of rings){const k=1-r.l/r.m;ctx.strokeStyle=`rgba(${r.c},${(1-k)*.6})`;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(r.x,r.y,r.r+(r.max-r.r)*k,0,TAU);ctx.stroke();}
- for(const b of balls)drawBall(b);
- for(const p of parts){ctx.globalAlpha=clamp(p.l/p.m,0,1);ctx.fillStyle=p.c;if(p.rect){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();}else{ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,TAU);ctx.fill();}}
- ctx.globalAlpha=1;
- if(flash>0){ctx.fillStyle=`rgba(${flashC},${clamp(flash,0,.5)})`;ctx.fillRect(-10,-10,W+20,H+20);}
- ctx.restore();
-}
-function drawBall(b){const sp=Math.hypot(b.vx,b.vy),k=clamp(sp/(400*U),0,1),sc=1+.05*Math.sin(T*TAU/1.5+b.ph),r=BR*sc;
- ctx.fillStyle='rgba(0,0,0,.4)';ctx.beginPath();ctx.ellipse(b.x,b.y+BR*1.05,BR*.9,BR*.3,0,0,TAU);ctx.fill();
- const n=3+Math.floor(k*2);for(let i=1;i<=n;i++){const j=(b.ti-i+10)%5;ctx.globalAlpha=.28*(1-i/(n+1));ctx.fillStyle=b.c;ctx.beginPath();ctx.arc(b.tr[j*2],b.tr[j*2+1],BR*(1-i*.12),0,TAU);ctx.fill();}
- ctx.globalAlpha=1;ctx.save();ctx.shadowColor=b.bo>0?'#ff9a1f':b.c;ctx.shadowBlur=8+k*22+(b.bo>0?14:0);
- const g=ctx.createRadialGradient(b.x-r*.3,b.y-r*.3,r*.1,b.x,b.y,r);g.addColorStop(0,'#fff');g.addColorStop(.25,b.c);g.addColorStop(1,'#000a');ctx.fillStyle=b.c;ctx.beginPath();ctx.arc(b.x,b.y,r,0,TAU);ctx.fill();
- ctx.shadowBlur=0;ctx.fillStyle=g;ctx.globalAlpha=.55;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.5;ctx.stroke();
- if(b.sh>0){ctx.strokeStyle=`rgba(39,200,255,${.5+.4*Math.sin(T*12)})`;ctx.lineWidth=2.5;ctx.shadowColor='#27c8ff';ctx.shadowBlur=14;ctx.beginPath();ctx.arc(b.x,b.y,r+5,0,TAU);ctx.stroke();}
- ctx.restore();
- let fs=Math.max(8,BR*.62);ctx.font=`800 ${fs}px Cairo,Tahoma,sans-serif`;const w=ctx.measureText(b.n).width;if(w>BR*1.7)fs*=BR*1.7/w;
- ctx.font=`800 ${fs}px Cairo,Tahoma,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillStyle='#fff';ctx.fillText(b.n,b.x,b.y+1);ctx.shadowBlur=0;
- if(b===mine){ctx.fillStyle='#f5c542';ctx.font='10px sans-serif';ctx.fillText('▼',b.x,b.y-BR-6);}}
-/* ---------- LOOP ---------- */
-let last=performance.now();
-function frame(now){requestAnimationFrame(frame);let dt=Math.min(.033,(now-last)/1000);last=now;if(!W)return;
- if(!paused){let sc=1;if(slowT>0){slowT-=dt;sc=.3;}const d=dt*sc;if(!over||true){step(d);}
-  for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.l-=d;if(p.l<=0){parts.splice(i,1);continue;}p.x+=p.vx*d;p.y+=p.vy*d;if(p.g){p.vy+=40*d;p.rot+=p.vr*d;}else{p.vx*=.98;p.vy*=.98;}}
-  for(let i=rings.length-1;i>=0;i--){rings[i].l-=d;if(rings[i].l<=0)rings.splice(i,1);}
-  if(over&&Math.random()<.35)confetti(1);}
- T+=dt;if(shake>0)shake=Math.max(0,shake-dt*15);if(flash>0)flash-=dt*(flashC==='255,255,255'?6:3);
- if(over){const n=Math.floor((T-winT)*10),m=Math.floor((T-winT-.9)*8);$('wn').textContent=winName.slice(0,Math.max(0,n));$('wt').textContent='بطل الحلبة'.slice(0,clamp(m,0,10));}
- uiT+=dt;if(uiT>.3){uiT=0;ui();}
- draw();}
-/* ---------- UI ---------- */
-function ui(){$('vn').textContent=name;$('av').textContent=(name[0]||'؟');$('sp').textContent='✦ '+(sparks===Infinity?'∞':sparks)+' شارة';$('earn').textContent=spent;
- const ok=!!mine&&!over;$('bo').disabled=!ok||sparks<50;$('sh').disabled=!ok||sparks<120;$('st').disabled=!ok||sparks<250||balls.length<2;}
-function spend(n){if(sparks<n)return false;if(sparks!==Infinity)sparks-=n;spent+=n;save();ui();return true;}
-function creditSparks(n){sparks=n==='∞'?Infinity:sparks+n;save();SND.pay();ui();$('msg').textContent='تمت إضافة الشارات ✓';}
-/* ---------- VERIFY PAYMENT ---------- */
-function verifyPayment(){
- const params=new URLSearchParams(window.location.search);
- if(!params.has('payment')&&!params.has('tx')&&!params.has('paymentId'))return;
- const pendingRaw=localStorage.getItem('derby_pending');
- if(!pendingRaw)return;
- try{
-  const pending=JSON.parse(pendingRaw);
-  const processed=JSON.parse(localStorage.getItem('derby_processed')||'[]');
-  if(!processed.includes(pending.txId)&&(Date.now()-pending.time<2*60*60*1000)){
-   creditSparks(pending.sparks);
-   processed.push(pending.txId);
-   if(processed.length>100)processed.shift();
-   localStorage.setItem('derby_processed',JSON.stringify(processed));
-   localStorage.removeItem('derby_pending');
-  }
- }catch(e){}
- window.history.replaceState({},'',window.location.pathname);
-}
-verifyPayment();
-/* ---------- TACTICAL ---------- */
-$('bo').onclick=()=>{if(!mine||over||!spend(50))return;mine.bo=1.5;mine.vx*=2;mine.vy*=2;SND.boost();burst(mine.x,mine.y,10,['#ff9a1f','#ffd35a'],200,.5);};
-$('sh').onclick=()=>{if(!mine||over||!spend(120))return;mine.sh=5;SND.shield();ring(mine.x,mine.y,BR*3,'39,200,255');};
-$('st').onclick=()=>{if(!mine||over)return;const t=balls.filter(b=>b!==mine);if(!t.length||!spend(250))return;const v=t[Math.floor(Math.random()*t.length)];
- let h=holes[0],bd=1e9;holes.forEach(o=>{const d=Math.hypot(o.x-v.x,o.y-v.y);if(d<bd){bd=d;h=o;}});const dx=h.x-v.x,dy=h.y-v.y,d=Math.hypot(dx,dy)||1;
- v.vx=dx/d*560*U;v.vy=dy/d*560*U;shake=5;SND.strike();burst(v.x,v.y,12,['#ff3358','#fff'],240,.5);ring(v.x,v.y,BR*3,'255,50,80');};
-function chat(t){const c=$('chat');c.innerHTML+='<div>'+t.replace(/</g,'&lt;')+'</div>';while(c.children.length>3)c.firstChild.remove();}
-function submit(){const v=$('nm').value.trim().slice(0,14);if(!v||over)return;$('nm').value='';
- if(balls.length>=24){chat('الحلبة ممتلئة');return;}
- if(balls.some(b=>b.n===v)){chat('⚠️ '+v+' موجود في الحلبة');return;}
- ambient();SND.vote();addBall(v,true);startCount=Math.max(startCount,balls.length);chat('💬 '+name+': '+v);ui();ambUpdate();}
-$('send').onclick=submit;$('nm').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
-$('pz').onclick=()=>{paused=!paused;$('pz').textContent=paused?'▶':'⏸';};
-$('rs').onclick=()=>{newRound();paused=false;$('pz').textContent='⏸';};
-$('again').onclick=()=>{newRound();};
-$('mt').onclick=()=>{muted=!muted;$('mt').textContent=muted?'🔇':'🔊';if(!muted)ambient();ambUpdate();};
-const sel=$('sel');Object.keys(SERIES).forEach(k=>{const o=document.createElement('option');o.textContent=k;sel.appendChild(o);});
-sel.onchange=()=>{series=sel.value;newRound();};
-/* ---------- SHOP ---------- */
-$('packs').innerHTML=PAYPAL_PACKS.map(p=>`<a class="pk" href="#" data-url="${p.url}" data-sparks="${p.sparks}"><span>✦ ${p.sparks} شارة</span><b>${p.price}</b></a>`).join('');
-$('packs').addEventListener('click',e=>{
- const pk=e.target.closest('.pk');
- if(!pk)return;
- e.preventDefault();
- const sparksAmount=pk.dataset.sparks;
- const txId='tx_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);
- localStorage.setItem('derby_pending',JSON.stringify({
-  txId,
-  sparks: sparksAmount==='∞'?'∞':parseInt(sparksAmount),
-  time: Date.now()
- }));
- SND.shop();
- $('msg').textContent='⏳ جارٍ تحويلك إلى PayPal...';
- setTimeout(()=>{ window.open(pk.dataset.url,'_blank'); }, 400);
-});
-$('shopb').onclick=()=>{$('shop').style.display='flex';SND.shop();};
-$('closeShop').onclick=()=>{$('shop').style.display='none';};
-$('wi').value=name==='زائر'?'':name;
-$('go').onclick=()=>{const v=$('wi').value.trim().slice(0,14);if(v)name=v;save();$('welcome').style.display='none';ambient();SND.vote();ui();};
-window.addEventListener('resize',resize);
-resize();newRound();requestAnimationFrame(frame);
-</script>
+            <!-- 2. البطاقة الفضية -->
+            <div class="col">
+                <div class="card card-custom h-100 p-3 text-center border-secondary">
+                    <div class="card-body">
+                        <span class="badge badge-silver mb-3 px-3 py-2 fs-6">الفئة الفضية</span>
+                        <h3 class="card-title fw-bold mb-3">حزمة المحارب</h3>
+                        <p class="text-muted">نقاط مضاعفة + أسلحة وميزات استثنائية داخل اللعبة.</p>
+                        <h4 class="text-warning fw-bold my-3">75 ر.س</h4>
+                        <button class="btn btn-store w-100 py-2 mt-3">شحن فوري</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. البطاقة الذهبية -->
+            <div class="col">
+                <div class="card card-custom h-100 p-3 text-center border-warning">
+                    <div class="card-body">
+                        <span class="badge badge-gold mb-3 px-3 py-2 fs-6">الفئة الذهبية (الملكية)</span>
+                        <h3 class="card-title fw-bold mb-3">الحزمة الأسطورية</h3>
+                        <p class="text-muted">الرصيد الأقصى + فتح كافة الميزات والترقيات الحصرية بالكامل.</p>
+                        <h4 class="text-warning fw-bold my-3">150 ر.س</h4>
+                        <button class="btn btn-store w-100 py-2 mt-3">شحن فوري</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </body>
 </html>
